@@ -1,32 +1,33 @@
-import { Link, Stack } from 'expo-router';
-import { StyleSheet } from 'react-native';
+import { View, StyleSheet, Pressable } from "react-native";
+import { ThemedText } from "@/components/ThemedText";
+import { useTheme } from "@/hooks/useTheme";
+import { router } from "expo-router";
+import { common } from "@/assets/text/common";
+import { useGlobalState } from "@/hooks/useGlobalState";
 
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+export default function NotFound() {
+    const { colors } = useTheme();
+    const { user } = useGlobalState();
 
-export default function NotFoundScreen() {
-  return (
-    <>
-      <Stack.Screen options={{ title: 'Oops!' }} />
-      <ThemedView style={styles.container}>
-        <ThemedText type="title">This screen doesn't exist.</ThemedText>
-        <Link href="/" style={styles.link}>
-          <ThemedText type="link">Go to home screen!</ThemedText>
-        </Link>
-      </ThemedView>
-    </>
-  );
+    const goBack = () => {
+        if (user) {
+            router.push('/home');
+        } else {
+            router.push('/');
+        }
+
+    }
+
+    return (
+        <View style={[styles.view, { backgroundColor: colors.background }]}>
+            <Pressable onPress={goBack}><ThemedText type="link">{common.pl.goToMainPage}</ThemedText></Pressable>
+        </View>
+    );
 }
-
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 20,
-  },
-  link: {
-    marginTop: 15,
-    paddingVertical: 15,
-  },
+    view: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+    }
 });
