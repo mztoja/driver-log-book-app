@@ -2,13 +2,17 @@ import { View, StyleSheet, Button, ScrollView, ImageBackground } from "react-nat
 import { useState } from "react";
 import { NewDayModal } from "@/components/mainFormModals/NewDayModal";
 import { useTheme } from "@/hooks/useTheme";
-import { common } from '../../assets/text/common';
+import { MainFormButton } from "@/components/buttons/MainFormButton";
+import { getText } from "@/utils/getText";
 
 
 export default function Home() {
 
   const { theme, colors } = useTheme();
   const [newDayVisible, setNewDayVisible] = useState<boolean>(false);
+  const [finishDayVisible, setFinishDayVisible] = useState<boolean>(false);
+  const [borderCrossVisible, setBorderCrossVisible] = useState<boolean>(false);
+  const [logAddVisible, setLogAddVisible] = useState<boolean>(false);
 
   const imageOpacity = theme === 'dark' ? 0.5 : 1;
 
@@ -25,16 +29,16 @@ export default function Home() {
       >
         <View style={styles.buttonsGroup}>
           <View style={styles.buttonView}>
-            <Button onPress={() => setNewDayVisible(true)} title={common.pl.dayStartPageTitle} />
+            <MainFormButton onPress={() => setNewDayVisible(true)} text={getText('common', 'dayStartPageTitle')} />
           </View>
           <View style={styles.buttonView}>
-            <Button onPress={() => setNewDayVisible(true)} title={common.pl.dayStopPageTitle} />
+            <MainFormButton onPress={() => setFinishDayVisible(true)} text={getText('common', 'dayStopPageTitle')} />
           </View>
           <View style={styles.buttonView}>
-            <Button onPress={() => setNewDayVisible(true)} title={common.pl.borderCrossPageTitle} />
+            <MainFormButton onPress={() => setBorderCrossVisible(true)} text={getText('common', 'borderCrossPageTitle')} />
           </View>
           <View style={styles.buttonView}>
-            <Button onPress={() => setNewDayVisible(true)} title={common.pl.logAddPageTitle} />
+            <MainFormButton onPress={() => setLogAddVisible(true)} text={getText('common', 'logAddPageTitle')} />
           </View>
         </View>
       </ImageBackground>

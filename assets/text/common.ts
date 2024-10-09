@@ -15,7 +15,10 @@ export const common: CommonInterface = {
         profilePageTitle: 'Profile',
         notFoundPageTitle: 'Ooops :( You got Lost.',
         goToMainPage: 'Go to main page',
-        logIn: 'Log in'
+        logIn: 'Log in',
+        register: `If you don't have an account - click here.`,
+        email: 'Email',
+        password: 'Password',
     },
     pl: {
         appName: 'Dziennik kierowcy',
@@ -32,5 +35,8 @@ export const common: CommonInterface = {
         notFoundPageTitle: 'Ooops :( Zabłądziłeś.',
         goToMainPage: 'Wróć do ekranu startowego',
         logIn: 'Zaloguj',
+        register: 'Jeśli nie masz u nas konta - kliknij tutaj.',
+        email: 'Email',
+        password: 'Hasło',
     }
 }

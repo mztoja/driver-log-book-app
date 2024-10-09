@@ -32,18 +32,21 @@ interface GlobalStateProviderProps {
 interface GlobalStateContextProps {
     user: UserInterface | null,
     setUser: React.Dispatch<React.SetStateAction<UserInterface | null>>,
+    lang: 'pl' | 'en';
 }
 
 export const GlobalStateContext = createContext<GlobalStateContextProps>({
     user: null,
     setUser: () => { },
+    lang: 'en',
 });
 
 export const GlobalStateProvider: React.FC<GlobalStateProviderProps> = ({ children }: GlobalStateProviderProps) => {
     const [user, setUser] = useState<UserInterface | null>(null);
+    const [lang, setLang] = useState<'pl' | 'en'>('en');
 
     return (
-        <GlobalStateContext.Provider value={{ user, setUser }}>
+        <GlobalStateContext.Provider value={{ user, setUser, lang }}>
             {children}
         </GlobalStateContext.Provider>
     );

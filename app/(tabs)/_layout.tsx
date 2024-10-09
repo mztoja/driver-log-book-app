@@ -22,16 +22,6 @@ export default function TabLayout() {
                 tabBarStyle: { backgroundColor: colors.tabBarBackground },
                 headerRight: () => (
                     <View style={styles.topBarRightButtons}>
-                        {/* <Pressable
-                            onPress={() => toggleTheme()}
-                            style={{ marginRight: 10 }}
-                        >
-                            <MaterialIcons
-                                name={theme === 'dark' ? 'light-mode' : 'dark-mode'}
-                                size={24}
-                                color={colors.tabIconDefault}
-                            />
-                        </Pressable> */}
                         <SwitchTheme />
                         <Pressable
                             // @ts-ignore

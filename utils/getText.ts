@@ -31,7 +31,7 @@ interface GetText {
 }
 
 export const getText: GetText = (group: Group, text: Text): string => {
-    const { user } = useGlobalState();
+    const { user, lang: offlineLang } = useGlobalState();
     let lang: Lang = 'en';
     switch (user?.lang) {
         case userLangEnum.pl:
@@ -39,6 +39,9 @@ export const getText: GetText = (group: Group, text: Text): string => {
             break;
         case userLangEnum.en:
             lang = 'en';
+            break;
+        default:
+            lang = offlineLang;
             break;
     }
 

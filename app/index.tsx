@@ -1,59 +1,60 @@
-import { View, StyleSheet, Image } from "react-native";
+import { View, StyleSheet, Image, ScrollView } from "react-native";
 import { ThemedText } from "@/components/ThemedText";
 import { useTheme } from "@/hooks/useTheme";
 import { STYLES } from "@/constants/STYLES";
 import { getText } from "@/utils/getText";
-import LoginInput from "@/components/inputs/LoginInput";
-import PasswordInput from "@/components/inputs/PasswordInput";
+import { EmailInput } from "@/components/inputs/EmailInput";
+import { PasswordInput } from "@/components/inputs/PasswordInput";
 import { SwitchTheme } from "@/components/SwitchTheme";
+import { SendButton } from "@/components/buttons/SendButton";
 
 
-const Login = () => {
+const Login: React.FC = (): JSX.Element => {
 
     const { colors } = useTheme();
 
     return (
-        <View style={[STYLES.mainView, { backgroundColor: colors.background }]}>
-            <View style={{ alignSelf: 'flex-end', padding: 10 }}><SwitchTheme /></View>
+        <ScrollView style={[STYLES.scrollView, { backgroundColor: colors.background }]}>
+            <View style={{ alignSelf: 'flex-end', padding: 20, marginTop: 20 }}><SwitchTheme /></View>
             <View style={styles.topContainer}>
                 <Image source={require('@/assets/images/icon.png')} style={styles.logo} />
-                <ThemedText type="title">{getText('common', 'appName')}</ThemedText>
+                <ThemedText type="title" style={{ marginBottom: 60 }}>{getText('common', 'appName')}</ThemedText>
             </View>
             <View style={styles.formConteiner}>
-                <ThemedText type="subtitle">{getText('common', "logIn")}</ThemedText>
-                <LoginInput />
+                <ThemedText type="subtitle" style={{ alignSelf: 'center' }}>{getText('common', "logIn")}</ThemedText>
+                <EmailInput />
                 <PasswordInput />
+                <SendButton onPress={() => console.log('blabla')} text={getText('common', 'logIn')} />
             </View>
             <View style={styles.bottomContainer}>
-                <ThemedText>Blablabla</ThemedText>
+                <ThemedText type="link">{getText('common', 'register')}</ThemedText>
             </View>
-        </View>
+        </ScrollView> 
     );
 }
 
 const styles = StyleSheet.create({
     topContainer: {
-        flex: 1,
-        justifyContent: 'flex-start',
+        justifyContent: 'center',
         padding: 10,
         alignItems: 'center',
     },
     formConteiner: {
-        flex: 1,
-        alignItems: 'center',
         padding: 10,
-    },
-    bottomContainer: {
-        flex: 1,
-        justifyContent: 'flex-end',
-        padding: 20,
+        marginHorizontal: 40,
     },
     logo: {
-        width: 100, // Szerokość logo
-        height: 100, // Wysokość logo
-        resizeMode: 'contain', // Umożliwia skalowanie logo
-        marginBottom: 10, // Odstęp poniżej logo
-    }
+        width: 100,
+        height: 100,
+        resizeMode: 'contain',
+        marginBottom: 20,
+    },
+    bottomContainer: {
+        marginTop: 20,
+        justifyContent: 'center',
+        padding: 10,
+        alignItems: 'center',
+    },
 });
 
 export default Login;

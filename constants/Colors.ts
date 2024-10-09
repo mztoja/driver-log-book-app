@@ -10,6 +10,10 @@ interface ColorEntries {
   tabIconDefault: string;
   tabIconSelected: string;
   tabBackgroundSelected: string;
+  buttonTextColor: string;
+  buttonColor: string;
+  buttonRipleColor: string;
+  inputBackground: string;
 }
 
 interface Themes {
@@ -26,6 +30,10 @@ export const COLORS: Themes = {
     tabIconDefault: '#687076',
     tabIconSelected: '#c71c1c',
     tabBackgroundSelected: '#c9c9c9',
+    buttonTextColor: 'black',
+    buttonColor: '#34aac2',
+    buttonRipleColor: '#1764ad',
+    inputBackground: '#d1d1d1',
   },
   dark: {
     text: '#ECEDEE',
@@ -35,5 +43,9 @@ export const COLORS: Themes = {
     tabIconDefault: '#9BA1A6',
     tabIconSelected: '#960b0b',
     tabBackgroundSelected: '#212121',
+    buttonTextColor: 'white',
+    buttonColor: '#34aac2',
+    buttonRipleColor: '#1764ad',
+    inputBackground: '#1c1c1c',
   },
 };

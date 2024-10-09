@@ -13,6 +13,9 @@ interface Entries {
     notFoundPageTitle: string;
     goToMainPage: string;
     logIn: string;
+    register: string;
+    email: string;
+    password: string;
 }
 
 export interface CommonInterface {

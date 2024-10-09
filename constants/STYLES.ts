@@ -6,7 +6,10 @@ export const STYLES = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
     },
+    scrollView: {
+        flex: 1,
+    },
     textInput: {
-        marginTop: 10,
+        marginVertical: 10,
     }
 });
