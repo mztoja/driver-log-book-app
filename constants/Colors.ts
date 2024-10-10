@@ -14,6 +14,14 @@ interface ColorEntries {
   buttonColor: string;
   buttonRipleColor: string;
   inputBackground: string;
+  snackbarInfoBackground: string;
+  snackbarInfoText: string;
+  snackbarErrorBackground: string;
+  snackbarErrorText: string;
+  snackbarSuccessBackground: string;
+  snackbarSuccessText: string;
+  snackbarWarningBackground: string;
+  snackbarWarningText: string;
 }
 
 interface Themes {
@@ -34,6 +42,14 @@ export const COLORS: Themes = {
     buttonColor: '#34aac2',
     buttonRipleColor: '#1764ad',
     inputBackground: '#d1d1d1',
+    snackbarInfoBackground: '#42A5F5',
+    snackbarInfoText: '#FFFFFF',
+    snackbarErrorBackground: '#EF5350',
+    snackbarErrorText: '#FFFFFF',
+    snackbarSuccessBackground: '#66BB6A',
+    snackbarSuccessText: '#FFFFFF',
+    snackbarWarningBackground: '#FFA726',
+    snackbarWarningText: '#000000',
   },
   dark: {
     text: '#ECEDEE',
@@ -47,5 +63,13 @@ export const COLORS: Themes = {
     buttonColor: '#34aac2',
     buttonRipleColor: '#1764ad',
     inputBackground: '#1c1c1c',
+    snackbarInfoBackground: '#64B5F6',
+    snackbarInfoText: '#FFFFFF',
+    snackbarErrorBackground: '#E57373',
+    snackbarErrorText: '#FFFFFF',
+    snackbarSuccessBackground: '#81C784',
+    snackbarSuccessText: '#FFFFFF',
+    snackbarWarningBackground: '#FFB74D',
+    snackbarWarningText: '#000000',
   },
 };

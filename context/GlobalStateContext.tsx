@@ -1,5 +1,5 @@
 import { UserInterface, userBidTypeEnum, userFuelConDispEnum, userFuelContypeEnum, userLangEnum, userStatusEnum } from '@/types';
-import React, { createContext, useState } from 'react';
+import { Dispatch, createContext, useState } from 'react';
 
 const defaultUser: UserInterface = {
     id: '1',
@@ -31,7 +31,7 @@ interface GlobalStateProviderProps {
 
 interface GlobalStateContextProps {
     user: UserInterface | null,
-    setUser: React.Dispatch<React.SetStateAction<UserInterface | null>>,
+    setUser: Dispatch<React.SetStateAction<UserInterface | null>>,
     lang: 'pl' | 'en';
 }
 
@@ -46,7 +46,11 @@ export const GlobalStateProvider: React.FC<GlobalStateProviderProps> = ({ childr
     const [lang, setLang] = useState<'pl' | 'en'>('en');
 
     return (
-        <GlobalStateContext.Provider value={{ user, setUser, lang }}>
+        <GlobalStateContext.Provider value={{
+            user,
+            setUser,
+            lang,
+        }}>
             {children}
         </GlobalStateContext.Provider>
     );

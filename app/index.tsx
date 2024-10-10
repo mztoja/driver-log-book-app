@@ -7,11 +7,13 @@ import { EmailInput } from "@/components/inputs/EmailInput";
 import { PasswordInput } from "@/components/inputs/PasswordInput";
 import { SwitchTheme } from "@/components/SwitchTheme";
 import { SendButton } from "@/components/buttons/SendButton";
+import { useSnackbar } from "@/hooks/useSnackbar";
 
 
 const Login: React.FC = (): JSX.Element => {
 
     const { colors } = useTheme();
+    const { showSnackbar } = useSnackbar();
 
     return (
         <ScrollView style={[STYLES.scrollView, { backgroundColor: colors.background }]}>
@@ -24,7 +26,7 @@ const Login: React.FC = (): JSX.Element => {
                 <ThemedText type="subtitle" style={{ alignSelf: 'center' }}>{getText('common', "logIn")}</ThemedText>
                 <EmailInput />
                 <PasswordInput />
-                <SendButton onPress={() => console.log('blabla')} text={getText('common', 'logIn')} />
+                <SendButton onPress={() => showSnackbar('ad', 'error')} text={getText('common', 'logIn')} />
             </View>
             <View style={styles.bottomContainer}>
                 <ThemedText type="link">{getText('common', 'register')}</ThemedText>
