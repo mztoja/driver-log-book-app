@@ -4,8 +4,12 @@ import { getText } from '@/utils/getText';
 import * as React from 'react';
 import { TextInput } from 'react-native-paper';
 
-export const EmailInput: React.FC = (): JSX.Element => {
-    const [text, setText] = React.useState("");
+interface Props {
+    value: string;
+    onChange: (e: string) => void;
+}
+
+export const EmailInput: React.FC<Props> = (props: Props): JSX.Element => {
     const { colors } = useTheme();
 
     return (
@@ -17,8 +21,8 @@ export const EmailInput: React.FC = (): JSX.Element => {
                 }
             }}
             label={getText('common', 'email')}
-            value={text}
-            onChangeText={text => setText(text)}
+            value={props.value}
+            onChangeText={props.onChange}
             textColor={colors.text}
             placeholderTextColor={colors.text}
         />

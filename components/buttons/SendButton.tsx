@@ -4,6 +4,7 @@ import { Button } from "react-native-paper"
 interface Props {
     onPress: () => void;
     text: string;
+    loading?: boolean;
 }
 
 export const SendButton: React.FC<Props> = (props: Props): JSX.Element => {
@@ -18,6 +19,7 @@ export const SendButton: React.FC<Props> = (props: Props): JSX.Element => {
             buttonColor={colors.buttonColor}
             rippleColor={colors.buttonRipleColor}
             style={{ margin: 20 }}
+            loading={props.loading}
         >
             {props.text}
         </Button>

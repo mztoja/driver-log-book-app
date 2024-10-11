@@ -8,12 +8,41 @@ import { PasswordInput } from "@/components/inputs/PasswordInput";
 import { SwitchTheme } from "@/components/SwitchTheme";
 import { SendButton } from "@/components/buttons/SendButton";
 import { useSnackbar } from "@/hooks/useSnackbar";
+import { LoginFormInterface, UserInterface } from "@/types";
+import { useState } from "react";
+import { useApi } from "@/hooks/useApi";
+import { useGlobalState } from "@/hooks/useGlobalState";
+import API_ENDPOINTS from "@/constants/API_ENDPOINTS";
 
 
 const Login: React.FC = (): JSX.Element => {
 
     const { colors } = useTheme();
     const { showSnackbar } = useSnackbar();
+    const { loading, fetchData } = useApi();
+    const { setUser } = useGlobalState();
+
+    const [loginForm, setLoginForm] = useState<LoginFormInterface>({
+        email: '',
+        password: '',
+    });
+
+    const updateForm = (key: keyof LoginFormInterface, value: string) => {
+        setLoginForm((loginForm: LoginFormInterface) => ({
+            ...loginForm,
+            [key]: value,
+        }));
+    };
+
+    const send = (): void => {
+        fetchData<UserInterface>(API_ENDPOINTS.LOGIN, { method: 'POST', sendData: loginForm }, { showSnackbar })
+            .then((res) => {
+                if (res.success && res.responseData) {
+                    showSnackbar('Jołjoł', 'success');
+                    setUser(res.responseData);
+                }
+            });
+    }
 
     return (
         <ScrollView style={[STYLES.scrollView, { backgroundColor: colors.background }]}>
@@ -24,9 +53,9 @@ const Login: React.FC = (): JSX.Element => {
             </View>
             <View style={styles.formConteiner}>
                 <ThemedText type="subtitle" style={{ alignSelf: 'center' }}>{getText('common', "logIn")}</ThemedText>
-                <EmailInput />
-                <PasswordInput />
-                <SendButton onPress={() => showSnackbar('ad', 'error')} text={getText('common', 'logIn')} />
+                <EmailInput value={loginForm.email} onChange={(e) => updateForm('email', e)} />
+                <PasswordInput value={loginForm.password} onChange={(e) => updateForm('password', e)} />
+                <SendButton onPress={send} text={getText('common', 'logIn')} loading={loading} />
             </View>
             <View style={styles.bottomContainer}>
                 <ThemedText type="link">{getText('common', 'register')}</ThemedText>

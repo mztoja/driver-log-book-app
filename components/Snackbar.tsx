@@ -1,3 +1,4 @@
+import CONFIG from '@/constants/CONFIG';
 import { useSnackbar } from '@/hooks/useSnackbar';
 import { useTheme } from '@/hooks/useTheme';
 import { Pressable } from 'react-native';
@@ -37,7 +38,7 @@ export const Snackbar = () => {
             visible={visible}
             style={{ backgroundColor, marginBottom: 50 }}
             onDismiss={hideSnackbar}
-            duration={5000}
+            duration={CONFIG.SNACKBAR_DURATION}
         >
             <Pressable onPress={hideSnackbar}>
                 <Text style={{ color: textColor }}>

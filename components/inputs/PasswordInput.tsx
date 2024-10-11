@@ -4,8 +4,12 @@ import { getText } from '@/utils/getText';
 import { useState } from 'react';
 import { TextInput } from 'react-native-paper';
 
-export const PasswordInput: React.FC = (): JSX.Element => {
-    const [text, setText] = useState<string>("");
+interface Props {
+    value: string;
+    onChange: (e: string) => void;
+}
+
+export const PasswordInput: React.FC<Props> = (props: Props): JSX.Element => {
     const [secure, setSecure] = useState<boolean>(true);
     const { colors } = useTheme();
 
@@ -18,8 +22,8 @@ export const PasswordInput: React.FC = (): JSX.Element => {
                 }
             }}
             label={getText('common', 'password')}
-            value={text}
-            onChangeText={text => setText(text)}
+            value={props.value}
+            onChangeText={props.onChange}
             textColor={colors.text}
             placeholderTextColor={colors.text}
             secureTextEntry={secure}

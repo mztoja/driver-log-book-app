@@ -1,13 +1,13 @@
 import { createContext, useState, useContext } from 'react';
 
-type Type = 'success' | 'error' | 'warning' | 'info';
+export type SnackbarType = 'success' | 'error' | 'warning' | 'info';
 
 interface SnackbarContextInterface {
     visible: boolean;
     message: string;
-    showSnackbar: (message: string, type: Type) => void;
+    showSnackbar: (message: string, type: SnackbarType) => void;
     hideSnackbar: () => void;
-    type: Type;
+    type: SnackbarType;
 }
 
 interface SnackbarProviderProps {
@@ -25,9 +25,9 @@ export const SnackbarContext = createContext<SnackbarContextInterface>({
 export const SnackbarProvider: React.FC<SnackbarProviderProps> = ({ children }): JSX.Element => {
     const [visible, setVisible] = useState<boolean>(false);
     const [message, setMessage] = useState<string>('');
-    const [type, setType] = useState<Type>('info');
+    const [type, setType] = useState<SnackbarType>('info');
 
-    const showSnackbar = (msg: string, type: Type) => {
+    const showSnackbar = (msg: string, type: SnackbarType) => {
         setMessage(msg);
         setType(type);
         setVisible(true);
