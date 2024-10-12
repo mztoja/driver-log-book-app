@@ -1,4 +1,4 @@
-import { View, StyleSheet, Image, ScrollView } from "react-native";
+import { View, StyleSheet, Image, ScrollView, Pressable } from "react-native";
 import { ThemedText } from "@/components/ThemedText";
 import { useTheme } from "@/hooks/useTheme";
 import { STYLES } from "@/constants/STYLES";
@@ -13,6 +13,7 @@ import { useState } from "react";
 import { useApi } from "@/hooks/useApi";
 import { useGlobalState } from "@/hooks/useGlobalState";
 import API_ENDPOINTS from "@/constants/API_ENDPOINTS";
+import { SwitchLang } from "@/components/SwitchLang";
 
 
 const Login: React.FC = (): JSX.Element => {
@@ -46,7 +47,10 @@ const Login: React.FC = (): JSX.Element => {
 
     return (
         <ScrollView style={[STYLES.scrollView, { backgroundColor: colors.background }]}>
-            <View style={{ alignSelf: 'flex-end', padding: 20, marginTop: 20 }}><SwitchTheme /></View>
+            <View style={styles.headerButtons}>
+                <SwitchLang style={styles.flagButtons} flagStyle={styles.flagImage} />
+                <View><SwitchTheme /></View>
+            </View>
             <View style={styles.topContainer}>
                 <Image source={require('@/assets/images/icon.png')} style={styles.logo} />
                 <ThemedText type="title" style={{ marginBottom: 60 }}>{getText('common', 'appName')}</ThemedText>
@@ -65,6 +69,13 @@ const Login: React.FC = (): JSX.Element => {
 }
 
 const styles = StyleSheet.create({
+    headerButtons: {
+        padding: 20,
+        marginTop: 20,
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        flexDirection: 'row',
+    },
     topContainer: {
         justifyContent: 'center',
         padding: 10,
@@ -85,6 +96,16 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         padding: 10,
         alignItems: 'center',
+    },
+    flagButtons: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    flagImage: {
+        width: 30,
+        height: 30,
+        marginHorizontal: 5,
+        resizeMode: 'contain',
     },
 });
 

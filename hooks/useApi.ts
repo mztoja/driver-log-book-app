@@ -25,7 +25,7 @@ interface FetchDataResponse<i> {
 
 export const useApi = () => {
     const [loading, setLoading] = useState<boolean>(false);
-    const { user, lang: offlineLang } = useGlobalState();
+    const { lang } = useGlobalState();
 
     const fetchData = async <i>(endpoint: string, config?: Config<i>, handleError?: HandleError): Promise<FetchDataResponse<i>> => {
         setLoading(true);
@@ -47,7 +47,7 @@ export const useApi = () => {
                 const responseData = await response.json();
                 if (config?.sendData) {
                     if (handleError && responseData.dtc) {
-                        const dtc = handleDtcErrors(responseData.dtc, { user, offlineLang });
+                        const dtc = handleDtcErrors(responseData.dtc, lang);
                         handleError.showSnackbar(dtc.message, dtc.type);
                         return { success: false }
                     }
@@ -64,7 +64,7 @@ export const useApi = () => {
             return { success: false };
         } catch (e) {
             if (config?.sendData && handleError) {
-                handleError.showSnackbar(getText('dtcErrors', 'apiConnectionError', { user, offlineLang }), 'error');
+                handleError.showSnackbar(getText('dtcErrors', 'apiConnectionError', lang), 'error');
             }
             return { success: false, error: e };
         } finally {

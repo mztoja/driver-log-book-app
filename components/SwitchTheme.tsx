@@ -2,7 +2,7 @@ import { Pressable } from 'react-native';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { useTheme } from '@/hooks/useTheme';
 
-export const SwitchTheme = () => {
+export const SwitchTheme: React.FC = (): JSX.Element => {
 
     const { theme, colors, toggleTheme } = useTheme();
 

@@ -1,258 +1,253 @@
 import { SnackbarType } from "@/context/SnackbarContext";
-import { Lang, getText } from "./getText";
-import { UserInterface } from "@/types";
+import { LangInterface } from "@/types";
+import { getText } from "./getText";
 
 interface HandleDtcErrors {
     message: string;
     type: SnackbarType;
 }
 
-interface GlobalData {
-    user: UserInterface | null;
-    offlineLang: Lang;
-}
-
-export const handleDtcErrors = (dtc: string, globalData: GlobalData): HandleDtcErrors => {
+export const handleDtcErrors = (dtc: string, lang: LangInterface): HandleDtcErrors => {
 
     switch (dtc) {
         case 'invalidLoginData':
             return {
-                message: getText('dtcErrors', 'invalidLoginData', globalData),
+                message: getText('dtcErrors', 'invalidLoginData', lang),
                 type: 'warning',
             }
         case 'country':
             return {
-                message: getText('dtcErrors', 'country', globalData),
+                message: getText('dtcErrors', 'country', lang),
                 type: 'warning',
             }
         case 'startData.country':
             return {
-                message: getText('dtcErrors', 'country', globalData),
+                message: getText('dtcErrors', 'country', lang),
                 type: 'warning',
             }
         case 'stopData.country':
             return {
-                message: getText('dtcErrors', 'country', globalData),
+                message: getText('dtcErrors', 'country', lang),
                 type: 'warning',
             }
         case 'logData.country':
             return {
-                message: getText('dtcErrors', 'country', globalData),
+                message: getText('dtcErrors', 'country', lang),
                 type: 'warning',
             }
         case 'unloadingLogData.country':
             return {
-                message: getText('dtcErrors', 'country', globalData),
+                message: getText('dtcErrors', 'country', lang),
                 type: 'warning',
             }
         case 'loadingLogData.country':
             return {
-                message: getText('dtcErrors', 'country', globalData),
+                message: getText('dtcErrors', 'country', lang),
                 type: 'warning',
             }
         case 'noActiveRoute':
             return {
-                message: getText('dtcErrors', 'noActiveRoute', globalData),
+                message: getText('dtcErrors', 'noActiveRoute', lang),
                 type: 'info',
             }
         case 'activeRoute':
             return {
-                message: getText('dtcErrors', 'activeRoute', globalData),
+                message: getText('dtcErrors', 'activeRoute', lang),
                 type: 'info',
             }
         case 'email':
             return {
-                message: getText('dtcErrors', 'registerResInvEmail', globalData),
+                message: getText('dtcErrors', 'registerResInvEmail', lang),
                 type: 'warning',
             }
         case 'email exist':
             return {
-                message: getText('dtcErrors', 'registerResEmailExist', globalData),
+                message: getText('dtcErrors', 'registerResEmailExist', lang),
                 type: 'warning',
             }
         case 'action':
             return {
-                message: getText('dtcErrors', 'actionNoExist', globalData),
+                message: getText('dtcErrors', 'actionNoExist', lang),
                 type: 'info',
             }
         case 'startData.action':
             return {
-                message: getText('dtcErrors', 'actionNoExist', globalData),
+                message: getText('dtcErrors', 'actionNoExist', lang),
                 type: 'info',
             }
         case 'unloadingLogData.action':
             return {
-                message: getText('dtcErrors', 'actionNoExist', globalData),
+                message: getText('dtcErrors', 'actionNoExist', lang),
                 type: 'info',
             }
         case 'loadingLogData.action':
             return {
-                message: getText('dtcErrors', 'actionNoExist', globalData),
+                message: getText('dtcErrors', 'actionNoExist', lang),
                 type: 'info',
             }
         case 'stopData.action':
             return {
-                message: getText('dtcErrors', 'actionNoExist', globalData),
+                message: getText('dtcErrors', 'actionNoExist', lang),
                 type: 'info',
             }
         case 'logData.action':
             return {
-                message: getText('dtcErrors', 'actionNoExist', globalData),
+                message: getText('dtcErrors', 'actionNoExist', lang),
                 type: 'info',
             }
         case 'password':
             return {
-                message: getText('dtcErrors', 'registerResInvPassword', globalData),
+                message: getText('dtcErrors', 'registerResInvPassword', lang),
                 type: 'warning',
             }
         case 'companyName':
             return {
-                message: getText('dtcErrors', 'registerCompanyNameNotExist', globalData),
+                message: getText('dtcErrors', 'registerCompanyNameNotExist', lang),
                 type: 'warning',
             }
         case 'companyCity':
             return {
-                message: getText('dtcErrors', 'registerCompanyCityNotExist', globalData),
+                message: getText('dtcErrors', 'registerCompanyCityNotExist', lang),
                 type: 'warning',
             }
         case 'trailerExist':
             return {
-                message: getText('dtcErrors', 'trailerExist', globalData),
+                message: getText('dtcErrors', 'trailerExist', lang),
                 type: 'info',
             }
         case 'noTrailer':
             return {
-                message: getText('dtcErrors', 'noTrailer', globalData),
+                message: getText('dtcErrors', 'noTrailer', lang),
                 type: 'info',
             }
         case 'countryConflict':
             return {
-                message: getText('dtcErrors', 'countryConflict', globalData),
+                message: getText('dtcErrors', 'countryConflict', lang),
                 type: 'warning',
             }
         case 'activeDay':
             return {
-                message: getText('dtcErrors', 'dayExist', globalData),
+                message: getText('dtcErrors', 'dayExist', lang),
                 type: 'info',
             }
         case 'dayExistRegardRoute':
             return {
-                message: getText('dtcErrors', 'dayExistRegardRoute', globalData),
+                message: getText('dtcErrors', 'dayExistRegardRoute', lang),
                 type: 'info',
             }
         case 'vehicle':
             return {
-                message: getText('dtcErrors', 'noVehicle', globalData),
+                message: getText('dtcErrors', 'noVehicle', lang),
                 type: 'warning',
             }
         case 'truck':
             return {
-                message: getText('dtcErrors', 'truckNoExist', globalData),
+                message: getText('dtcErrors', 'truckNoExist', lang),
                 type: 'warning',
             }
         case 'weight':
             return {
-                message: getText('dtcErrors', 'noWeight', globalData),
+                message: getText('dtcErrors', 'noWeight', lang),
                 type: 'warning',
             }
         case 'description':
             return {
-                message: getText('dtcErrors', 'noDescription', globalData),
+                message: getText('dtcErrors', 'noDescription', lang),
                 type: 'warning',
             }
         case 'name':
             return {
-                message: getText('dtcErrors', 'registerCompanyNameNotExist', globalData),
+                message: getText('dtcErrors', 'registerCompanyNameNotExist', lang),
                 type: 'warning',
             }
         case 'city':
             return {
-                message: getText('dtcErrors', 'registerCompanyCityNotExist', globalData),
+                message: getText('dtcErrors', 'registerCompanyCityNotExist', lang),
                 type: 'warning',
             }
         case 'fuelCombustion':
             return {
-                message: getText('dtcErrors', 'typeFuelBurned', globalData),
+                message: getText('dtcErrors', 'typeFuelBurned', lang),
                 type: 'warning',
             }
         case 'dayNotExist':
             return {
-                message: getText('dtcErrors', 'dayNotExist', globalData),
+                message: getText('dtcErrors', 'dayNotExist', lang),
                 type: 'info',
             }
         case 'loadId':
             return {
-                message: getText('dtcErrors', 'noLoadChosen', globalData),
+                message: getText('dtcErrors', 'noLoadChosen', lang),
                 type: 'warning',
             }
         case 'noChosenLoad':
             return {
-                message: getText('dtcErrors', 'noLoadChosen', globalData),
+                message: getText('dtcErrors', 'noLoadChosen', lang),
                 type: 'warning',
             }
         case 'chosenLoadIsUnloaded':
             return {
-                message: getText('dtcErrors', 'chosenLoadIsUnloaded', globalData),
+                message: getText('dtcErrors', 'chosenLoadIsUnloaded', lang),
                 type: 'warning',
             }
         case 'noLoadReceiver':
             return {
-                message: getText('dtcErrors', 'noLoadReceiver', globalData),
+                message: getText('dtcErrors', 'noLoadReceiver', lang),
                 type: 'warning',
             }
         case 'expenseDescriptionEmpty':
             return {
-                message: getText('dtcErrors', 'noExpenseDescription', globalData),
+                message: getText('dtcErrors', 'noExpenseDescription', lang),
                 type: 'warning',
             }
         case 'addVehicleRegEmpty':
             return {
-                message: getText('dtcErrors', 'addVehicleRegEmpty', globalData),
+                message: getText('dtcErrors', 'addVehicleRegEmpty', lang),
                 type: 'error',
             }
         case 'addVehicleWeightEmpty':
             return {
-                message: getText('dtcErrors', 'addVehicleWeightEmpty', globalData),
+                message: getText('dtcErrors', 'addVehicleWeightEmpty', lang),
                 type: 'error',
             }
         case 'vehicleRegExist':
             return {
-                message: getText('dtcErrors', 'vehicleRegExist', globalData),
+                message: getText('dtcErrors', 'vehicleRegExist', lang),
                 type: 'error',
             }
         case 'chooseServicedVehicle':
             return {
-                message: getText('dtcErrors', 'chooseServicedVehicle', globalData),
+                message: getText('dtcErrors', 'chooseServicedVehicle', lang),
                 type: 'error',
             }
         case 'noServiceEntry':
             return {
-                message: getText('dtcErrors', 'noServiceEntry', globalData),
+                message: getText('dtcErrors', 'noServiceEntry', lang),
                 type: 'error',
             }
         case 'youHaveToChooseRoutes':
             return {
-                message: getText('dtcErrors', 'youHaveToChooseRoutes', globalData),
+                message: getText('dtcErrors', 'youHaveToChooseRoutes', lang),
                 type: 'warning',
             }
         case 'monthIncorrectFormat':
             return {
-                message: getText('dtcErrors', 'monthIncorrectFormat', globalData),
+                message: getText('dtcErrors', 'monthIncorrectFormat', lang),
                 type: 'warning',
             }
         case 'cannotEditSettledTourData':
             return {
-                message: getText('dtcErrors', 'cannotEditSettledTourData', globalData),
+                message: getText('dtcErrors', 'cannotEditSettledTourData', lang),
                 type: 'warning',
             }
         case 'Unauthorized':
             return {
-                message: getText('dtcErrors', 'apiUnauthorized', globalData),
+                message: getText('dtcErrors', 'apiUnauthorized', lang),
                 type: 'error',
             }
         default:
             return {
-                message: getText('dtcErrors', 'apiUnknownError', globalData),
+                message: getText('dtcErrors', 'apiUnknownError', lang),
                 type: 'error',
             }
     }
