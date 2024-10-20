@@ -3,9 +3,8 @@ import { ThemedText } from "@/components/ThemedText";
 import { useTheme } from "@/hooks/useTheme";
 import { STYLES } from "@/constants/STYLES";
 import { getText } from "@/utils/getText";
-import { EmailInput } from "@/components/inputs/EmailInput";
-import { PasswordInput } from "@/components/inputs/PasswordInput";
-import { SwitchTheme } from "@/components/SwitchTheme";
+import { EmailInput } from "@/components/inputs/user/EmailInput";
+import { PasswordInput } from "@/components/inputs/user/PasswordInput";
 import { SendButton } from "@/components/buttons/SendButton";
 import { useSnackbar } from "@/hooks/useSnackbar";
 import { LoginFormInterface, UserInterface } from "@/types";
@@ -13,7 +12,9 @@ import { useState } from "react";
 import { useApi } from "@/hooks/useApi";
 import { useGlobalState } from "@/hooks/useGlobalState";
 import API_ENDPOINTS from "@/constants/API_ENDPOINTS";
+import { router } from "expo-router";
 import { SwitchLang } from "@/components/SwitchLang";
+import { SwitchTheme } from "@/components/SwitchTheme";
 
 
 const Login: React.FC = (): JSX.Element => {
@@ -47,8 +48,8 @@ const Login: React.FC = (): JSX.Element => {
 
     return (
         <ScrollView style={[STYLES.scrollView, { backgroundColor: colors.background }]}>
-            <View style={styles.headerButtons}>
-                <SwitchLang style={styles.flagButtons} flagStyle={styles.flagImage} />
+            <View style={styles.header}>
+                <SwitchLang />
                 <View><SwitchTheme /></View>
             </View>
             <View style={styles.topContainer}>
@@ -62,14 +63,14 @@ const Login: React.FC = (): JSX.Element => {
                 <SendButton onPress={send} text={getText('common', 'logIn')} loading={loading} />
             </View>
             <View style={styles.bottomContainer}>
-                <ThemedText type="link">{getText('common', 'register')}</ThemedText>
+                <ThemedText type="link" onPress={() => router.push('/register')}>{getText('common', 'register')}</ThemedText>
             </View>
         </ScrollView> 
     );
 }
 
 const styles = StyleSheet.create({
-    headerButtons: {
+    header: {
         padding: 20,
         marginTop: 20,
         justifyContent: 'space-between',
@@ -96,16 +97,6 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         padding: 10,
         alignItems: 'center',
-    },
-    flagButtons: {
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
-    flagImage: {
-        width: 30,
-        height: 30,
-        marginHorizontal: 5,
-        resizeMode: 'contain',
     },
 });
 

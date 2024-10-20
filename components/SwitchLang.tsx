@@ -1,14 +1,9 @@
 import { useGlobalState } from "@/hooks/useGlobalState";
 import { LangInterface, userLangEnum } from "@/types";
 import { useEffect, useState } from "react";
-import { Pressable, View, Image, ViewStyle, ImageStyle } from "react-native";
+import { Pressable, View, Image, ViewStyle, ImageStyle, StyleSheet } from "react-native";
 
-interface Props {
-    style: ViewStyle;
-    flagStyle: ImageStyle;
-}
-
-export const SwitchLang: React.FC<Props> = (props: Props): JSX.Element => {
+export const SwitchLang: React.FC = (): JSX.Element => {
     const { lang, setLang, setUser } = useGlobalState();
     const [enOpacity, enSetOpacity] = useState<number>(0.5);
     const [plOpacity, plSetOpacity] = useState<number>(0.5);
@@ -44,13 +39,26 @@ export const SwitchLang: React.FC<Props> = (props: Props): JSX.Element => {
 
 
     return (
-        <View style={props.style}>
+        <View style={styles.flagButtons}>
             <Pressable onPress={() => set('en')}>
-                <Image source={require('@/assets/images/en.jpg')} style={[props.flagStyle, { opacity: enOpacity }]} />
+                <Image source={require('@/assets/images/en.jpg')} style={[styles.flagImage, { opacity: enOpacity }]} />
             </Pressable>
             <Pressable onPress={() => set('pl')}>
-                <Image source={require('@/assets/images/pl.jpg')} style={[props.flagStyle, { opacity: plOpacity }]} />
+                <Image source={require('@/assets/images/pl.jpg')} style={[styles.flagImage, { opacity: plOpacity }]} />
             </Pressable>
         </View>
     );
 }
+
+const styles = StyleSheet.create({
+    flagButtons: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    flagImage: {
+        width: 30,
+        height: 30,
+        marginHorizontal: 5,
+        resizeMode: 'contain',
+    },
+});

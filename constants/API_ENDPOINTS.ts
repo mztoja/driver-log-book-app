@@ -22,7 +22,7 @@ const API_ENDPOINTS = {
     generateSettlementRoute: '/tours/generator',
     deleteMonthlySettlement: '/tours/deleteMonthlySettlement',
     // users
-    register: '/users/register',
+    REGISTER: '/users/register',
     LOGIN: '/auth/login',
     get: '/auth/user',
     logout: '/auth/logout',
