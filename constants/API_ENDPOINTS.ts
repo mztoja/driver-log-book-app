@@ -24,7 +24,7 @@ const API_ENDPOINTS = {
     // users
     REGISTER: '/users/register',
     LOGIN: '/auth/login',
-    get: '/auth/user',
+    GET: '/auth/user',
     logout: '/auth/logout',
     markDepart: '/users/markDepart',
     userUpdate: '/users/userUpdate',

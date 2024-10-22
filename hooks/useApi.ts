@@ -4,6 +4,7 @@ import { getText } from "@/utils/getText";
 import { handleDtcErrors } from "@/utils/handleDtcErrors";
 import { Dispatch, SetStateAction, useState } from "react";
 import { useGlobalState } from "./useGlobalState";
+import getToken from "@/utils/getToken";
 
 type Method = 'GET' | 'POST' | 'PATCH' | 'DELETE';
 
@@ -11,6 +12,7 @@ interface Config<i> {
     method?: Method;
     sendData?: any;
     setData?: Dispatch<SetStateAction<i | null>>;
+    withoutToken?: boolean;
 }
 
 interface HandleError {
@@ -28,6 +30,7 @@ export const useApi = () => {
     const { lang } = useGlobalState();
 
     const fetchData = async <i>(endpoint: string, config?: Config<i>, handleError?: HandleError): Promise<FetchDataResponse<i>> => {
+        const token = await getToken();
         setLoading(true);
         if (config && config.sendData && config.setData) {
             throw new Error("You can't specify 'setData' and 'sendData' simultaneously.");
@@ -37,9 +40,34 @@ export const useApi = () => {
         }
         try {
             const method: Method = config && config.method ? config.method : 'GET';
-            const response = await fetch(CONFIG.API_URL + endpoint, {
-                method,
-                headers: method === 'GET' ? { Accept: 'application/json' } : { 'Content-Type': 'application/json' },
+
+            const response = !config?.withoutToken && token ?
+                await fetch(CONFIG.API_URL + endpoint, {
+                    method,
+                    headers: method === 'GET'
+                        ? {
+                            'Authorization': `Bearer ${token}`,
+                            Accept: 'application/json',
+                            'is-mobile-app': 'true',
+                        } : {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json',
+                            'is-mobile-app': 'true',
+                        },
+                    body: method === 'GET' ? null : JSON.stringify(config?.sendData),
+                    credentials: "include",
+                })
+                :
+                await fetch(CONFIG.API_URL + endpoint, {
+                    method,
+                    headers: method === 'GET'
+                        ? {
+                            Accept: 'application/json',
+                            'is-mobile-app': 'true',
+                        } : {
+                            'Content-Type': 'application/json',
+                            'is-mobile-app': 'true',
+                        },
                 body: method === 'GET' ? null : JSON.stringify(config?.sendData),
                 credentials: "include",
             });
@@ -60,6 +88,9 @@ export const useApi = () => {
                         return { success: true, responseData };
                     }
                 }
+            }
+            if (config?.setData) {
+                config.setData(null);
             }
             return { success: false };
         } catch (e) {

@@ -57,7 +57,7 @@ const Register: React.FC = (): JSX.Element => {
     };
 
     const send = (): void => {
-        fetchData(API_ENDPOINTS.REGISTER, { method: 'POST', sendData: registerForm }, { showSnackbar })
+        fetchData(API_ENDPOINTS.REGISTER, { method: 'POST', sendData: registerForm, withoutToken: true }, { showSnackbar })
             .then((res) => {
                 if (res.success) {
                     showSnackbar(getText('common', 'registerSuccess', lang), 'success');

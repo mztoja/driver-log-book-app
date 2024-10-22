@@ -1,3 +1,5 @@
+import { STYLES } from '@/constants/STYLES';
+import { useTheme } from '@/hooks/useTheme';
 import { Modal, StyleSheet, Text, Pressable, View } from 'react-native';
 
 interface Props {
@@ -7,6 +9,8 @@ interface Props {
 
 export const NewDayModal = (props: Props) => {
 
+    const { colors } = useTheme();
+
     return (
         <Modal
             animationType="slide"
@@ -15,15 +19,13 @@ export const NewDayModal = (props: Props) => {
             onRequestClose={() => {
                 props.setVisible(!props.visible);
             }}>
-            <View style={styles.centeredView}>
-                <View style={styles.modalView}>
+            <View style={[STYLES.modalFormMainView, { backgroundColor: colors.background }]}>
                     <Text style={styles.modalText}>New Day Modal :)</Text>
                     <Pressable
                         style={[styles.button, styles.buttonClose]}
                         onPress={() => props.setVisible(!props.visible)}>
                         <Text style={styles.textStyle}>Hide Modal</Text>
-                    </Pressable>
-                </View>
+                </Pressable>
             </View>
         </Modal>
     );

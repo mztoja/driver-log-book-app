@@ -4,10 +4,6 @@ export const common: CommonInterface = {
     en: {
         appName: `Driver's Log Book`,
         homePageTitle: 'Home',
-        dayStartPageTitle: 'Start working day',
-        dayStopPageTitle: 'Finish working day',
-        borderCrossPageTitle: 'Border cross',
-        logAddPageTitle: 'Add other activity',
         infoPageTitle: 'Info',
         routesPageTitle: 'Routes',
         placesPageTitle: 'Places',
@@ -58,10 +54,6 @@ export const common: CommonInterface = {
     pl: {
         appName: 'Dziennik kierowcy',
         homePageTitle: 'Strona główna',
-        dayStartPageTitle: 'Rozpocznij dzień pracy',
-        dayStopPageTitle: 'Zakończ dzień pracy',
-        borderCrossPageTitle: 'Przekroczenie granicy',
-        logAddPageTitle: 'Dodaj inną czynność',
         infoPageTitle: 'Info',
         routesPageTitle: 'Trasy',
         placesPageTitle: 'Adresy',

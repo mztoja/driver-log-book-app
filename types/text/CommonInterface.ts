@@ -1,10 +1,6 @@
 interface Entries {
     appName: string;
     homePageTitle: string;
-    dayStartPageTitle: string;
-    dayStopPageTitle: string;
-    borderCrossPageTitle: string;
-    logAddPageTitle: string;
     infoPageTitle: string;
     routesPageTitle: string;
     placesPageTitle: string;

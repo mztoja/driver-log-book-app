@@ -1,29 +1,5 @@
 import { LangInterface, UserInterface, userBidTypeEnum, userFuelConDispEnum, userFuelContypeEnum, userLangEnum, userStatusEnum } from '@/types';
-import { Dispatch, createContext, useState } from 'react';
-
-const defaultUser: UserInterface = {
-    id: '1',
-    email: 'mztoja@gmail.com',
-    bid: 0,
-    bidType: userBidTypeEnum.notSpecified,
-    companyId: 0,
-    country: 'PL',
-    currency: 'PLN',
-    currentTokenId: '',
-    customer: '',
-    firstName: 'Marcin',
-    lastName: 'Zyskowski',
-    lang: userLangEnum.pl,
-    fuelConDisp: userFuelConDispEnum.litersPer100km,
-    fuelConType: userFuelContypeEnum.liters,
-    markedArrive: 0,
-    markedDepart: 0,
-    notes: '',
-    pwdHash: '',
-    registerAt: '',
-    status: userStatusEnum.active,
-    tourGenerator: '',
-}
+import { Dispatch, createContext, useEffect, useState } from 'react';
 
 interface GlobalStateProviderProps {
     children: React.ReactNode;
@@ -46,6 +22,17 @@ export const GlobalStateContext = createContext<GlobalStateContextProps>({
 export const GlobalStateProvider: React.FC<GlobalStateProviderProps> = ({ children }: GlobalStateProviderProps) => {
     const [user, setUser] = useState<UserInterface | null>(null);
     const [lang, setLang] = useState<LangInterface>('en');
+
+    useEffect(() => {
+        switch (user?.lang) {
+            case userLangEnum.en:
+                setLang('en');
+                break;
+            case userLangEnum.pl:
+                setLang('pl');
+                break;
+        }
+    }, [user]);
 
     return (
         <GlobalStateContext.Provider value={{

@@ -15,6 +15,8 @@ import API_ENDPOINTS from "@/constants/API_ENDPOINTS";
 import { router } from "expo-router";
 import { SwitchLang } from "@/components/SwitchLang";
 import { SwitchTheme } from "@/components/SwitchTheme";
+import { LoginResponse } from "@/types/backend/user/LoginResponse";
+import storeToken from "@/utils/storeToken";
 
 
 const Login: React.FC = (): JSX.Element => {
@@ -37,11 +39,11 @@ const Login: React.FC = (): JSX.Element => {
     };
 
     const send = (): void => {
-        fetchData<UserInterface>(API_ENDPOINTS.LOGIN, { method: 'POST', sendData: loginForm }, { showSnackbar })
+        fetchData<LoginResponse>(API_ENDPOINTS.LOGIN, { method: 'POST', sendData: loginForm }, { showSnackbar })
             .then((res) => {
                 if (res.success && res.responseData) {
-                    showSnackbar('Jołjoł', 'success');
-                    setUser(res.responseData);
+                    storeToken(res.responseData.accessToken);
+                    setUser(res.responseData.user);
                 }
             });
     }

@@ -1,23 +1,47 @@
 import { View, StyleSheet, Button, ScrollView, ImageBackground } from "react-native";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { NewDayModal } from "@/components/mainFormModals/NewDayModal";
 import { useTheme } from "@/hooks/useTheme";
 import { MainFormButton } from "@/components/buttons/MainFormButton";
 import { getText } from "@/utils/getText";
+import { useGlobalState } from "@/hooks/useGlobalState";
+import { useApi } from "@/hooks/useApi";
+import API_ENDPOINTS from "@/constants/API_ENDPOINTS";
+import { UserInterface, userLangEnum, userStatusEnum } from "@/types";
+import { useFocusEffect } from "expo-router";
+import { STYLES } from "@/constants/STYLES";
+import { ThemedText } from "@/components/ThemedText";
 
 
 export default function Home() {
 
   const { theme, colors } = useTheme();
+  const { setUser, user, lang } = useGlobalState();
+  const { fetchData } = useApi();
   const [newDayVisible, setNewDayVisible] = useState<boolean>(false);
   const [finishDayVisible, setFinishDayVisible] = useState<boolean>(false);
   const [borderCrossVisible, setBorderCrossVisible] = useState<boolean>(false);
   const [logAddVisible, setLogAddVisible] = useState<boolean>(false);
+  const [expenceAddVisible, setExpenceAddVisible] = useState<boolean>(false);
 
   const imageOpacity = theme === 'dark' ? 0.5 : 1;
 
+  useFocusEffect(
+    useCallback(() => {
+      fetchData<UserInterface>(API_ENDPOINTS.GET, { setData: setUser }).then();
+    }, [])
+  );
+
+  if (user?.status === userStatusEnum.blocked) {
+    return (
+      <View style={[STYLES.mainView, { backgroundColor: colors.background }]}>
+        <ThemedText>{getText('home', 'blockedDescription', lang)}</ThemedText>
+      </View>
+    );
+  }
+
   return (
-    <ScrollView style={[styles.scrollView, { backgroundColor: colors.background }]}>
+    <ScrollView style={[STYLES.scrollView, { backgroundColor: colors.background }]}>
 
       <NewDayModal visible={newDayVisible} setVisible={setNewDayVisible} />
 
@@ -29,16 +53,16 @@ export default function Home() {
       >
         <View style={styles.buttonsGroup}>
           <View style={styles.buttonView}>
-            <MainFormButton onPress={() => setNewDayVisible(true)} text={getText('common', 'dayStartPageTitle')} />
+            <MainFormButton onPress={() => setNewDayVisible(true)} text={getText('home', 'dayStart', lang)} />
           </View>
           <View style={styles.buttonView}>
-            <MainFormButton onPress={() => setFinishDayVisible(true)} text={getText('common', 'dayStopPageTitle')} />
+            <MainFormButton onPress={() => setFinishDayVisible(true)} text={getText('home', 'dayStop', lang)} />
           </View>
           <View style={styles.buttonView}>
-            <MainFormButton onPress={() => setBorderCrossVisible(true)} text={getText('common', 'borderCrossPageTitle')} />
+            <MainFormButton onPress={() => setBorderCrossVisible(true)} text={getText('home', 'crossBorder', lang)} />
           </View>
           <View style={styles.buttonView}>
-            <MainFormButton onPress={() => setLogAddVisible(true)} text={getText('common', 'logAddPageTitle')} />
+            <MainFormButton onPress={() => setLogAddVisible(true)} text={getText('home', 'addLog', lang)} />
           </View>
         </View>
       </ImageBackground>
@@ -50,13 +74,13 @@ export default function Home() {
         resizeMode="cover"
       >
         <View style={styles.buttonView}>
-          <Button onPress={() => setNewDayVisible(true)} title='Tankowanie Diesel' />
+          <MainFormButton onPress={() => setExpenceAddVisible(true)} text={getText('home', 'dieselRefuel', lang)} />
         </View>
         <View style={styles.buttonView}>
-          <Button onPress={() => setNewDayVisible(true)} title='Tankowanie Adblue' />
+          <MainFormButton onPress={() => setExpenceAddVisible(true)} text={getText('home', 'adblueRefuel', lang)} />
         </View>
         <View style={styles.buttonView}>
-          <Button onPress={() => setNewDayVisible(true)} title='Dodaj inny wydatek' />
+          <MainFormButton onPress={() => setExpenceAddVisible(true)} text={getText('home', 'expenceAdd', lang)} />
         </View>
       </ImageBackground>
 
@@ -108,9 +132,6 @@ export default function Home() {
 }
 
 const styles = StyleSheet.create({
-  scrollView: {
-    flex: 1,
-  },
   imageBackground: {
     justifyContent: 'center',
     height: 230,
@@ -121,6 +142,7 @@ const styles = StyleSheet.create({
   },
   imageStyle: {
     borderRadius: 10,
+    opacity: 0.6,
   },
   buttonView: {
     margin: 5,

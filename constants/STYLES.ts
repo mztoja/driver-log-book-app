@@ -38,4 +38,10 @@ export const STYLES = StyleSheet.create({
         right: 0,
         bottom: 0,
     },
+    modalFormMainView: {
+        borderRadius: 20,
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+    },
 });
