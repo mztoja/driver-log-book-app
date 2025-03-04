@@ -47,6 +47,41 @@ interface Entries {
     bidType2: string;
     bidType3: string;
     registerSuccess: string;
+    dateTime: string;
+    odometer: string;
+    odometerHelper: string;
+    place: string;
+    placeHelper: string;
+    choosePlace: string;
+    placeType: string;
+    placeType0: string;
+    placeType1: string;
+    placeType2: string;
+    placeType3: string;
+    placeType4: string;
+    placeType5: string;
+    placeType6: string;
+    placeType7: string;
+    placeTypeAll: string;
+    favorite: string;
+    activity: string;
+    activityHelper: string;
+    notes: string;
+    confirmation: string;
+    confirmationDeleteElement: (x: string) => string;
+    cancel: string;
+    delete: string;
+    yes: string;
+    no: string;
+    insertedCard: string;
+    cardTakeOut: string;
+    doubleCrew: string;
+    driveTime: string;
+    driveTime2: string;
+    driveTimeHelper: string;
+    driveTimeHelper2: string;
+    fuelQuantity: string;
+    fuelCombustion: string;
 }
 
 export interface CommonInterface {

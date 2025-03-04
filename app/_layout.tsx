@@ -15,6 +15,7 @@ const Stacks = () => {
     const { colors } = useTheme();
 
     return (
+
         <SnackbarProvider>
             <View style={{ flex: 1 }}>
                 <Stack
@@ -36,6 +37,7 @@ const Stacks = () => {
                 <Snackbar />
             </View>
         </SnackbarProvider>
+
     );
 }
 

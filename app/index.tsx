@@ -7,7 +7,7 @@ import { EmailInput } from "@/components/inputs/user/EmailInput";
 import { PasswordInput } from "@/components/inputs/user/PasswordInput";
 import { SendButton } from "@/components/buttons/SendButton";
 import { useSnackbar } from "@/hooks/useSnackbar";
-import { LoginFormInterface, UserInterface } from "@/types";
+import { LoginFormInterface } from "@/types";
 import { useState } from "react";
 import { useApi } from "@/hooks/useApi";
 import { useGlobalState } from "@/hooks/useGlobalState";

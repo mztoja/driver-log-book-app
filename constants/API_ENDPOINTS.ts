@@ -1,6 +1,6 @@
 const API_ENDPOINTS = {
     // places
-    getPlaces: '/places/get',
+    GET_PLACES: '/places/get',
     getPlace: '/places/getOne',
     createPlace: '/places/create',
     getCompanyList: '/places/companyList',
@@ -30,9 +30,9 @@ const API_ENDPOINTS = {
     userUpdate: '/users/userUpdate',
     editNotes: '/users/editNotes',
     // days
-    createNewDay: '/days/create',
-    finishDay: '/days/finish',
-    getActiveDay: '/days/getActiveDay',
+    START_NEW_DAY: '/days/create',
+    FINISH_DAY: '/days/finish',
+    GET_ACTIVE_DAY: '/days/getActiveDay',
     getLastDay: '/days/getLastDay',
     getYourLastDay: '/days/getYourLastDay',
     getDays: '/days/get',
@@ -43,19 +43,20 @@ const API_ENDPOINTS = {
     editDay: '/days/edit',
     editSimpleDay: '/days/simpleEdit',
     // logs
-    createNewLog: '/logs/create',
-    createBorderCross: '/logs/createBorderCross',
+    CREATE_NEW_LOG: '/logs/create',
     getLogs: '/logs/get',
     getLogById: '/logs/getById',
     getLogsByTourId: '/logs/getByTourId',
-    getLastLog: '/logs/getLastLog',
+    GET_LAST_LOG: '/logs/getLastLog',
     attachTrailer: '/logs/attachTrailer',
     detachTrailer: '/logs/detachTrailer',
     loadingArrival: '/logs/loadingArrival',
     unloadingArrival: '/logs/unloadingArrival',
     editLog: '/logs/edit',
     // borders
-    getBordersByCountry: '/borders/getByCountry',
+    GET_BORDERS_BY_COUNTRY: '/borders/getByCountry', // + /countryCode
+    CREATE_BORDER_CROSS: '/logs/createBorderCross',
+    DELETE_BORDER_CROSS: '/borders/delete',
     // vehicles
     getVehicleByRegistration: '/vehicles/findByRegistration',
     createVehicle: '/vehicles/create',

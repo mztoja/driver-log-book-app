@@ -55,7 +55,6 @@ export const useApi = () => {
                             'is-mobile-app': 'true',
                         },
                     body: method === 'GET' ? null : JSON.stringify(config?.sendData),
-                    credentials: "include",
                 })
                 :
                 await fetch(CONFIG.API_URL + endpoint, {
@@ -68,25 +67,41 @@ export const useApi = () => {
                             'Content-Type': 'application/json',
                             'is-mobile-app': 'true',
                         },
-                body: method === 'GET' ? null : JSON.stringify(config?.sendData),
-                credentials: "include",
+                    body: method === 'GET' ? null : JSON.stringify(config?.sendData),
             });
+            // console.log('Response from', endpoint, ':\n', response);
             if (response.ok) {
-                const responseData = await response.json();
-                if (config?.sendData) {
+                const textData = await response.text();
+                const responseData = textData ? JSON.parse(textData) : null;
+                // console.log('Data from', endpoint, ':\n', responseData);
+                if (config?.sendData && responseData) {
                     if (handleError && responseData.dtc) {
                         const dtc = handleDtcErrors(responseData.dtc, lang);
                         handleError.showSnackbar(dtc.message, dtc.type);
                         return { success: false }
+                    } else if (responseData.dtc) {
+                        return { success: false }
                     }
                     return { success: true, responseData };
                 } else if (!config || config.setData) {
-                    if (!responseData.dtc && responseData) {
-                        if (config && config.setData) {
-                            config.setData(responseData);
+
+                    if (config?.setData) {
+                        if (!responseData) {
+                            config.setData(null);
+                            return { success: false }
                         }
-                        return { success: true, responseData };
+                        if (!responseData.dtc) {
+                            config.setData(responseData);
+                            return { success: true, responseData };
+                        }
                     }
+
+                    // if (!responseData.dtc && responseData) {
+                    //     if (config && config.setData) {
+                    //         config.setData(responseData);
+                    //     }
+                    //     return { success: true, responseData };
+                    // }
                 }
             }
             if (config?.setData) {

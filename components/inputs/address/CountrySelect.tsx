@@ -19,7 +19,7 @@ export const CountrySelect: React.FC<Props> = (props: Props): JSX.Element => {
     const [searchText, setSearchText] = useState<string>('');
     const [modalVisible, setModalVisible] = useState<boolean>(false);
     const { colors } = useTheme();
-    const lang = useGlobalState().lang;
+    const { lang, user } = useGlobalState();
     const screenHeight = Dimensions.get('window').height;
 
     const onModalOpen = (): void => {
@@ -69,6 +69,13 @@ export const CountrySelect: React.FC<Props> = (props: Props): JSX.Element => {
         props.onChange(country.code);
         setModalVisible(false);
     };
+
+    useEffect(() => {
+        if (user && props.value.length < 1) {
+            const country = COUNTRIES.find(country => country.code === user.country);
+            if (country) handleCountrySelect(country);
+        }
+    }, []);
 
     return (
         <View>

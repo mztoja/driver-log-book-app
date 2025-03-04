@@ -14,28 +14,45 @@ type TextCountries = keyof CountriesInterface['en'];
 type Text = TextCommon | TextHome | TextDtcErrors | TextCountries;
 
 interface GetText {
-    (group: 'common', text: TextCommon, lang?: LangInterface): string;
-    (group: 'home', text: TextHome, lang?: LangInterface): string;
-    (group: 'dtcErrors', text: TextDtcErrors, lang?: LangInterface): string;
-    (group: 'countries', text: TextCountries, lang?: LangInterface): string;
+    (group: 'common', text: TextCommon, lang?: LangInterface, params?: string): string;
+    (group: 'home', text: TextHome, lang?: LangInterface, params?: string): string;
+    (group: 'dtcErrors', text: TextDtcErrors, lang?: LangInterface, params?: string): string;
+    (group: 'countries', text: TextCountries, lang?: LangInterface, params?: string): string;
 }
 
 
-export const getText: GetText = (group: Group, text: Text, langValue?: LangInterface): string => {
+export const getText: GetText = (group: Group, text: Text, langValue?: LangInterface, params?: string): string => {
 
     const lang = langValue ? langValue : useGlobalState().lang;
 
-    switch (group) {
-        case 'common':
-            return common[lang][text as TextCommon];
-        case 'home':
-            return home[lang][text as TextHome];
-        case 'dtcErrors':
-            return dtcErrors[lang][text as TextDtcErrors];
-        case 'countries':
-            return countries[lang][text as TextCountries];
-        default:
-            return '';
-    }
+    // switch (group) {
+    //     case 'common':
+    //         return common[lang][text as TextCommon];
+    //     case 'home':
+    //         return home[lang][text as TextHome];
+    //     case 'dtcErrors':
+    //         return dtcErrors[lang][text as TextDtcErrors];
+    //     case 'countries':
+    //         return countries[lang][text as TextCountries];
+    //     default:
+    //         return '';
+    // }
+
+    const entry = (() => {
+        switch (group) {
+            case 'common':
+                return common[lang][text as TextCommon];
+            case 'home':
+                return home[lang][text as TextHome];
+            case 'dtcErrors':
+                return dtcErrors[lang][text as TextDtcErrors];
+            case 'countries':
+                return countries[lang][text as TextCountries];
+            default:
+                return '';
+        }
+    })();
+
+    return typeof entry === 'function' ? entry(params || '') : entry;
 
 }

@@ -36,7 +36,16 @@ export const Snackbar: React.FC = (): JSX.Element => {
     return (
         <BaseSnackbar
             visible={visible}
-            style={{ backgroundColor, marginBottom: 50 }}
+            style={{
+                backgroundColor,
+                position: 'absolute',
+                bottom: 50,
+                left: 0,
+                right: 0,
+                zIndex: 1000,
+                margin: 0,
+                alignSelf: 'center',
+            }}
             onDismiss={hideSnackbar}
             duration={CONFIG.SNACKBAR_DURATION}
         >
@@ -46,6 +55,5 @@ export const Snackbar: React.FC = (): JSX.Element => {
                 </Text>
             </Pressable>
         </BaseSnackbar>
-
     );
 };

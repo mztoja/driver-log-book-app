@@ -22,6 +22,8 @@ interface ColorEntries {
   snackbarSuccessText: string;
   snackbarWarningBackground: string;
   snackbarWarningText: string;
+  deleteIcon: string;
+  actionIcon: string;
 }
 
 interface Themes {
@@ -50,6 +52,8 @@ export const COLORS: Themes = {
     snackbarSuccessText: '#FFFFFF',
     snackbarWarningBackground: '#FFA726',
     snackbarWarningText: '#000000',
+    actionIcon: '#3789ff',
+    deleteIcon: '#fb0101',
   },
   dark: {
     text: '#ECEDEE',
@@ -71,5 +75,7 @@ export const COLORS: Themes = {
     snackbarSuccessText: '#FFFFFF',
     snackbarWarningBackground: '#FFB74D',
     snackbarWarningText: '#000000',
+    actionIcon: '#3789ff',
+    deleteIcon: '#af0000',
   },
 };
