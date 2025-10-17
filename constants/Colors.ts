@@ -24,6 +24,7 @@ interface ColorEntries {
   snackbarWarningText: string;
   deleteIcon: string;
   actionIcon: string;
+  disabledIcon: string;
 }
 
 interface Themes {
@@ -54,6 +55,7 @@ export const COLORS: Themes = {
     snackbarWarningText: '#000000',
     actionIcon: '#3789ff',
     deleteIcon: '#fb0101',
+    disabledIcon: 'gray',
   },
   dark: {
     text: '#ECEDEE',
@@ -77,5 +79,6 @@ export const COLORS: Themes = {
     snackbarWarningText: '#000000',
     actionIcon: '#3789ff',
     deleteIcon: '#af0000',
+    disabledIcon: 'gray',
   },
 };

@@ -67,5 +67,11 @@ export const STYLES = StyleSheet.create({
         top: 10,
         flexDirection: 'row',
         alignItems: 'center',
+    },
+    separator: {
+        borderBottomWidth: 2, // Grubość linii
+        borderBottomColor: 'rgba(0, 0, 0, 0.3)', // Kolor linii (zmień według potrzeb)
+        width: '100%', // Upewnia się, że linia rozciąga się na całą szerokość
+        marginVertical: 10, // Dystans między komponentami
     }
 });

@@ -8,13 +8,14 @@ import { HelperText, IconButton, TextInput } from 'react-native-paper';
 interface Props {
     value: string;
     onChange: (e: string) => void;
+    disabled?: boolean;
 }
 
-export const ActivityInput: React.FC<Props> = (props: Props): JSX.Element => {
+export const ItemDescriptionInput: React.FC<Props> = (props: Props): JSX.Element => {
     const { colors } = useTheme();
     const [error, setError] = React.useState<boolean>(false);
-    const label = getText('common', 'activity');
-    const helper = getText('common', 'activityHelper');
+    const label = getText('home', 'expenseItemDescription');
+    const helper = getText('home', 'expenseItemDescriptionHelper');
     const [clearVisible, setClearVisible] = React.useState<boolean>(false);
 
     const clear = (): void => {
@@ -45,12 +46,13 @@ export const ActivityInput: React.FC<Props> = (props: Props): JSX.Element => {
                 label={label}
                 value={props.value}
                 onChangeText={props.onChange}
-                textColor={colors.text}
+                textColor={props.disabled ? colors.disabledIcon : colors.text}
                 placeholderTextColor={colors.text}
                 error={error}
+                disabled={props.disabled}
             />
             <View style={STYLES.iconInputWrapper}>
-                {clearVisible &&
+                {clearVisible && !props.disabled &&
                     <IconButton
                         icon="close"
                         size={24}

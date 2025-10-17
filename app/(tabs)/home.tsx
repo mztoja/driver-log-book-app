@@ -6,26 +6,39 @@ import { getText } from "@/utils/getText";
 import { useGlobalState } from "@/hooks/useGlobalState";
 import { useApi } from "@/hooks/useApi";
 import API_ENDPOINTS from "@/constants/API_ENDPOINTS";
-import { DayInterface, GeneralFormData, LogInterface, UserInterface, userStatusEnum } from "@/types";
+import { DayInterface, ExpenseEnum, GeneralFormData, LoadInterface, LogInterface, TourInterface, UserInterface, userStatusEnum } from "@/types";
 import { useFocusEffect } from "expo-router";
 import { STYLES } from "@/constants/STYLES";
 import { ThemedText } from "@/components/ThemedText";
-import { NewDayForm, BorderCrossForm, AddLogForm, FinishDayForm } from "@/components/mainForms/content";
+import { NewDayForm, BorderCrossForm, AddLogForm, FinishDayForm } from "@/components/mainForms";
 import { useSnackbar } from "@/hooks/useSnackbar";
+import { ExpenseAdd } from "@/components/mainForms/Finances/ExpenseAdd";
+import { LoadingArrival } from "@/components/mainForms/Loadings/LoadingArrival";
+import { LoadingCompleted } from "@/components/mainForms/Loadings/LoadingCompleted";
+import { UnloadingArrival } from "@/components/mainForms/Loadings/UnloadingArrival";
+import { UnloadingCompleted } from "@/components/mainForms/Loadings/UnloadingCompleted";
 
 export default function Home() {
 
   const { theme, colors } = useTheme();
-  const { setUser, user, lang, lastLog, setLastLog, activeDay, setActiveDay } = useGlobalState();
+  const { setUser, user, lang, lastLog, setLastLog, activeDay, setActiveDay, setActiveTour, activeLoads, setActiveLoads } = useGlobalState();
   const { fetchData } = useApi();
   const { showSnackbar } = useSnackbar();
   const [lastLogRefresh, setLastLogRefresh] = useState<boolean>(false);
   const [activeDayRefresh, setActiveDayRefresh] = useState<boolean>(false);
+  const [activeTourRefresh, setActiveTourRefresh] = useState<boolean>(false);
+  const [activeLoadsRefresh, setActiveLoadsRefresh] = useState<boolean>(false);
   const [newDayVisible, setNewDayVisible] = useState<boolean>(false);
   const [finishDayVisible, setFinishDayVisible] = useState<boolean>(false);
   const [borderCrossVisible, setBorderCrossVisible] = useState<boolean>(false);
   const [addLogVisible, setAddLogVisible] = useState<boolean>(false);
   const [expenceAddVisible, setExpenceAddVisible] = useState<boolean>(false);
+  const [expenceType, setExpenceType] = useState<ExpenseEnum>(ExpenseEnum.standard);
+  const [loadingArrivalVisible, setLoadingArrivalVisible] = useState<boolean>(false);
+  const [loadingCompletedVisible, setLoadingCompletedVisible] = useState<boolean>(false);
+  const [unloadingArrivalVisible, setUnloadingArrivalVisible] = useState<boolean>(false);
+  const [unloadingCompletedVisible, setUnoadingCompletedVisible] = useState<boolean>(false);
+
   const txt = {
     dayExist: getText('home', 'dayExist', lang),
     dayNotExist: getText('home', 'dayNotExist', lang),
@@ -33,6 +46,13 @@ export default function Home() {
     dayStop: getText('home', 'dayStop', lang),
     crossBorder: getText('home', 'crossBorder', lang),
     addLog: getText('home', 'addLog', lang),
+    addExpense: getText('home', 'addExpense', lang),
+    dieselRefuel: getText('home', 'dieselRefuel', lang),
+    adblueRefuel: getText('home', 'adblueRefuel', lang),
+    loadingArrival: getText('home', 'loadingArrival', lang),
+    loadingCompleted: getText('home', 'loadingCompleted', lang),
+    unloadingArrival: getText('home', 'unloadingArrival', lang),
+    unloadingCompleted: getText('home', 'unloadingCompleted', lang),
   }
 
   const imageOpacity = theme === 'dark' ? 0.5 : 1;
@@ -90,12 +110,12 @@ export default function Home() {
     serviceVehicleId: '',
     serviceVehicleType: '',
   });
-  const updateGeneralFormData = (key: keyof GeneralFormData, value: string): void => {
+  const updateGeneralFormData = useCallback((key: keyof GeneralFormData, value: string): void => {
     setGeneralFormData((values: GeneralFormData) => ({
       ...values,
       [key]: value,
     }));
-  };
+  }, []);
 
   useEffect(() => {
     fetchData<LogInterface>(API_ENDPOINTS.GET_LAST_LOG, { setData: setLastLog });
@@ -116,8 +136,12 @@ export default function Home() {
   }, [activeDayRefresh]);
 
   useEffect(() => {
-    console.log('Active Day: ', activeDay);
-  }, [activeDay]);
+    fetchData<TourInterface>(API_ENDPOINTS.GET_ACTIVE_ROUTE, { setData: setActiveTour });
+  }, [activeTourRefresh]);
+
+  useEffect(() => {
+    fetchData<LoadInterface[]>(API_ENDPOINTS.GET_NOT_UNLOADED_LOADS, { setData: setActiveLoads });
+  }, [activeLoadsRefresh]);
 
   return (
     <ScrollView style={[STYLES.scrollView, { backgroundColor: colors.background }]}>
@@ -152,6 +176,48 @@ export default function Home() {
         setForm={updateGeneralFormData}
         setlastLogRefresh={setLastLogRefresh}
       />
+      <ExpenseAdd
+        visible={expenceAddVisible}
+        setVisible={setExpenceAddVisible}
+        form={generalFormData}
+        setForm={updateGeneralFormData}
+        setlastLogRefresh={setLastLogRefresh}
+        expenseType={expenceType}
+      />
+
+      <LoadingArrival
+        visible={loadingArrivalVisible}
+        setVisible={setLoadingArrivalVisible}
+        form={generalFormData}
+        setForm={updateGeneralFormData}
+        setlastLogRefresh={setLastLogRefresh}
+      />
+
+      <LoadingCompleted
+        visible={loadingCompletedVisible}
+        setVisible={setLoadingCompletedVisible}
+        form={generalFormData}
+        setForm={updateGeneralFormData}
+        setlastLogRefresh={setLastLogRefresh}
+        setActiveLoadsRefresh={setActiveLoadsRefresh}
+      />
+
+      <UnloadingArrival
+        visible={unloadingArrivalVisible}
+        setVisible={setUnloadingArrivalVisible}
+        form={generalFormData}
+        setForm={updateGeneralFormData}
+        setlastLogRefresh={setLastLogRefresh}
+      />
+
+      <UnloadingCompleted
+        visible={unloadingCompletedVisible}
+        setVisible={setUnoadingCompletedVisible}
+        form={generalFormData}
+        setForm={updateGeneralFormData}
+        setlastLogRefresh={setLastLogRefresh}
+        setActiveLoadsRefresh={setActiveLoadsRefresh}
+      />
 
       <ImageBackground
         source={require('@/assets/images/activitiesBackground.png')}
@@ -182,13 +248,22 @@ export default function Home() {
         resizeMode="cover"
       >
         <View style={styles.buttonView}>
-          <MainFormButton onPress={() => setExpenceAddVisible(true)} text={getText('home', 'dieselRefuel', lang)} />
+          <MainFormButton onPress={() => {
+            setExpenceAddVisible(true);
+            setExpenceType(ExpenseEnum.standard);
+          }} text={txt.addExpense} />
         </View>
         <View style={styles.buttonView}>
-          <MainFormButton onPress={() => setExpenceAddVisible(true)} text={getText('home', 'adblueRefuel', lang)} />
+          <MainFormButton onPress={() => {
+            setExpenceAddVisible(true);
+            setExpenceType(ExpenseEnum.fuel);
+          }} text={txt.dieselRefuel} />
         </View>
         <View style={styles.buttonView}>
-          <MainFormButton onPress={() => setExpenceAddVisible(true)} text={getText('home', 'expenceAdd', lang)} />
+          <MainFormButton onPress={() => {
+            setExpenceAddVisible(true);
+            setExpenceType(ExpenseEnum.def);
+          }} text={txt.adblueRefuel} />
         </View>
       </ImageBackground>
 
@@ -199,16 +274,16 @@ export default function Home() {
         resizeMode="cover"
       >
         <View style={styles.buttonView}>
-          <Button onPress={() => setActiveDayRefresh((prev) => !prev)} title='Dojazd na załadunek' />
+          <MainFormButton onPress={() => setLoadingArrivalVisible(true)} text={txt.loadingArrival} />
         </View>
         <View style={styles.buttonView}>
-          <Button onPress={() => setNewDayVisible(true)} title='Zakończenie załadunku' />
+          <MainFormButton onPress={() => setLoadingCompletedVisible(true)} text={txt.loadingCompleted} />
         </View>
         <View style={styles.buttonView}>
-          <Button onPress={() => setNewDayVisible(true)} title='Dojazd na rozładunek' />
+          <MainFormButton onPress={() => setUnloadingArrivalVisible(true)} text={txt.unloadingArrival} />
         </View>
         <View style={styles.buttonView}>
-          <Button onPress={() => setNewDayVisible(true)} title='Zakończenie rozładunku' />
+          <MainFormButton onPress={() => setUnoadingCompletedVisible(true)} text={txt.unloadingCompleted} />
         </View>
       </ImageBackground>
 
@@ -232,7 +307,7 @@ export default function Home() {
         </View>
       </ImageBackground>
       <View style={[styles.buttonView, { marginVertical: 30, opacity: imageOpacity }]}>
-        <Button onPress={() => setNewDayVisible(true)} title='Koniec trasy' />
+        <Button onPress={() => setActiveTourRefresh((prev) => !prev)} title='Koniec trasy' />
       </View>
 
     </ScrollView >

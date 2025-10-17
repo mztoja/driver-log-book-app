@@ -5,6 +5,7 @@ import { useGlobalState } from '@/hooks/useGlobalState';
 import { useTheme } from '@/hooks/useTheme';
 import { extractNumberWithDecimal } from '@/utils/extractNumberWithDecimal';
 import { getText } from '@/utils/getText';
+import React, { Dispatch, SetStateAction } from 'react';
 import { useEffect, useState } from 'react';
 import { FlatList, Modal, TouchableOpacity, View, Text, KeyboardAvoidingView, Dimensions } from 'react-native';
 import { TextInput } from 'react-native-paper';
@@ -14,6 +15,7 @@ interface Props {
     valueCurrency: string;
     onChangeAmount: (e: string) => void;
     onChangeCurrency: (e: string) => void;
+    marker?: Dispatch<SetStateAction<boolean>>;
     options?: {
         currencyDisable?: boolean;
         amountLabel?: string;
@@ -28,6 +30,12 @@ export const AmountInput: React.FC<Props> = (props: Props): JSX.Element => {
     const { colors } = useTheme();
     const { user } = useGlobalState();
     const screenHeight = Dimensions.get('window').height;
+    const txt = {
+        amount: getText('common', 'amount'),
+        currency: getText('common', 'currency'),
+        chooseFromList: getText('common', 'chooseFromList'),
+        search: getText('common', 'search'),
+    };
 
     const onModalOpen = (): void => {
         setSearchText('');
@@ -35,9 +43,10 @@ export const AmountInput: React.FC<Props> = (props: Props): JSX.Element => {
         setModalVisible(true);
     }
 
-    const onChangeAmount = (v: string): void => {
+    const changeValue = (v: string): void => {
         const newValue = extractNumberWithDecimal(v);
         props.onChangeAmount(newValue);
+        props.marker && props.marker(prev => !prev);
     }
 
     const handleSearch = (search: string): void => {
@@ -87,14 +96,14 @@ export const AmountInput: React.FC<Props> = (props: Props): JSX.Element => {
                         primary: colors.text,
                     }
                 }}
-                label={props.options?.amountLabel || getText('common', 'amount')}
+                label={props.options?.amountLabel || txt.amount}
                 value={props.valueAmount}
-                onChangeText={onChangeAmount}
+                onChangeText={(e) => changeValue(e)}
                 textColor={colors.text}
                 placeholderTextColor={colors.text}
                 keyboardType='numeric'
             />
-            <TouchableOpacity onPress={() => { onModalOpen() }}>
+            <TouchableOpacity onPress={() => { if (!props.options?.currencyDisable) onModalOpen() }}>
                 <TextInput
                     style={[STYLES.textInput, { backgroundColor: colors.inputBackground, maxWidth: 150 }]}
                     theme={{
@@ -102,9 +111,9 @@ export const AmountInput: React.FC<Props> = (props: Props): JSX.Element => {
                             primary: colors.text,
                         }
                     }}
-                    label={getText('common', 'currency')}
+                    label={txt.currency}
                     value={searchText}
-                    textColor={colors.text}
+                    textColor={!props.options?.currencyDisable ? colors.text : colors.disabledIcon}
                     placeholderTextColor={colors.text}
                     editable={false}
                 />
@@ -122,7 +131,7 @@ export const AmountInput: React.FC<Props> = (props: Props): JSX.Element => {
                                 style={{ alignSelf: 'center' }}
                                 type="subtitle"
                             >
-                                {getText('common', 'chooseFromList')}
+                                {txt.chooseFromList}
                             </ThemedText>
                         </View>
                         <FlatList
@@ -142,7 +151,7 @@ export const AmountInput: React.FC<Props> = (props: Props): JSX.Element => {
                                         primary: colors.text,
                                     }
                                 }}
-                                label={getText('common', 'search')}
+                                label={txt.search}
                                 textColor={colors.text}
                                 placeholderTextColor={colors.text}
                                 value={searchText}

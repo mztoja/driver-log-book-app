@@ -6,7 +6,7 @@ import { Switch } from "react-native-paper";
 
 interface Props {
     value: 'true' | 'false';
-    onChange: (e: string) => void;
+    onChange: (e: 'true' | 'false') => void;
     label: string;
 }
 
@@ -17,11 +17,18 @@ export const OnOffSwitch: React.FC<Props> = (props: Props): JSX.Element => {
         no: ' (' + getText('common', 'no') + ')',
     }
 
-    const onToggleSwitch = (): void => setIsSwitchOn(!isSwitchOn);
+    const onToggleSwitch = (): void => {
+        setIsSwitchOn(prevState => {
+            props.onChange(!prevState ? 'true' : 'false');
+            return !prevState;
+        });
+    };
 
     useEffect(() => {
-        isSwitchOn ? props.onChange('true') : props.onChange('false');
-    }, [isSwitchOn]);
+        if (isSwitchOn !== (props.value === 'true')) {
+            setIsSwitchOn(props.value === 'true');
+        }
+    }, [props.value]);
 
     return (
         <Pressable onPress={onToggleSwitch} style={styles.container}>

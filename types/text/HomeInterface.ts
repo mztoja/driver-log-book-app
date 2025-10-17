@@ -13,11 +13,47 @@ export interface Entries {
     crossBorderYouAre(x: string): string;
     dieselRefuel: string;
     adblueRefuel: string;
-    expenceAdd: string;
+    addExpense: string;
     startedDayAction: string;
     startedDayActionCardInsert: string;
     finishedDayAction: string;
     finishedDayActionCardTakeOut: string;
+    expenseItemDescription: string;
+    expenseItemDescriptionHelper: string;
+    expenseQuantity: string;
+    expenseUnitPrice: string;
+    expenseForeignCurrency: string;
+    cash: string;
+    paymentMethod: string;
+    newPaymentLabel: string;
+    paymentForeignCurrency: string;
+    expenseAddAction: string;
+    addedExpenseActionSuccess: string;
+    loadingArrival: string;
+    loadingArrivalAction: string;
+    loadingArrivalSuccess: string;
+    loadingCompleted: string;
+    loadingCompletedAction: string;
+    loadingCompletedSuccess: string;
+    loadingSenderSwitchLabel: string;
+    loadingPlace: string;
+    loadingSender: string;
+    loadingReceiver: string;
+    loadedVehicle: string;
+    vehicleDetailsNotFound: string;
+    loadReference: string;
+    loadDescription: string;
+    loadWeight: string;
+    loadQuantity: string;
+    unloadingArrival: string;
+    unloadingArrivalSuccess: string;
+    unloadingArrivalAction: string;
+    unloadingCompleted: string;
+    unloadingCompletedAction: string;
+    unloadingCompletedSuccess: string;
+    unloadingLoadSelectLabel: string;
+    chooseLoad: string;
+    noLoadReceiver: string;
 }
 
 export interface HomeInterface {

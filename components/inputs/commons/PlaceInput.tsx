@@ -20,6 +20,8 @@ interface Props {
     onChangeCountry: (e: string) => void;
     options?: {
         withoutPlaceId?: boolean;
+        label?: string;
+        disablePlaceText?: boolean;
     }
 }
 
@@ -44,10 +46,10 @@ export const PlaceInput: React.FC<Props> = (props: Props): JSX.Element => {
         setDisplayedText(text);
     }
 
-    const handlePlaceSelect = (place: PlaceInterface): void => {
+    const handlePlaceSelect = (place: number): void => {
         props.onChange('');
-        props.onChangeId(place.id.toString());
-        setDisplayedText(`${place.name} - ${place.street}, ${place.code} ${place.city}`);
+        props.onChangeId(place.toString());
+        // setDisplayedText(`${place.name} - ${place.street}, ${place.code} ${place.city}`);
         setModalVisible(false);
     }
 
@@ -89,17 +91,6 @@ export const PlaceInput: React.FC<Props> = (props: Props): JSX.Element => {
     }, []);
 
     useEffect(() => {
-        if (props.place === '' && props.placeId !== '0') {
-            const place = places?.find(place => place.id === Number(props.placeId));
-            if (place) {
-                setDisplayedText(`${place.name} - ${place.street}, ${place.code} ${place.city}`);
-            }
-        } else {
-            setDisplayedText(props.place);
-        }
-    }, [places]);
-
-    useEffect(() => {
         if (props.place.length > 0 || (props.placeId !== '0' && props.placeId !== '')) {
             setClearVisible(true);
         } else {
@@ -112,11 +103,18 @@ export const PlaceInput: React.FC<Props> = (props: Props): JSX.Element => {
         } else {
             setChoosed(false);
         }
-    }, [props.place, props.placeId]);
+        if (props.place === '' && props.placeId !== '0') {
+            const place = places?.find(place => place.id === Number(props.placeId));
+            if (place) {
+                setDisplayedText(`${place.name} - ${place.street}, ${place.code} ${place.city}`);
+                props.onChangeCountry(place.country);
+            }
+        } else {
+            setDisplayedText(props.place);
+        }
 
-    useEffect(() => {
         props.place.length > 30 ? setError(true) : setError(false);
-    }, [props.place]);
+    }, [props.place, props.placeId, places]);
 
     return (
         <View>
@@ -129,12 +127,13 @@ export const PlaceInput: React.FC<Props> = (props: Props): JSX.Element => {
                             primary: colors.text,
                         }
                     }}
-                    label={getText('common', 'place')}
+                    label={props.options?.label || getText('common', 'place')}
                     textColor={colors.text}
                     placeholderTextColor={colors.text}
                     value={displayedText}
                     onChangeText={(e) => writePlace(e)}
                     error={error}
+                    editable={!props.options?.disablePlaceText}
                 />
                 {error &&
                     <HelperText type="error" visible={error}>
@@ -222,7 +221,7 @@ export const PlaceInput: React.FC<Props> = (props: Props): JSX.Element => {
 
                                             </ThemedText>
                                         }
-                                        <TouchableOpacity onPress={() => handlePlaceSelect(item)}>
+                                        <TouchableOpacity onPress={() => handlePlaceSelect(item.id)}>
                                             <Text style={[STYLES.selectItem, { color: colors.text }]}>
                                                 {item.name} - {item.street}, {item.code} {item.city}
                                             </Text>

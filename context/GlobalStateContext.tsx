@@ -1,4 +1,4 @@
-import { DayInterface, LangInterface, LogInterface, PlaceInterface, UserInterface, userLangEnum } from '@/types';
+import { DayInterface, LangInterface, LoadInterface, LogInterface, PaymentInterface, PlaceInterface, TourInterface, UserInterface, userLangEnum } from '@/types';
 import { Dispatch, createContext, useEffect, useState } from 'react';
 
 interface GlobalStateProviderProps {
@@ -16,6 +16,12 @@ interface GlobalStateContextProps {
     setLastLog: Dispatch<React.SetStateAction<LogInterface | null>>;
     activeDay: DayInterface | null;
     setActiveDay: Dispatch<React.SetStateAction<DayInterface | null>>;
+    paymentMethods: PaymentInterface[] | null;
+    setPaymentMethods: Dispatch<React.SetStateAction<PaymentInterface[] | null>>;
+    activeTour: TourInterface | null;
+    setActiveTour: Dispatch<React.SetStateAction<TourInterface | null>>;
+    activeLoads: LoadInterface[] | null;
+    setActiveLoads: Dispatch<React.SetStateAction<LoadInterface[] | null>>;
 }
 
 export const GlobalStateContext = createContext<GlobalStateContextProps>({
@@ -29,6 +35,12 @@ export const GlobalStateContext = createContext<GlobalStateContextProps>({
     setLastLog: () => { },
     activeDay: null,
     setActiveDay: () => { },
+    paymentMethods: null,
+    setPaymentMethods: () => { },
+    activeTour: null,
+    setActiveTour: () => { },
+    activeLoads: null,
+    setActiveLoads: () => { },
 });
 
 export const GlobalStateProvider: React.FC<GlobalStateProviderProps> = ({ children }: GlobalStateProviderProps) => {
@@ -37,6 +49,9 @@ export const GlobalStateProvider: React.FC<GlobalStateProviderProps> = ({ childr
     const [places, setPlaces] = useState<PlaceInterface[] | null>(null);
     const [lastLog, setLastLog] = useState<LogInterface | null>(null);
     const [activeDay, setActiveDay] = useState<DayInterface | null>(null);
+    const [paymentMethods, setPaymentMethods] = useState<PaymentInterface[] | null>(null);
+    const [activeTour, setActiveTour] = useState<TourInterface | null>(null);
+    const [activeLoads, setActiveLoads] = useState<LoadInterface[] | null>(null);
 
 
     useEffect(() => {
@@ -64,6 +79,16 @@ export const GlobalStateProvider: React.FC<GlobalStateProviderProps> = ({ childr
         }
     }, [places]);
 
+    useEffect(() => {
+        if (paymentMethods) {
+            paymentMethods.sort((a, b) => {
+                if (a.method < b.method) return -1;
+                if (a.method > b.method) return 1;
+                return 0;
+            });
+        }
+    }, [paymentMethods]);
+
     return (
         <GlobalStateContext.Provider value={{
             user,
@@ -76,6 +101,12 @@ export const GlobalStateProvider: React.FC<GlobalStateProviderProps> = ({ childr
             setLastLog,
             activeDay,
             setActiveDay,
+            paymentMethods,
+            setPaymentMethods,
+            activeTour,
+            setActiveTour,
+            activeLoads,
+            setActiveLoads,
         }}>
             {children}
         </GlobalStateContext.Provider>
