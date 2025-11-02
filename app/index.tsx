@@ -19,7 +19,7 @@ import { LoginResponse } from "@/types/backend/user/LoginResponse";
 import storeToken from "@/utils/storeToken";
 
 
-const Login: React.FC = (): JSX.Element => {
+const Login: React.FC = () => {
 
     const { colors } = useTheme();
     const { showSnackbar } = useSnackbar();

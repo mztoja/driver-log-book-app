@@ -57,6 +57,10 @@ export const home: HomeInterface = {
         unloadingLoadSelectLabel: 'enter the receiver in the place of unloading',
         chooseLoad: 'Choose your load',
         noLoadReceiver: 'no receiver entered',
+        attachTrailer: 'Attach Trailer',
+        attachTrailerAction: 'Trailer attached',
+        attachTrailerSuccess: 'The trailer has been connected successfully',
+        trailerNoValid: 'Please enter trailer number.',
     },
     pl: {
         blockedDescription: 'Twoje konto jest nieaktywne. Jeżeli chcesz je aktywować i zyskać tym samym pełną funkcjonalność aplikacji - skontaktuj się z Administratorem.',
@@ -114,5 +118,9 @@ export const home: HomeInterface = {
         unloadingLoadSelectLabel: 'wpisz odbiorcę w miejsce rozładunku',
         chooseLoad: 'Wybierz ładunek',
         noLoadReceiver: 'nie podano odbiorcy',
+        attachTrailer: 'Podepnij naczepę',
+        attachTrailerAction: 'Podpięto naczepę',
+        attachTrailerSuccess: 'Naczepa została podpięta pomyślnie.',
+        trailerNoValid: 'Podaj nr. rej. naczepy.',
     },
 }

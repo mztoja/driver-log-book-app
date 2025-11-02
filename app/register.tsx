@@ -24,7 +24,7 @@ import API_ENDPOINTS from "@/constants/API_ENDPOINTS";
 import { useSnackbar } from "@/hooks/useSnackbar";
 import { router } from 'expo-router';
 
-const Register: React.FC = (): JSX.Element => {
+const Register: React.FC = () => {
 
     const { colors } = useTheme();
     const { lang } = useGlobalState();

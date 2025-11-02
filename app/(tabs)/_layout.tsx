@@ -57,7 +57,7 @@ export default function TabLayout() {
                 options={{
                     title: common.pl.infoPageTitle,
                     tabBarIcon: ({ focused }) => (
-                        <AntDesign name="infocirlceo" size={20} color={!focused ? colors.tabIconDefault : colors.tabIconSelected} />
+                        <AntDesign name="info-circle" size={20} color={!focused ? colors.tabIconDefault : colors.tabIconSelected} />
                     ),
                 }}
             />

@@ -14,7 +14,7 @@ interface Props {
     disableHelper?: boolean;
 }
 
-export const OdometerInput: React.FC<Props> = (props: Props): JSX.Element => {
+export const OdometerInput: React.FC<Props> = (props: Props) => {
     const { colors } = useTheme();
     const [clearVisible, setClearVisible] = useState<boolean>(false);
     const { lastLog } = useGlobalState();

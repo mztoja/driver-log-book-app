@@ -54,6 +54,10 @@ export interface Entries {
     unloadingLoadSelectLabel: string;
     chooseLoad: string;
     noLoadReceiver: string;
+    attachTrailer: string;
+    attachTrailerAction: string;
+    attachTrailerSuccess: string;
+    trailerNoValid: string;
 }
 
 export interface HomeInterface {

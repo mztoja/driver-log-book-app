@@ -85,6 +85,9 @@ export const common: CommonInterface = {
         driveTimeHelper2: 'You can also enter the co-driver driving time.',
         fuelCombustion: 'Amount of fuel consumed',
         fuelQuantity: 'Fuel level',
+        truck: 'Truck reg. plate',
+        trailer: 'Trailer reg. plate',
+        vehicleInput: 'Vehicle',
     },
     pl: {
         appName: 'Dziennik kierowcy',
@@ -170,5 +173,8 @@ export const common: CommonInterface = {
         driveTimeHelper2: 'Możesz też wpisać czas jazdy zmiennika celem lepszego zliczania statystyk.',
         fuelQuantity: 'Poziom paliwa',
         fuelCombustion: 'Ilość spalonego paliwa',
+        truck: 'Nr. rej. ciężarówki',
+        trailer: 'Nr. rej. naczepy/przyczepy',
+        vehicleInput: 'Pojazd',
     }
 }

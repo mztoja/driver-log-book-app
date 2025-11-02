@@ -10,7 +10,7 @@ interface Props {
     onChange: (e: string) => void;
 }
 
-export const ActivityInput: React.FC<Props> = (props: Props): JSX.Element => {
+export const ActivityInput: React.FC<Props> = (props: Props) => {
     const { colors } = useTheme();
     const [error, setError] = React.useState<boolean>(false);
     const label = getText('common', 'activity');

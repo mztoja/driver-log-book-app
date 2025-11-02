@@ -22,7 +22,7 @@ interface Props {
     setlastLogRefresh: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export const AddLogForm: React.FC<Props> = (props: Props): JSX.Element => {
+export const AddLogForm: React.FC<Props> = (props: Props) => {
 
     const { form, setForm } = props;
     const { lang } = useGlobalState();

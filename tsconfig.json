@@ -8,10 +8,14 @@
         "./*"
       ]
     },
-    "jsx": "react-jsx", // tutaj, nie w module!
-    "module": "esnext", // poprawna wartość dla modern JS
+    "jsx": "react-jsx",
+    "module": "esnext",
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "types": [
+      "react",
+      "react-native"
+    ]
   },
   "include": [
     "**/*.ts",

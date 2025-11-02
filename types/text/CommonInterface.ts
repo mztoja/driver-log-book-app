@@ -82,6 +82,9 @@ interface Entries {
     driveTimeHelper2: string;
     fuelQuantity: string;
     fuelCombustion: string;
+    truck: string;
+    trailer: string;
+    vehicleInput: string;
 }
 
 export interface CommonInterface {
