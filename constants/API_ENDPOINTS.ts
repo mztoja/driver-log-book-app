@@ -29,7 +29,6 @@ const API_ENDPOINTS = {
     logout: '/auth/logout',
     markDepart: '/users/markDepart',
     userUpdate: '/users/userUpdate',
-    editNotes: '/users/editNotes',
     // days
     START_NEW_DAY: '/days/create',
     FINISH_DAY: '/days/finish',
