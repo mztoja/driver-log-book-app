@@ -29,8 +29,6 @@ interface Entries {
     firstNameHelper: string;
     lastName: string;
     lastNameHelper: string;
-    defaultCustomer: string;
-    defaultCustomerHelper: string;
     search: string;
     companyDetails: string;
     loginDetails: string;

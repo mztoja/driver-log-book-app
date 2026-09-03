@@ -15,7 +15,6 @@ import { ThemedText } from "@/components/ThemedText";
 import { getText } from "@/utils/getText";
 import { FirstNameInput } from "@/components/inputs/user/FirstName";
 import { LastNameInput } from "@/components/inputs/user/LastName";
-import { DefaultCustomerInput } from "@/components/inputs/user/DefaultCustomerInput";
 import { SendButton } from "@/components/buttons/SendButton";
 import { AmountInput } from "@/components/inputs/finances/AmountInput";
 import { BidTypeSelect } from "@/components/inputs/user/BidTypeSelect";
@@ -42,7 +41,6 @@ const Register: React.FC = () => {
         companyPostCode: '',
         companyCity: '',
         country: '',
-        defaultCustomer: '',
         bidType: '',
         bid: '',
         currency: '',
@@ -136,10 +134,6 @@ const Register: React.FC = () => {
             <LastNameInput
                 value={registerForm.lastName}
                 onChange={(e) => updateForm('lastName', e)}
-            />
-            <DefaultCustomerInput
-                value={registerForm.defaultCustomer}
-                onChange={(e) => updateForm('defaultCustomer', e)}
             />
             <BidTypeSelect
                 value={registerForm.bidType}
