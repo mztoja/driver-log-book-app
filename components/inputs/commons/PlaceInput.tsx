@@ -218,6 +218,7 @@ export const PlaceInput: React.FC<Props> = (props: Props): JSX.Element => {
                                                 {item.type === placeTypeEnum.unloadingPlace && getText('common', 'placeType3', lang)}
                                                 {item.type === placeTypeEnum.parking && getText('common', 'placeType5', lang)}
                                                 {item.type === placeTypeEnum.service && getText('common', 'placeType6', lang)}
+                                                {item.type === placeTypeEnum.fuelStation && getText('common', 'placeType8', lang)}
 
                                             </ThemedText>
                                         }

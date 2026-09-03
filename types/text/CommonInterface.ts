@@ -60,6 +60,7 @@ interface Entries {
     placeType5: string;
     placeType6: string;
     placeType7: string;
+    placeType8: string;
     placeTypeAll: string;
     favorite: string;
     activity: string;
