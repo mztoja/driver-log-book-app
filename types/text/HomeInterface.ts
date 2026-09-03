@@ -58,6 +58,9 @@ export interface Entries {
     attachTrailerAction: string;
     attachTrailerSuccess: string;
     trailerNoValid: string;
+    detachTrailer: string;
+    detachTrailerAction: string;
+    detachTrailerSuccess: string;
 }
 
 export interface HomeInterface {

@@ -18,6 +18,7 @@ import { LoadingCompleted } from "@/components/mainForms/Loadings/LoadingComplet
 import { UnloadingArrival } from "@/components/mainForms/Loadings/UnloadingArrival";
 import { UnloadingCompleted } from "@/components/mainForms/Loadings/UnloadingCompleted";
 import { AttachTrailerForm } from "@/components/mainForms/Vehicle/AttachTrailerForm";
+import { DetachTrailerForm } from "@/components/mainForms/Vehicle/DetachTrailerForm";
 
 export default function Home() {
 
@@ -40,6 +41,7 @@ export default function Home() {
   const [unloadingArrivalVisible, setUnloadingArrivalVisible] = useState<boolean>(false);
   const [unloadingCompletedVisible, setUnoadingCompletedVisible] = useState<boolean>(false);
   const [attachTrailerVisible, setAttachTrailerVisible] = useState<boolean>(false);
+  const [detachTrailerVisible, setDetachTrailerVisible] = useState<boolean>(false);
 
   const txt = {
     dayExist: getText('home', 'dayExist', lang),
@@ -56,6 +58,7 @@ export default function Home() {
     unloadingArrival: getText('home', 'unloadingArrival', lang),
     unloadingCompleted: getText('home', 'unloadingCompleted', lang),
     attachTrailer: getText('home', 'attachTrailer', lang),
+    detachTrailer: getText('home', 'detachTrailer', lang),
   }
 
   const imageOpacity = theme === 'dark' ? 0.5 : 1;
@@ -231,6 +234,15 @@ export default function Home() {
         setActiveTourRefresh={setActiveTourRefresh}
       />
 
+      <DetachTrailerForm
+        visible={detachTrailerVisible}
+        setVisible={setDetachTrailerVisible}
+        form={generalFormData}
+        setForm={updateGeneralFormData}
+        setlastLogRefresh={setLastLogRefresh}
+        setActiveTourRefresh={setActiveTourRefresh}
+        setActiveLoadsRefresh={setActiveLoadsRefresh}
+      />
 
       <ImageBackground
         source={require('@/assets/images/activitiesBackground.png')}
@@ -310,7 +322,7 @@ export default function Home() {
           <MainFormButton onPress={() => setAttachTrailerVisible(true)} text={txt.attachTrailer} />
         </View>
         <View style={styles.buttonView}>
-          <Button onPress={() => setNewDayVisible(true)} title='Odepnij naczepę' />
+          <MainFormButton onPress={() => setDetachTrailerVisible(true)} text={txt.detachTrailer} />
         </View>
         <View style={styles.buttonView}>
           <Button onPress={() => setNewDayVisible(true)} title='Smarowanie siodła' />

@@ -1,10 +1,14 @@
 import CONFIG from "@/constants/CONFIG";
+import API_ENDPOINTS from "@/constants/API_ENDPOINTS";
 import { SnackbarType } from "@/context/SnackbarContext";
 import { getText } from "@/utils/getText";
 import { handleDtcErrors } from "@/utils/handleDtcErrors";
 import { Dispatch, SetStateAction, useState } from "react";
 import { useGlobalState } from "./useGlobalState";
+import { useSnackbar } from "./useSnackbar";
 import getToken from "@/utils/getToken";
+import { refreshSession } from "@/utils/refreshSession";
+import clearSession from "@/utils/clearSession";
 
 type Method = 'GET' | 'POST' | 'PATCH' | 'DELETE';
 
@@ -25,12 +29,24 @@ interface FetchDataResponse<i> {
     error?: any,
 }
 
+const isExpired = (status: number, body: any): boolean =>
+    status === 401 || body?.status === 401 || body?.dtc === 'Unauthorized';
+
+const parseBody = (text: string): any => {
+    if (!text) return null;
+    try {
+        return JSON.parse(text);
+    } catch {
+        return null;
+    }
+};
+
 export const useApi = () => {
     const [loading, setLoading] = useState<boolean>(false);
-    const { lang } = useGlobalState();
+    const { lang, setUser } = useGlobalState();
+    const { showSnackbar } = useSnackbar();
 
     const fetchData = async <i>(endpoint: string, config?: Config<i>, handleError?: HandleError): Promise<FetchDataResponse<i>> => {
-        const token = await getToken();
         setLoading(true);
         if (config && config.sendData && config.setData) {
             throw new Error("You can't specify 'setData' and 'sendData' simultaneously.");
@@ -41,39 +57,48 @@ export const useApi = () => {
         try {
             const method: Method = config && config.method ? config.method : 'GET';
 
-            const response = !config?.withoutToken && token ?
-                await fetch(CONFIG.API_URL + endpoint, {
+            const doFetch = async (token: string | null): Promise<Response> => {
+                const headers: Record<string, string> = {
+                    'is-mobile-app': 'true',
+                    ...(method === 'GET'
+                        ? { Accept: 'application/json' }
+                        : { 'Content-Type': 'application/json' }),
+                };
+                if (!config?.withoutToken && token) {
+                    headers['Authorization'] = `Bearer ${token}`;
+                }
+                return fetch(CONFIG.API_URL + endpoint, {
                     method,
-                    headers: method === 'GET'
-                        ? {
-                            'Authorization': `Bearer ${token}`,
-                            Accept: 'application/json',
-                            'is-mobile-app': 'true',
-                        } : {
-                            'Authorization': `Bearer ${token}`,
-                            'Content-Type': 'application/json',
-                            'is-mobile-app': 'true',
-                        },
+                    headers,
                     body: method === 'GET' ? null : JSON.stringify(config?.sendData),
-                })
-                :
-                await fetch(CONFIG.API_URL + endpoint, {
-                    method,
-                    headers: method === 'GET'
-                        ? {
-                            Accept: 'application/json',
-                            'is-mobile-app': 'true',
-                        } : {
-                            'Content-Type': 'application/json',
-                            'is-mobile-app': 'true',
-                        },
-                    body: method === 'GET' ? null : JSON.stringify(config?.sendData),
-            });
-            // console.log('Response from', endpoint, ':\n', response);
+                });
+            };
+
+            let response = await doFetch(await getToken());
+            let responseData = parseBody(await response.text());
+
+            // Wygasła sesja – spróbuj odnowić refresh tokenem i powtórzyć raz.
+            const canRefresh =
+                !config?.withoutToken &&
+                endpoint !== API_ENDPOINTS.LOGIN &&
+                endpoint !== API_ENDPOINTS.REFRESH;
+            if (canRefresh && isExpired(response.status, responseData)) {
+                const refreshed = await refreshSession();
+                if (refreshed) {
+                    response = await doFetch(await getToken());
+                    responseData = parseBody(await response.text());
+                } else {
+                    await clearSession();
+                    setUser(null);
+                    showSnackbar(getText('dtcErrors', 'sessionExpired', lang), 'error');
+                    if (config?.setData) {
+                        config.setData(null);
+                    }
+                    return { success: false };
+                }
+            }
+
             if (response.ok) {
-                const textData = await response.text();
-                const responseData = textData ? JSON.parse(textData) : null;
-                // console.log('Data from', endpoint, ':\n', responseData);
                 if (config?.sendData && responseData) {
                     if (handleError && responseData.dtc) {
                         const dtc = handleDtcErrors(responseData.dtc, lang);
@@ -95,13 +120,6 @@ export const useApi = () => {
                             return { success: true, responseData };
                         }
                     }
-
-                    // if (!responseData.dtc && responseData) {
-                    //     if (config && config.setData) {
-                    //         config.setData(responseData);
-                    //     }
-                    //     return { success: true, responseData };
-                    // }
                 }
             }
             if (config?.setData) {

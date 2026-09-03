@@ -36,6 +36,7 @@ export const dtcErrors: DtcErrorsInterface = {
         monthIncorrectFormat: 'The wrong settlement period format was entered.',
         cannotEditSettledTourData: 'You cannot edit data assigned to a route that has already been settled.',
         apiUnauthorized: 'You do not have access to this part of the application. Please contact the administrator.',
+        sessionExpired: 'Your login session has expired. Please log in again.',
         apiUnknownError: 'An unknown error occurred. Please contact the administrator.',
         apiConnectionError: 'The server is not responding. Please check your internet connection.',
     },
@@ -74,6 +75,7 @@ export const dtcErrors: DtcErrorsInterface = {
         monthIncorrectFormat: 'Podano zły format okresu rozliczenia.',
         cannotEditSettledTourData: 'Nie możesz edytować danych przypisanych do rozliczonej już trasy.',
         apiUnauthorized: 'Nie masz dostępu do tej części aplikacji. Skontaktuj się z administratorem.',
+        sessionExpired: 'Twoja sesja logowania wygasła. Zaloguj się raz jeszcze.',
         apiUnknownError: 'Wystąpił nieznany błąd. Skontaktuj się z administratorem.',
         apiConnectionError: 'Serwer nie odpowiada. Sprawdź swoje połączenie.'
     }

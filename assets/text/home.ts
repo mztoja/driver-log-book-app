@@ -59,8 +59,11 @@ export const home: HomeInterface = {
         noLoadReceiver: 'no receiver entered',
         attachTrailer: 'Attach Trailer',
         attachTrailerAction: 'Trailer attached',
-        attachTrailerSuccess: 'The trailer has been connected successfully',
+        attachTrailerSuccess: 'The trailer has been connected successfully.',
         trailerNoValid: 'Please enter trailer number.',
+        detachTrailer: 'Drop Trailer',
+        detachTrailerAction: 'Trailer Dropped',
+        detachTrailerSuccess: 'The trailer has been dropped successfully.',
     },
     pl: {
         blockedDescription: 'Twoje konto jest nieaktywne. Jeżeli chcesz je aktywować i zyskać tym samym pełną funkcjonalność aplikacji - skontaktuj się z Administratorem.',
@@ -122,5 +125,8 @@ export const home: HomeInterface = {
         attachTrailerAction: 'Podpięto naczepę',
         attachTrailerSuccess: 'Naczepa została podpięta pomyślnie.',
         trailerNoValid: 'Podaj nr. rej. naczepy.',
+        detachTrailer: 'Odepnij naczepę',
+        detachTrailerAction: 'Odpięto naczepę',
+        detachTrailerSuccess: 'Naczepa została odpięta pomyślnie.',
     },
 }

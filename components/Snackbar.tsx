@@ -5,7 +5,7 @@ import { Pressable } from 'react-native';
 import { Snackbar as BaseSnackbar } from 'react-native-paper';
 import { Text } from 'react-native-paper';
 
-export const Snackbar: React.FC = (): JSX.Element => {
+export const Snackbar: React.FC = () => {
     const { visible, message, hideSnackbar, type } = useSnackbar();
     const { colors } = useTheme();
     let backgroundColor = '';

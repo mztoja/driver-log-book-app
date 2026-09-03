@@ -24,6 +24,7 @@ const API_ENDPOINTS = {
     // users
     REGISTER: '/users/register',
     LOGIN: '/auth/login',
+    REFRESH: '/auth/refresh',
     GET: '/auth/user',
     logout: '/auth/logout',
     markDepart: '/users/markDepart',
@@ -49,7 +50,7 @@ const API_ENDPOINTS = {
     getLogsByTourId: '/logs/getByTourId',
     GET_LAST_LOG: '/logs/getLastLog',
     ATTACH_TRAILER: '/logs/attachTrailer',
-    detachTrailer: '/logs/detachTrailer',
+    DETACH_TRAILER: '/logs/detachTrailer',
     LOADING_ARRIVAL: '/logs/loadingArrival',
     UNLOADING_ARRIVAL: '/logs/unloadingArrival',
     editLog: '/logs/edit',

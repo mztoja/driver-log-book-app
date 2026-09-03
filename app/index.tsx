@@ -17,6 +17,7 @@ import { SwitchLang } from "@/components/SwitchLang";
 import { SwitchTheme } from "@/components/SwitchTheme";
 import { LoginResponse } from "@/types/backend/user/LoginResponse";
 import storeToken from "@/utils/storeToken";
+import storeRefreshToken from "@/utils/storeRefreshToken";
 
 
 const Login: React.FC = () => {
@@ -43,6 +44,7 @@ const Login: React.FC = () => {
             .then((res) => {
                 if (res.success && res.responseData) {
                     storeToken(res.responseData.accessToken);
+                    storeRefreshToken(res.responseData.refreshToken);
                     setUser(res.responseData.user);
                 }
             });

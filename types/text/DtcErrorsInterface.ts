@@ -33,6 +33,7 @@ interface Entries {
     monthIncorrectFormat: string;
     cannotEditSettledTourData: string;
     apiUnauthorized: string;
+    sessionExpired: string;
     apiUnknownError: string;
     apiConnectionError: string;
 }
