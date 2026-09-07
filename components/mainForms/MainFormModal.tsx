@@ -9,7 +9,7 @@ interface Props {
     visible: boolean;
     setVisible: React.Dispatch<React.SetStateAction<boolean>>;
     title: string;
-    children: JSX.Element;
+    children: React.ReactNode;
 }
 
 export const MainFormModal: React.FC<Props> = (props: Props): JSX.Element => {

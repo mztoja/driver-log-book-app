@@ -20,7 +20,7 @@ export const ThemeContext = createContext<ThemeContextProps>({
 
 export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }): JSX.Element => {
     const systemTheme = useColorScheme();
-    const [theme, setTheme] = useState(systemTheme || 'light');
+    const [theme, setTheme] = useState<'light' | 'dark'>(systemTheme === 'dark' ? 'dark' : 'light');
 
     const toggleTheme = () => {
         setTheme((prevTheme) => (prevTheme === 'light' ? 'dark' : 'light'));
