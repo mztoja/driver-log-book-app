@@ -84,6 +84,16 @@ interface Entries {
     truck: string;
     trailer: string;
     vehicleInput: string;
+    vehicleType: string;
+    vehicleTruck: string;
+    vehicleTrailer: string;
+    registrationPlate: string;
+    serviceType: string;
+    serviceMaintenance: string;
+    serviceService: string;
+    serviceMaintenanceHelper: string;
+    serviceServiceHelper: string;
+    serviceEntry: string;
 }
 
 export interface CommonInterface {

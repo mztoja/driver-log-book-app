@@ -61,6 +61,28 @@ export interface Entries {
     detachTrailer: string;
     detachTrailerAction: string;
     detachTrailerSuccess: string;
+    tourStart: string;
+    tourStop: string;
+    tourExist: string;
+    noActiveRoute: string;
+    startedTour: string;
+    startedTourAction: string;
+    finishedTour: string;
+    finishedTourAction: string;
+    truckNoValid: string;
+    tourStopHelper1: string;
+    finishTourUnloadedLoadsConfirm(x: string): string;
+    finishTourUnloadNote: string;
+    tourStartKeepTrailerConfirm(x: string): string;
+    tourStartKeepLoadConfirm(x: string): string;
+    trailerAttachedBySystemNote: string;
+    loadAddedBySystemNote: string;
+    addService: string;
+    addLubrication: string;
+    addServiceSuccess: string;
+    addServiceAction: string;
+    chooseServicedVehicle: string;
+    noServiceEntry: string;
 }
 
 export interface HomeInterface {

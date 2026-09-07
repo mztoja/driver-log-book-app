@@ -1,4 +1,4 @@
-import { View, StyleSheet, Button, ScrollView, ImageBackground } from "react-native";
+import { View, StyleSheet, ScrollView, ImageBackground } from "react-native";
 import { useCallback, useEffect, useState } from "react";
 import { useTheme } from "@/hooks/useTheme";
 import { MainFormButton } from "@/components/buttons/MainFormButton";
@@ -6,11 +6,11 @@ import { getText } from "@/utils/getText";
 import { useGlobalState } from "@/hooks/useGlobalState";
 import { useApi } from "@/hooks/useApi";
 import API_ENDPOINTS from "@/constants/API_ENDPOINTS";
-import { DayInterface, ExpenseEnum, GeneralFormData, LoadInterface, LogInterface, TourInterface, UserInterface, userStatusEnum } from "@/types";
+import { DayInterface, ExpenseEnum, GeneralFormData, LoadInterface, LogInterface, ServiceEnum, TourInterface, UserInterface, userStatusEnum } from "@/types";
 import { useFocusEffect } from "expo-router";
 import { STYLES } from "@/constants/STYLES";
 import { ThemedText } from "@/components/ThemedText";
-import { NewDayForm, BorderCrossForm, AddLogForm, FinishDayForm } from "@/components/mainForms";
+import { NewDayForm, BorderCrossForm, AddLogForm, FinishDayForm, TourStartForm, TourStopForm, ServiceForm } from "@/components/mainForms";
 import { useSnackbar } from "@/hooks/useSnackbar";
 import { ExpenseAdd } from "@/components/mainForms/Finances/ExpenseAdd";
 import { LoadingArrival } from "@/components/mainForms/Loadings/LoadingArrival";
@@ -23,7 +23,7 @@ import { DetachTrailerForm } from "@/components/mainForms/Vehicle/DetachTrailerF
 export default function Home() {
 
   const { theme, colors } = useTheme();
-  const { setUser, user, lang, lastLog, setLastLog, activeDay, setActiveDay, setActiveTour, activeLoads, setActiveLoads } = useGlobalState();
+  const { setUser, user, lang, lastLog, setLastLog, activeDay, setActiveDay, activeTour, setActiveTour, setActiveLoads } = useGlobalState();
   const { fetchData } = useApi();
   const { showSnackbar } = useSnackbar();
   const [lastLogRefresh, setLastLogRefresh] = useState<boolean>(false);
@@ -32,6 +32,8 @@ export default function Home() {
   const [activeLoadsRefresh, setActiveLoadsRefresh] = useState<boolean>(false);
   const [newDayVisible, setNewDayVisible] = useState<boolean>(false);
   const [finishDayVisible, setFinishDayVisible] = useState<boolean>(false);
+  const [tourStartVisible, setTourStartVisible] = useState<boolean>(false);
+  const [tourStopVisible, setTourStopVisible] = useState<boolean>(false);
   const [borderCrossVisible, setBorderCrossVisible] = useState<boolean>(false);
   const [addLogVisible, setAddLogVisible] = useState<boolean>(false);
   const [expenceAddVisible, setExpenceAddVisible] = useState<boolean>(false);
@@ -42,40 +44,8 @@ export default function Home() {
   const [unloadingCompletedVisible, setUnoadingCompletedVisible] = useState<boolean>(false);
   const [attachTrailerVisible, setAttachTrailerVisible] = useState<boolean>(false);
   const [detachTrailerVisible, setDetachTrailerVisible] = useState<boolean>(false);
-
-  const txt = {
-    dayExist: getText('home', 'dayExist', lang),
-    dayNotExist: getText('home', 'dayNotExist', lang),
-    dayStart: getText('home', 'dayStart', lang),
-    dayStop: getText('home', 'dayStop', lang),
-    crossBorder: getText('home', 'crossBorder', lang),
-    addLog: getText('home', 'addLog', lang),
-    addExpense: getText('home', 'addExpense', lang),
-    dieselRefuel: getText('home', 'dieselRefuel', lang),
-    adblueRefuel: getText('home', 'adblueRefuel', lang),
-    loadingArrival: getText('home', 'loadingArrival', lang),
-    loadingCompleted: getText('home', 'loadingCompleted', lang),
-    unloadingArrival: getText('home', 'unloadingArrival', lang),
-    unloadingCompleted: getText('home', 'unloadingCompleted', lang),
-    attachTrailer: getText('home', 'attachTrailer', lang),
-    detachTrailer: getText('home', 'detachTrailer', lang),
-  }
-
-  const imageOpacity = theme === 'dark' ? 0.5 : 1;
-
-  useFocusEffect(
-    useCallback(() => {
-      fetchData<UserInterface>(API_ENDPOINTS.GET, { setData: setUser }).then();
-    }, [])
-  );
-
-  if (user?.status === userStatusEnum.blocked) {
-    return (
-      <View style={[STYLES.mainView, { backgroundColor: colors.background }]}>
-        <ThemedText>{getText('home', 'blockedDescription', lang)}</ThemedText>
-      </View>
-    );
-  }
+  const [serviceVisible, setServiceVisible] = useState<boolean>(false);
+  const [serviceType, setServiceType] = useState<ServiceEnum>(ServiceEnum.standard);
 
   const [generalFormData, setGeneralFormData] = useState<GeneralFormData>({
     date: '',
@@ -123,6 +93,38 @@ export default function Home() {
     }));
   }, []);
 
+  const txt = {
+    dayExist: getText('home', 'dayExist', lang),
+    dayNotExist: getText('home', 'dayNotExist', lang),
+    dayStart: getText('home', 'dayStart', lang),
+    dayStop: getText('home', 'dayStop', lang),
+    tourStart: getText('home', 'tourStart', lang),
+    tourStop: getText('home', 'tourStop', lang),
+    tourExist: getText('home', 'tourExist', lang),
+    noActiveRoute: getText('home', 'noActiveRoute', lang),
+    crossBorder: getText('home', 'crossBorder', lang),
+    addLog: getText('home', 'addLog', lang),
+    addExpense: getText('home', 'addExpense', lang),
+    dieselRefuel: getText('home', 'dieselRefuel', lang),
+    adblueRefuel: getText('home', 'adblueRefuel', lang),
+    loadingArrival: getText('home', 'loadingArrival', lang),
+    loadingCompleted: getText('home', 'loadingCompleted', lang),
+    unloadingArrival: getText('home', 'unloadingArrival', lang),
+    unloadingCompleted: getText('home', 'unloadingCompleted', lang),
+    attachTrailer: getText('home', 'attachTrailer', lang),
+    detachTrailer: getText('home', 'detachTrailer', lang),
+    addService: getText('home', 'addService', lang),
+    addLubrication: getText('home', 'addLubrication', lang),
+  }
+
+  const imageOpacity = theme === 'dark' ? 0.5 : 1;
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchData<UserInterface>(API_ENDPOINTS.GET, { setData: setUser }).then();
+    }, [])
+  );
+
   useEffect(() => {
     fetchData<LogInterface>(API_ENDPOINTS.GET_LAST_LOG, { setData: setLastLog });
     fetchData<UserInterface>(API_ENDPOINTS.GET, { setData: setUser });
@@ -149,6 +151,14 @@ export default function Home() {
     fetchData<LoadInterface[]>(API_ENDPOINTS.GET_NOT_UNLOADED_LOADS, { setData: setActiveLoads });
   }, [activeLoadsRefresh]);
 
+  if (user?.status === userStatusEnum.blocked) {
+    return (
+      <View style={[STYLES.mainView, { backgroundColor: colors.background }]}>
+        <ThemedText>{getText('home', 'blockedDescription', lang)}</ThemedText>
+      </View>
+    );
+  }
+
   return (
     <ScrollView style={[STYLES.scrollView, { backgroundColor: colors.background }]}>
 
@@ -167,6 +177,24 @@ export default function Home() {
         setForm={updateGeneralFormData}
         setlastLogRefresh={setLastLogRefresh}
         setActiveDayRefresh={setActiveDayRefresh}
+      />
+      <TourStartForm
+        visible={tourStartVisible}
+        setVisible={setTourStartVisible}
+        form={generalFormData}
+        setForm={updateGeneralFormData}
+        setlastLogRefresh={setLastLogRefresh}
+        setActiveTourRefresh={setActiveTourRefresh}
+        setActiveLoadsRefresh={setActiveLoadsRefresh}
+      />
+      <TourStopForm
+        visible={tourStopVisible}
+        setVisible={setTourStopVisible}
+        form={generalFormData}
+        setForm={updateGeneralFormData}
+        setlastLogRefresh={setLastLogRefresh}
+        setActiveTourRefresh={setActiveTourRefresh}
+        setActiveLoadsRefresh={setActiveLoadsRefresh}
       />
       <BorderCrossForm
         visible={borderCrossVisible}
@@ -244,9 +272,18 @@ export default function Home() {
         setActiveLoadsRefresh={setActiveLoadsRefresh}
       />
 
+      <ServiceForm
+        visible={serviceVisible}
+        setVisible={setServiceVisible}
+        form={generalFormData}
+        setForm={updateGeneralFormData}
+        setlastLogRefresh={setLastLogRefresh}
+        serviceType={serviceType}
+      />
+
       <ImageBackground
         source={require('@/assets/images/activitiesBackground.png')}
-        style={[styles.imageBackground, { opacity: imageOpacity }]}
+        style={[styles.imageBackground, { opacity: imageOpacity, height: 360 }]}
         imageStyle={styles.imageStyle}
         resizeMode="cover"
       >
@@ -256,6 +293,12 @@ export default function Home() {
           </View>
           <View style={styles.buttonView}>
             <MainFormButton onPress={() => activeDay ? setFinishDayVisible(true) : showSnackbar(txt.dayNotExist, 'info')} text={txt.dayStop} />
+          </View>
+          <View style={styles.buttonView}>
+            <MainFormButton onPress={() => activeTour ? showSnackbar(txt.tourExist, 'info') : setTourStartVisible(true)} text={txt.tourStart} />
+          </View>
+          <View style={styles.buttonView}>
+            <MainFormButton onPress={() => activeTour ? setTourStopVisible(true) : showSnackbar(txt.noActiveRoute, 'info')} text={txt.tourStop} />
           </View>
           <View style={styles.buttonView}>
             <MainFormButton onPress={() => setBorderCrossVisible(true)} text={txt.crossBorder} />
@@ -325,15 +368,18 @@ export default function Home() {
           <MainFormButton onPress={() => setDetachTrailerVisible(true)} text={txt.detachTrailer} />
         </View>
         <View style={styles.buttonView}>
-          <Button onPress={() => setNewDayVisible(true)} title='Smarowanie siodła' />
+          <MainFormButton onPress={() => {
+            setServiceType(ServiceEnum.fifthWheelLube);
+            setServiceVisible(true);
+          }} text={txt.addLubrication} />
         </View>
         <View style={styles.buttonView}>
-          <Button onPress={() => setNewDayVisible(true)} title='Serwis / obsługa pojazdu' />
+          <MainFormButton onPress={() => {
+            setServiceType(ServiceEnum.standard);
+            setServiceVisible(true);
+          }} text={txt.addService} />
         </View>
       </ImageBackground>
-      <View style={[styles.buttonView, { marginVertical: 30, opacity: imageOpacity }]}>
-        <Button onPress={() => setActiveTourRefresh((prev) => !prev)} title='Koniec trasy' />
-      </View>
 
     </ScrollView >
   );
