@@ -59,6 +59,20 @@ interface Entries {
     generate: string;
     generateSoon: string;
     noRecords: string;
+    // przeglądanie wpisów (wspólna lista)
+    browseRecords: string;
+    editRecord: string;
+    showMoreFields: string;
+    showLessFields: string;
+    editSuccess: string;
+    logEditHeader: string;
+    dayEditHeader: string;
+    financeEditHeader: string;
+    loadEditHeader: string;
+    sectionStart: string;
+    sectionStop: string;
+    sectionLoading: string;
+    sectionUnloading: string;
     // logs
     logsTitle: string;
     activity: string;

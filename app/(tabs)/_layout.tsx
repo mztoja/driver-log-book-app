@@ -102,6 +102,14 @@ export default function TabLayout() {
                     href: null,
                 }}
             />
+            <Tabs.Screen
+                name="records"
+                redirect={!user}
+                options={{
+                    href: null,
+                    headerShown: false,
+                }}
+            />
         </Tabs>
     );
 }

@@ -19,6 +19,7 @@ import { UnloadingArrival } from "@/components/mainForms/Loadings/UnloadingArriv
 import { UnloadingCompleted } from "@/components/mainForms/Loadings/UnloadingCompleted";
 import { AttachTrailerForm } from "@/components/mainForms/Vehicle/AttachTrailerForm";
 import { DetachTrailerForm } from "@/components/mainForms/Vehicle/DetachTrailerForm";
+import { BrowseRecordsSection } from "@/components/records/BrowseRecordsSection";
 
 export default function Home() {
 
@@ -165,7 +166,10 @@ export default function Home() {
 
   if (!activeTour) {
     return (
-      <View style={[STYLES.mainView, { backgroundColor: colors.background }]}>
+      <ScrollView
+        style={[STYLES.scrollView, { backgroundColor: colors.background }]}
+        contentContainerStyle={styles.noTourContent}
+      >
         <TourStartForm
           visible={tourStartVisible}
           setVisible={setTourStartVisible}
@@ -178,7 +182,8 @@ export default function Home() {
         <View style={styles.tourStartOnly}>
           <MainFormButton onPress={() => setTourStartVisible(true)} text={txt.tourStart} />
         </View>
-      </View>
+        <BrowseRecordsSection />
+      </ScrollView>
     );
   }
 
@@ -393,6 +398,8 @@ export default function Home() {
         <MainFormButton onPress={() => setTourStopVisible(true)} text={txt.tourStop} />
       </View>
 
+      <BrowseRecordsSection />
+
     </ScrollView >
   );
 }
@@ -426,5 +433,10 @@ const styles = StyleSheet.create({
   tourStartOnly: {
     alignSelf: 'stretch',
     marginHorizontal: 40,
+  },
+  noTourContent: {
+    flexGrow: 1,
+    justifyContent: 'center',
+    paddingVertical: 30,
   },
 });

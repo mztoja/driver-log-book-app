@@ -1,9 +1,9 @@
 {
   "expo": {
-    "name": "driver-log-book-app",
+    "name": "Driver Logbook App",
     "slug": "driver-log-book-app",
     "version": "1.0.0",
-    "orientation": "portrait",
+    "orientation": "default",
     "icon": "./assets/images/icon.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",

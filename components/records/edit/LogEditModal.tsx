@@ -63,15 +63,14 @@ export const LogEditModal: React.FC<Props> = (props: Props): JSX.Element | null 
             { showSnackbar },
         ).then((res) => {
             if (res.success) {
-                showSnackbar(getText('places', 'logEditSuccess', lang), 'success');
-                props.onClose();
+                showSnackbar(getText('tours', 'editSuccess', lang), 'success');
                 props.onSaved();
             }
         });
     };
 
     return (
-        <MainFormModal visible={props.log !== null} setVisible={() => props.onClose()} title={getText('places', 'logEditHeader', lang)}>
+        <MainFormModal visible setVisible={() => props.onClose()} title={getText('tours', 'logEditHeader', lang)}>
             <ScrollView style={STYLES.scrollView} contentContainerStyle={{ padding: 12 }}>
                 <DateTimeInput value={form.date} initialValue={props.log.date} onChange={(e) => update('date', e)} />
                 <OdometerInput value={form.odometer} onChange={(e) => update('odometer', e)} disableHelper />
@@ -85,7 +84,7 @@ export const LogEditModal: React.FC<Props> = (props: Props): JSX.Element | null 
                 />
                 <ActivityInput value={form.action} onChange={(e) => update('action', e)} />
                 <NotesInput value={form.notes} onChange={(e) => update('notes', e)} />
-                <SendButton onPress={send} text={getText('places', 'logEdit', lang)} loading={loading} />
+                <SendButton onPress={send} text={getText('tours', 'editRecord', lang)} loading={loading} />
             </ScrollView>
         </MainFormModal>
     );

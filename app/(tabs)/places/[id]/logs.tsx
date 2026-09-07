@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { Stack, useLocalSearchParams } from 'expo-router';
 import { useGlobalState } from '@/hooks/useGlobalState';
 import { getText } from '@/utils/getText';
-import { PlaceLogsList } from '@/components/places/PlaceLogsList';
+import { LogRecords } from '@/components/records/LogRecords';
 
 export default function PlaceLogsScreen() {
     const { id } = useLocalSearchParams<{ id: string }>();
@@ -19,7 +19,7 @@ export default function PlaceLogsScreen() {
     return (
         <>
             <Stack.Screen options={{ title }} />
-            <PlaceLogsList placeId={placeId} />
+            <LogRecords source={{ kind: 'place', placeId }} />
         </>
     );
 }
