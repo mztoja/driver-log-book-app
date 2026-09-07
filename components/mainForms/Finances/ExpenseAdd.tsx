@@ -71,6 +71,9 @@ export const ExpenseAdd: React.FC<Props> = (props: Props): JSX.Element => {
         setForm('expenseItemDescription', fav.itemDescription);
         setForm('payment', fav.payment);
         setForm('expenseUnitPrice', fav.unitPrice != null ? String(fav.unitPrice) : '');
+        // ustawienie wartości przez setForm nie odpala onChange inputu, więc marker
+        // trzeba przełączyć ręcznie – inaczej hook liczący kwotę się nie uruchomi
+        setUnitPriceMarker((prev) => !prev);
     };
 
     React.useEffect(() => {
