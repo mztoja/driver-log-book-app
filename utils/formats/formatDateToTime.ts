@@ -1,10 +1,16 @@
+// Godzina z bazy wyświetlana DOSŁOWNIE – dokładnie te cyfry, które przyszły w stringu
+// (`...THH:MM...`), bez obiektu Date i bez przeliczeń stref (Hermes potrafi je psuć).
+// `addHours` przesuwa samą godzinę ściany zegara (z zawinięciem w dobie).
 export const formatDateToTime = (dateString: string, addHours?: number): string => {
-    const date = new Date(dateString);
-    date.setMinutes(date.getMinutes() + date.getTimezoneOffset());
+    const m = /[T ](\d{2}):(\d{2})/.exec(dateString ?? '');
+    if (!m) return '--:--';
+
+    let hours = Number(m[1]);
+    const minutes = m[2];
+
     if (addHours) {
-        date.setHours(date.getHours() + addHours);
+        hours = (((hours + addHours) % 24) + 24) % 24;
     }
-    const hours = date.getHours().toString().padStart(2, '0');
-    const minutes = date.getMinutes().toString().padStart(2, '0');
-    return `${hours}:${minutes}`;
+
+    return `${hours.toString().padStart(2, '0')}:${minutes}`;
 };

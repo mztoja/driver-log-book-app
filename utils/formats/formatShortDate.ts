@@ -1,9 +1,19 @@
+// Data z bazy wyświetlana DOSŁOWNIE (bez obiektu Date, bez przeliczeń stref).
+// Obsługuje `YYYY-MM-DD`, `YYYY-MM-DDTHH:MM...` oraz `YYYY-MM` (etykieta miesiąca).
 export const formatShortDate = (dateString: string): string => {
     if (!dateString) return '---';
-    const date = new Date(dateString);
-    if (isNaN(date.getTime())) return '---';
-    const day = date.getUTCDate().toString().padStart(2, '0');
-    const month = (date.getUTCMonth() + 1).toString().padStart(2, '0');
-    const year = date.getUTCFullYear().toString();
-    return `${day}.${month}.${year}`;
+
+    const full = /^(\d{4})-(\d{2})-(\d{2})/.exec(dateString);
+    if (full) {
+        const [, year, month, day] = full;
+        return `${day}.${month}.${year}`;
+    }
+
+    const yearMonth = /^(\d{4})-(\d{2})$/.exec(dateString);
+    if (yearMonth) {
+        const [, year, month] = yearMonth;
+        return `01.${month}.${year}`;
+    }
+
+    return '---';
 };

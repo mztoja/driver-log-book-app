@@ -25,12 +25,21 @@ import { formatFuelQuantity } from '@/utils/formats/formatFuelQuantity';
 import { formatSimplePlace } from '@/utils/formats/formatSimplePlace';
 import { formatShortDate } from '@/utils/formats/formatShortDate';
 
-// data z bazy zapisywana jest jako lokalny "wall time" bez strefy – żeby liczyć
-// różnice, cofamy o offset (tak samo robi front).
+// Data z bazy to surowy "wall time". Do liczenia różnic (względem `new Date()`)
+// budujemy Date z komponentów wprost z tekstu – bez parsowania przez silnik i bez
+// przeliczeń stref (Hermes potrafi je psuć). Lokalne gettery zwracają wtedy
+// dokładnie tę godzinę, która jest w bazie.
 const toLocalDate = (dateString: string): Date => {
-    const d = new Date(dateString);
-    d.setMinutes(d.getMinutes() + d.getTimezoneOffset());
-    return d;
+    const m = /^(\d{4})-(\d{2})-(\d{2})(?:[T ](\d{2}):(\d{2})(?::(\d{2}))?)?/.exec(dateString ?? '');
+    if (!m) return new Date(dateString);
+    return new Date(
+        Number(m[1]),
+        Number(m[2]) - 1,
+        Number(m[3]),
+        Number(m[4] ?? 0),
+        Number(m[5] ?? 0),
+        Number(m[6] ?? 0),
+    );
 };
 
 const diffHM = (a: number, b: number): { hours: number; minutes: number } => {
