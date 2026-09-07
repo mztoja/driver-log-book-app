@@ -1,5 +1,5 @@
 {
-  "name": "driver-log-book-app",
+  "name": "Driver Logbook App",
   "main": "expo-router/entry",
   "version": "1.0.0",
   "scripts": {

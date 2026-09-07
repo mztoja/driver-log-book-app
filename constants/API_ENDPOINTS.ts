@@ -14,6 +14,7 @@ const API_ENDPOINTS = {
     getRoutes: '/tours',
     createSettlement: '/tours/createSettlement',
     getRouteSettlements: '/tours/getSettlements',
+    getRouteStats: '/tours/stats',
     getRouteById: '/tours/getRouteById',
     getRouteByLogId: '/tours/getRouteByLogId',
     countDistanceOfActiveRoute: '/tours/countDistanceOfActiveRoute',

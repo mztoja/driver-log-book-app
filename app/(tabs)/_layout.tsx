@@ -67,6 +67,7 @@ export default function TabLayout() {
                 redirect={!user}
                 options={{
                     title: common.pl.routesPageTitle,
+                    headerShown: false,
                     tabBarIcon: ({ focused }) => (
                         <FontAwesome5 name="route" size={20} color={!focused ? colors.tabIconDefault : colors.tabIconSelected} />
                     ),
