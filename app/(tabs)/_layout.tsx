@@ -78,6 +78,7 @@ export default function TabLayout() {
                 redirect={!user}
                 options={{
                     title: common.pl.placesPageTitle,
+                    headerShown: false,
                     tabBarIcon: ({ focused }) => (
                         <FontAwesome5 name="address-book" size={20} color={!focused ? colors.tabIconDefault : colors.tabIconSelected} />
                     ),

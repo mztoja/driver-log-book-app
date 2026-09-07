@@ -4,18 +4,20 @@ import { dtcErrors } from "@/assets/text/dtcErrors";
 import { home } from "@/assets/text/home";
 import { info } from "@/assets/text/info";
 import { tours } from "@/assets/text/tours";
+import { places } from "@/assets/text/places";
 import { useGlobalState } from "@/hooks/useGlobalState";
-import { CommonInterface, DtcErrorsInterface, LangInterface, CountriesInterface, InfoInterface, ToursInterface } from "@/types";
+import { CommonInterface, DtcErrorsInterface, LangInterface, CountriesInterface, InfoInterface, ToursInterface, PlacesInterface } from "@/types";
 import { HomeInterface } from "@/types/text/HomeInterface";
 
-type Group = 'common' | 'home' | 'dtcErrors' | 'countries' | 'info' | 'tours';
+type Group = 'common' | 'home' | 'dtcErrors' | 'countries' | 'info' | 'tours' | 'places';
 type TextCommon = keyof CommonInterface['en'];
 type TextHome = keyof HomeInterface['en'];
 type TextDtcErrors = keyof DtcErrorsInterface['en'];
 type TextCountries = keyof CountriesInterface['en'];
 type TextInfo = keyof InfoInterface['en'];
 type TextTours = keyof ToursInterface['en'];
-type Text = TextCommon | TextHome | TextDtcErrors | TextCountries | TextInfo | TextTours;
+type TextPlaces = keyof PlacesInterface['en'];
+type Text = TextCommon | TextHome | TextDtcErrors | TextCountries | TextInfo | TextTours | TextPlaces;
 
 interface GetText {
     (group: 'common', text: TextCommon, lang?: LangInterface, params?: string): string;
@@ -24,6 +26,7 @@ interface GetText {
     (group: 'countries', text: TextCountries, lang?: LangInterface, params?: string): string;
     (group: 'info', text: TextInfo, lang?: LangInterface, params?: string): string;
     (group: 'tours', text: TextTours, lang?: LangInterface, params?: string): string;
+    (group: 'places', text: TextPlaces, lang?: LangInterface, params?: string): string;
 }
 
 
@@ -45,6 +48,8 @@ export const getText: GetText = (group: Group, text: Text, langValue?: LangInter
                 return info[lang][text as TextInfo];
             case 'tours':
                 return tours[lang][text as TextTours];
+            case 'places':
+                return places[lang][text as TextPlaces];
             default:
                 return '';
         }

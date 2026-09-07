@@ -14,6 +14,8 @@ registerTranslation('pl', pl);
 interface Props {
     value: string;
     onChange: (e: string) => void;
+    // wstępna data/godzina dla trybu edycji, format "YYYY-MM-DDTHH:MM" (wall time)
+    initialValue?: string;
 }
 
 export const DateTimeInput: React.FC<Props> = (props: Props): JSX.Element => {
@@ -21,12 +23,20 @@ export const DateTimeInput: React.FC<Props> = (props: Props): JSX.Element => {
     const { colors } = useTheme();
     const { lang } = useGlobalState();
     const today = new Date();
-    const defaultTime = {
-        hours: today.getHours(),
-        minutes: today.getMinutes(),
-    };
 
-    const [date, setDate] = useState<CalendarDate>(today);
+    // parsujemy komponenty daty wprost z tekstu, żeby uniknąć przesunięć stref
+    const parsed = props.initialValue
+        ? /^(\d{4})-(\d{2})-(\d{2})[T ](\d{2}):(\d{2})/.exec(props.initialValue)
+        : null;
+
+    const initialDate = parsed
+        ? new Date(Number(parsed[1]), Number(parsed[2]) - 1, Number(parsed[3]))
+        : today;
+    const defaultTime = parsed
+        ? { hours: Number(parsed[4]), minutes: Number(parsed[5]) }
+        : { hours: today.getHours(), minutes: today.getMinutes() };
+
+    const [date, setDate] = useState<CalendarDate>(initialDate);
     const [time, setTime] = useState<{ hours: number; minutes: number }>(defaultTime);
     const [openDate, setOpenDate] = useState<boolean>(false);
     const [openTime, setOpenTime] = useState<boolean>(false);

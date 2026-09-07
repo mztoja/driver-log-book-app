@@ -48,6 +48,7 @@ const API_ENDPOINTS = {
     getLogs: '/logs/get',
     getLogById: '/logs/getById',
     getLogsByTourId: '/logs/getByTourId',
+    getLogsByPlaceId: '/logs/getByPlaceId',
     GET_LAST_LOG: '/logs/getLastLog',
     ATTACH_TRAILER: '/logs/attachTrailer',
     DETACH_TRAILER: '/logs/detachTrailer',
