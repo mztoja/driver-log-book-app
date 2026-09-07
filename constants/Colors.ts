@@ -63,7 +63,7 @@ export const COLORS: Themes = {
     headerBackground: '#121212',
     tabBarBackground: '#121212',
     tabIconDefault: '#9BA1A6',
-    tabIconSelected: '#960b0b',
+    tabIconSelected: '#ef5350',
     tabBackgroundSelected: '#212121',
     buttonTextColor: 'white',
     buttonColor: '#34aac2',

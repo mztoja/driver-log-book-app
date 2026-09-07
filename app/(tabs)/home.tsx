@@ -30,6 +30,7 @@ export default function Home() {
   const [activeDayRefresh, setActiveDayRefresh] = useState<boolean>(false);
   const [activeTourRefresh, setActiveTourRefresh] = useState<boolean>(false);
   const [activeLoadsRefresh, setActiveLoadsRefresh] = useState<boolean>(false);
+  const [tourChecked, setTourChecked] = useState<boolean>(false);
   const [newDayVisible, setNewDayVisible] = useState<boolean>(false);
   const [finishDayVisible, setFinishDayVisible] = useState<boolean>(false);
   const [tourStartVisible, setTourStartVisible] = useState<boolean>(false);
@@ -100,8 +101,6 @@ export default function Home() {
     dayStop: getText('home', 'dayStop', lang),
     tourStart: getText('home', 'tourStart', lang),
     tourStop: getText('home', 'tourStop', lang),
-    tourExist: getText('home', 'tourExist', lang),
-    noActiveRoute: getText('home', 'noActiveRoute', lang),
     crossBorder: getText('home', 'crossBorder', lang),
     addLog: getText('home', 'addLog', lang),
     addExpense: getText('home', 'addExpense', lang),
@@ -144,7 +143,8 @@ export default function Home() {
   }, [activeDayRefresh]);
 
   useEffect(() => {
-    fetchData<TourInterface>(API_ENDPOINTS.GET_ACTIVE_ROUTE, { setData: setActiveTour });
+    fetchData<TourInterface>(API_ENDPOINTS.GET_ACTIVE_ROUTE, { setData: setActiveTour })
+      .finally(() => setTourChecked(true));
   }, [activeTourRefresh]);
 
   useEffect(() => {
@@ -155,6 +155,29 @@ export default function Home() {
     return (
       <View style={[STYLES.mainView, { backgroundColor: colors.background }]}>
         <ThemedText>{getText('home', 'blockedDescription', lang)}</ThemedText>
+      </View>
+    );
+  }
+
+  if (!tourChecked) {
+    return <View style={[STYLES.mainView, { backgroundColor: colors.background }]} />;
+  }
+
+  if (!activeTour) {
+    return (
+      <View style={[STYLES.mainView, { backgroundColor: colors.background }]}>
+        <TourStartForm
+          visible={tourStartVisible}
+          setVisible={setTourStartVisible}
+          form={generalFormData}
+          setForm={updateGeneralFormData}
+          setlastLogRefresh={setLastLogRefresh}
+          setActiveTourRefresh={setActiveTourRefresh}
+          setActiveLoadsRefresh={setActiveLoadsRefresh}
+        />
+        <View style={styles.tourStartOnly}>
+          <MainFormButton onPress={() => setTourStartVisible(true)} text={txt.tourStart} />
+        </View>
       </View>
     );
   }
@@ -177,15 +200,6 @@ export default function Home() {
         setForm={updateGeneralFormData}
         setlastLogRefresh={setLastLogRefresh}
         setActiveDayRefresh={setActiveDayRefresh}
-      />
-      <TourStartForm
-        visible={tourStartVisible}
-        setVisible={setTourStartVisible}
-        form={generalFormData}
-        setForm={updateGeneralFormData}
-        setlastLogRefresh={setLastLogRefresh}
-        setActiveTourRefresh={setActiveTourRefresh}
-        setActiveLoadsRefresh={setActiveLoadsRefresh}
       />
       <TourStopForm
         visible={tourStopVisible}
@@ -282,8 +296,8 @@ export default function Home() {
       />
 
       <ImageBackground
-        source={require('@/assets/images/activitiesBackground.png')}
-        style={[styles.imageBackground, { opacity: imageOpacity, height: 360 }]}
+        source={require('@/assets/images/activitiesBackground.jpg')}
+        style={[styles.imageBackground, { opacity: imageOpacity }]}
         imageStyle={styles.imageStyle}
         resizeMode="cover"
       >
@@ -295,12 +309,6 @@ export default function Home() {
             <MainFormButton onPress={() => activeDay ? setFinishDayVisible(true) : showSnackbar(txt.dayNotExist, 'info')} text={txt.dayStop} />
           </View>
           <View style={styles.buttonView}>
-            <MainFormButton onPress={() => activeTour ? showSnackbar(txt.tourExist, 'info') : setTourStartVisible(true)} text={txt.tourStart} />
-          </View>
-          <View style={styles.buttonView}>
-            <MainFormButton onPress={() => activeTour ? setTourStopVisible(true) : showSnackbar(txt.noActiveRoute, 'info')} text={txt.tourStop} />
-          </View>
-          <View style={styles.buttonView}>
             <MainFormButton onPress={() => setBorderCrossVisible(true)} text={txt.crossBorder} />
           </View>
           <View style={styles.buttonView}>
@@ -310,7 +318,7 @@ export default function Home() {
       </ImageBackground>
 
       <ImageBackground
-        source={require('@/assets/images/financesBackground.png')}
+        source={require('@/assets/images/financesBackground.jpg')}
         style={[styles.imageBackground, { opacity: imageOpacity }]}
         imageStyle={styles.imageStyle}
         resizeMode="cover"
@@ -336,7 +344,7 @@ export default function Home() {
       </ImageBackground>
 
       <ImageBackground
-        source={require('@/assets/images/loadingsBackground.png')}
+        source={require('@/assets/images/loadingsBackground.jpg')}
         style={[styles.imageBackground, { opacity: imageOpacity }]}
         imageStyle={styles.imageStyle}
         resizeMode="cover"
@@ -356,7 +364,7 @@ export default function Home() {
       </ImageBackground>
 
       <ImageBackground
-        source={require('@/assets/images/vehiclesBackground.png')}
+        source={require('@/assets/images/vehiclesBackground.webp')}
         style={[styles.imageBackground, { opacity: imageOpacity }]}
         imageStyle={styles.imageStyle}
         resizeMode="cover"
@@ -380,6 +388,10 @@ export default function Home() {
           }} text={txt.addService} />
         </View>
       </ImageBackground>
+
+      <View style={styles.tourStopBottom}>
+        <MainFormButton onPress={() => setTourStopVisible(true)} text={txt.tourStop} />
+      </View>
 
     </ScrollView >
   );
@@ -405,5 +417,14 @@ const styles = StyleSheet.create({
   },
   buttonsGroup: {
     marginVertical: 20,
+  },
+  tourStopBottom: {
+    marginHorizontal: 60,
+    marginTop: 20,
+    marginBottom: 40,
+  },
+  tourStartOnly: {
+    alignSelf: 'stretch',
+    marginHorizontal: 40,
   },
 });

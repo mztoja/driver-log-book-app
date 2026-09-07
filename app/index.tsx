@@ -1,4 +1,4 @@
-import { View, StyleSheet, Image, ScrollView, Pressable } from "react-native";
+import { View, StyleSheet, Image, ScrollView, KeyboardAvoidingView, Platform } from "react-native";
 import { ThemedText } from "@/components/ThemedText";
 import { useTheme } from "@/hooks/useTheme";
 import { STYLES } from "@/constants/STYLES";
@@ -51,29 +51,43 @@ const Login: React.FC = () => {
     }
 
     return (
-        <ScrollView style={[STYLES.scrollView, { backgroundColor: colors.background }]}>
-            <View style={styles.header}>
-                <SwitchLang />
-                <View><SwitchTheme /></View>
-            </View>
-            <View style={styles.topContainer}>
-                <Image source={require('@/assets/images/icon.png')} style={styles.logo} />
-                <ThemedText type="title" style={{ marginBottom: 60 }}>{getText('common', 'appName')}</ThemedText>
-            </View>
-            <View style={styles.formConteiner}>
-                <ThemedText type="subtitle" style={{ alignSelf: 'center' }}>{getText('common', "logIn")}</ThemedText>
-                <EmailInput value={loginForm.email} onChange={(e) => updateForm('email', e)} />
-                <PasswordInput value={loginForm.password} onChange={(e) => updateForm('password', e)} />
-                <SendButton onPress={send} text={getText('common', 'logIn')} loading={loading} />
-            </View>
-            <View style={styles.bottomContainer}>
-                <ThemedText type="link" onPress={() => router.push('/register')}>{getText('common', 'register')}</ThemedText>
-            </View>
-        </ScrollView> 
+        <KeyboardAvoidingView
+            style={{ flex: 1, backgroundColor: colors.background }}
+            behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        >
+            <ScrollView
+                style={[STYLES.scrollView, { backgroundColor: colors.background }]}
+                contentContainerStyle={styles.scrollContent}
+                keyboardShouldPersistTaps="handled"
+                showsVerticalScrollIndicator={false}
+            >
+                <View style={styles.header}>
+                    <SwitchLang />
+                    <View><SwitchTheme /></View>
+                </View>
+                <View style={styles.topContainer}>
+                    <Image source={require('@/assets/images/icon.png')} style={styles.logo} />
+                    <ThemedText type="title" style={{ marginBottom: 40 }}>{getText('common', 'appName')}</ThemedText>
+                </View>
+                <View style={styles.formConteiner}>
+                    <ThemedText type="subtitle" style={{ alignSelf: 'center' }}>{getText('common', "logIn")}</ThemedText>
+                    <EmailInput value={loginForm.email} onChange={(e) => updateForm('email', e)} />
+                    <PasswordInput value={loginForm.password} onChange={(e) => updateForm('password', e)} />
+                    <SendButton onPress={send} text={getText('common', 'logIn')} loading={loading} />
+                </View>
+                <View style={styles.bottomContainer}>
+                    <ThemedText type="link" onPress={() => router.push('/register')}>{getText('common', 'register')}</ThemedText>
+                </View>
+            </ScrollView>
+        </KeyboardAvoidingView>
     );
 }
 
 const styles = StyleSheet.create({
+    scrollContent: {
+        flexGrow: 1,
+        paddingBottom: 120,
+    },
     header: {
         padding: 20,
         marginTop: 20,

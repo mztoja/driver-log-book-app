@@ -37,8 +37,9 @@ export default function TabLayout() {
                     </View>
                 ),
                 tabBarActiveTintColor: colors.tabIconSelected,
+                tabBarInactiveTintColor: colors.tabIconDefault,
                 tabBarActiveBackgroundColor: colors.tabBackgroundSelected,
-
+                tabBarLabelStyle: { fontSize: 11 },
             }}
         >
             <Tabs.Screen

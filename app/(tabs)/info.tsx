@@ -1,22 +1,15 @@
-import { View, StyleSheet } from "react-native";
-import { ThemedText } from "@/components/ThemedText";
+import { ScrollView } from "react-native";
+import { STYLES } from "@/constants/STYLES";
 import { useTheme } from "@/hooks/useTheme";
+import { InfoPanel } from "@/components/InfoPanel";
 
 export default function Info() {
 
     const { colors } = useTheme();
 
     return (
-        <View style={[styles.view, { backgroundColor: colors.background }]}>
-            <ThemedText>Here we get some info</ThemedText>
-        </View>
+        <ScrollView style={[STYLES.scrollView, { backgroundColor: colors.background }]}>
+            <InfoPanel />
+        </ScrollView>
     );
 }
-
-const styles = StyleSheet.create({
-    view: {
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-    }
-});
