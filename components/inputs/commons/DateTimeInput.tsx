@@ -2,7 +2,9 @@ import { STYLES } from '@/constants/STYLES';
 import { useGlobalState } from '@/hooks/useGlobalState';
 import { useTheme } from '@/hooks/useTheme';
 import { getText } from '@/utils/getText';
-import React, { useEffect, useState } from 'react';
+import { homeNow } from '@/utils/homeNow';
+import { placeTypeEnum } from '@/types';
+import React, { useEffect, useRef, useState } from 'react';
 import { View } from 'react-native';
 import { IconButton, TextInput } from 'react-native-paper';
 import { DatePickerModal, TimePickerModal, en, pl, registerTranslation } from 'react-native-paper-dates';
@@ -21,8 +23,15 @@ interface Props {
 export const DateTimeInput: React.FC<Props> = (props: Props): JSX.Element => {
 
     const { colors } = useTheme();
-    const { lang } = useGlobalState();
-    const today = new Date();
+    const { lang, user, places } = useGlobalState();
+    // „godzina domowa" = czas kraju bazy z profilu (miejsce typu `base`, wskazywane przez user.companyId).
+    // Gdy jedziemy za granicą telefon może przestawić strefę, a do dziennika ma trafić czas bazy
+    // (w surowym formacie, bez konwersji stref). user.country to kraj BIEŻĄCY (zmienny na granicach) – tylko fallback.
+    const baseCountry =
+        places?.find((p) => p.id === user?.companyId)?.country ??
+        places?.find((p) => p.type === placeTypeEnum.base)?.country ??
+        user?.country;
+    const today = homeNow(baseCountry);
 
     // parsujemy komponenty daty wprost z tekstu, żeby uniknąć przesunięć stref
     const parsed = props.initialValue
@@ -42,6 +51,23 @@ export const DateTimeInput: React.FC<Props> = (props: Props): JSX.Element => {
     const [openTime, setOpenTime] = useState<boolean>(false);
     const [textInputValue, setTextInputValue] = useState<string>('');
 
+    const touched = useRef<boolean>(false);
+    const didInit = useRef<boolean>(false);
+
+    // lista miejsc (a więc i kraj bazy) bywa ładowana asynchronicznie – gdy dojedzie później,
+    // zaktualizuj domyślną „godzinę domową", o ile użytkownik nie tknął jeszcze pickera
+    useEffect(() => {
+        if (!didInit.current) {
+            didInit.current = true;
+            return;
+        }
+        if (parsed || touched.current) return;
+        const n = homeNow(baseCountry);
+        setDate(n);
+        setTime({ hours: n.getHours(), minutes: n.getMinutes() });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [baseCountry]);
+
     useEffect(() => {
         if (!date || !time) {
             props.onChange('2100-01-01T06:00');
@@ -59,6 +85,7 @@ export const DateTimeInput: React.FC<Props> = (props: Props): JSX.Element => {
 
 
     const addMinute = (): void => {
+        touched.current = true;
         if (date && time) {
             const newDate = new Date(date);
             newDate.setHours(time.hours);
@@ -119,6 +146,7 @@ export const DateTimeInput: React.FC<Props> = (props: Props): JSX.Element => {
                 onDismiss={() => setOpenDate(false)}
                 date={date}
                 onConfirm={(selectedDate) => {
+                    touched.current = true;
                     setOpenDate(false);
                     setDate(selectedDate.date);
                     setOpenTime(true);
@@ -130,6 +158,7 @@ export const DateTimeInput: React.FC<Props> = (props: Props): JSX.Element => {
                 visible={openTime}
                 onDismiss={() => setOpenTime(false)}
                 onConfirm={(selectedTime) => {
+                    touched.current = true;
                     setOpenTime(false);
                     setTime(selectedTime);
                 }}

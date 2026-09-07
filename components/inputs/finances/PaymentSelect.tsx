@@ -79,12 +79,14 @@ export const PaymentSelect: React.FC<Props> = (props: Props): JSX.Element => {
 
     React.useEffect(() => {
         if (paymentMethods) {
-            const defaultMethod = paymentMethods.find((payment) =>
-                props.editMode
-                    ? payment.method === props.value
-                    : payment.default === true
-            );
-            props.onChange(defaultMethod ? defaultMethod.method : txt.cash);
+            if (props.editMode) {
+                const match = paymentMethods.find((payment) => payment.method === props.value);
+                props.onChange(match ? match.method : txt.cash);
+            } else if (props.value === '') {
+                // nie nadpisujemy wyboru ustawionego z zewnątrz (np. wczytana ulubiona pozycja wydatku)
+                const defaultMethod = paymentMethods.find((payment) => payment.default === true);
+                props.onChange(defaultMethod ? defaultMethod.method : txt.cash);
+            }
         } else {
             if (props.value === '') { props.onChange(txt.cash) }
         }

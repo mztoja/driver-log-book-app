@@ -1,5 +1,5 @@
 import React from "react";
-import { AddExpenseData, ExpenseEnum, GeneralFormData } from "@/types";
+import { AddExpenseData, AddExpenseFavoriteData, ExpenseEnum, ExpenseFavoriteInterface, GeneralFormData } from "@/types";
 import { MainFormModal } from "../MainFormModal";
 import { ScrollView, View } from "react-native";
 import { STYLES } from "@/constants/STYLES";
@@ -16,6 +16,8 @@ import { ExpenseQuantityInput } from "@/components/inputs/finances/ExpenseQuanti
 import { UnitPriceInput } from "@/components/inputs/finances/UnitPriceInput";
 import { PaymentSelect } from "@/components/inputs/finances/PaymentSelect";
 import { OnOffSwitch } from "@/components/inputs/commons/OnOffSwitch";
+import { ExpenseFavorites } from "@/components/inputs/finances/ExpenseFavorites";
+import { MainFormButton } from "@/components/buttons/MainFormButton";
 import { COUNTRIES } from "@/constants/COUNTRIES";
 import { useGlobalState } from "@/hooks/useGlobalState";
 import { useAddExpenseMath } from "@/hooks/useExpenceMath";
@@ -43,6 +45,8 @@ export const ExpenseAdd: React.FC<Props> = (props: Props): JSX.Element => {
     const [foreignAmountMarker, setForeignAmountMarker] = React.useState<boolean>(false);
     const [unitPriceMarker, setUnitPriceMarker] = React.useState<boolean>(false);
     const [quantityMarker, setQuantityMarker] = React.useState<boolean>(false);
+    const [favoritesVisible, setFavoritesVisible] = React.useState<boolean>(false);
+    const [saveFavorite, setSaveFavorite] = React.useState<'false' | 'true'>('false');
 
     const txt = {
         title: {
@@ -55,6 +59,18 @@ export const ExpenseAdd: React.FC<Props> = (props: Props): JSX.Element => {
         def: getText('home', 'adblueRefuel'),
         actionAdd: getText('home', 'expenseAddAction'),
         success: getText('home', 'addedExpenseActionSuccess'),
+        favLoad: getText('home', 'expenseFavLoad'),
+        favSave: getText('home', 'expenseFavSave'),
+        favSaved: getText('home', 'expenseFavSaved'),
+    };
+
+    const applyFavorite = (fav: ExpenseFavoriteInterface): void => {
+        setForm('country', fav.country);
+        setForm('place', fav.place);
+        setForm('placeId', fav.placeId ? String(fav.placeId) : '0');
+        setForm('expenseItemDescription', fav.itemDescription);
+        setForm('payment', fav.payment);
+        setForm('expenseUnitPrice', fav.unitPrice != null ? String(fav.unitPrice) : '');
     };
 
     React.useEffect(() => {
@@ -115,6 +131,21 @@ export const ExpenseAdd: React.FC<Props> = (props: Props): JSX.Element => {
             .then((res) => {
                 if (res.success) {
                     showSnackbar(txt.success, 'success');
+                    if (saveFavorite === 'true' && props.expenseType === ExpenseEnum.standard) {
+                        const favoriteData: AddExpenseFavoriteData = {
+                            place: form.place,
+                            placeId: form.placeId !== '' ? form.placeId : '0',
+                            country: form.country,
+                            itemDescription,
+                            unitPrice: form.expenseUnitPrice !== '' ? form.expenseUnitPrice : '0',
+                            payment: form.payment,
+                        };
+                        fetchData(API_ENDPOINTS.addExpenseFavorite, { method: 'POST', sendData: favoriteData })
+                            .then((favRes) => {
+                                if (favRes.success) showSnackbar(txt.favSaved, 'success');
+                            });
+                        setSaveFavorite('false');
+                    }
                     props.setForm('expenseItemDescription', '');
                     props.setForm('expenseQuantity', '1');
                     props.setForm('expenseAmount', '');
@@ -135,6 +166,16 @@ export const ExpenseAdd: React.FC<Props> = (props: Props): JSX.Element => {
             <ScrollView style={STYLES.scrollView}>
                 <DateTimeInput value={form.date} onChange={(e) => setForm('date', e)} />
                 <OdometerInput value={form.odometer} onChange={(e) => setForm('odometer', e)} />
+                {expenseType === ExpenseEnum.standard && (
+                    <View style={{ marginVertical: 6 }}>
+                        <MainFormButton onPress={() => setFavoritesVisible(true)} text={txt.favLoad} />
+                    </View>
+                )}
+                <ExpenseFavorites
+                    visible={favoritesVisible}
+                    onClose={() => setFavoritesVisible(false)}
+                    onApply={applyFavorite}
+                />
                 <PlaceInput
                     place={form.place}
                     placeId={form.placeId}
@@ -199,6 +240,9 @@ export const ExpenseAdd: React.FC<Props> = (props: Props): JSX.Element => {
                     marker={setAmountMarker}
                 />
                 <NotesInput value={form.notes} onChange={(e) => setForm('notes', e)} />
+                {expenseType === ExpenseEnum.standard && (
+                    <OnOffSwitch value={saveFavorite} onChange={(e) => setSaveFavorite(e)} label={txt.favSave} />
+                )}
                 <SendButton onPress={send} text={txt.title} loading={loading} />
             </ScrollView>
         </MainFormModal>

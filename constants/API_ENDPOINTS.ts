@@ -94,5 +94,9 @@ const API_ENDPOINTS = {
     getFinancesByTourId: '/finances/getByTourId',
     getFinanceByLogId: '/finances/getByLogId',
     editFinance: '/finances/edit',
+    // expense favorites (ulubione wydatki)
+    getExpenseFavorites: '/expense-favorites',
+    addExpenseFavorite: '/expense-favorites/add',
+    deleteExpenseFavorite: '/expense-favorites/delete',
 }
 export default API_ENDPOINTS;

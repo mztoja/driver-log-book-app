@@ -5,3 +5,6 @@ export * from './AddPaymentData';
 export * from './DeletePaymentData';
 export * from './FinanceEditData';
 export * from './FinanceListResponse';
+export * from './ExpenseFavoriteInterface';
+export * from './AddExpenseFavoriteData';
+export * from './DeleteExpenseFavoriteData';

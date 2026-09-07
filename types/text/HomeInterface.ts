@@ -29,6 +29,12 @@ export interface Entries {
     paymentForeignCurrency: string;
     expenseAddAction: string;
     addedExpenseActionSuccess: string;
+    expenseFavSave: string;
+    expenseFavLoad: string;
+    expenseFavTitle: string;
+    expenseFavDelete: string;
+    expenseFavEmpty: string;
+    expenseFavSaved: string;
     loadingArrival: string;
     loadingArrivalAction: string;
     loadingArrivalSuccess: string;
