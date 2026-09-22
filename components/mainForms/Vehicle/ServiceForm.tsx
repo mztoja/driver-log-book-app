@@ -36,7 +36,7 @@ interface Props {
 export const ServiceForm: React.FC<Props> = (props: Props): JSX.Element => {
 
     const { form, setForm, serviceType } = props;
-    const { lang } = useGlobalState();
+    const { lang, activeTour } = useGlobalState();
     const { fetchData, loading } = useApi();
     const { showSnackbar } = useSnackbar();
 
@@ -111,6 +111,7 @@ export const ServiceForm: React.FC<Props> = (props: Props): JSX.Element => {
                     value={form.serviceVehicleId}
                     onChange={(e) => setForm('serviceVehicleId', e)}
                     vehicleType={vehicleType}
+                    currentRegistration={vehicleType === vehicleTypeEnum.trailer ? activeTour?.trailer : activeTour?.truck}
                 />
                 {isTruck &&
                     <OdometerInput value={form.odometer} onChange={(e) => setForm('odometer', e)} />

@@ -14,6 +14,7 @@ interface Props {
     value: string;
     onChange: (e: string) => void;
     vehicleType: vehicleTypeEnum;
+    currentRegistration?: string | null;
 }
 
 export const VehicleRegistrationSelect: React.FC<Props> = (props: Props): JSX.Element => {
@@ -33,7 +34,15 @@ export const VehicleRegistrationSelect: React.FC<Props> = (props: Props): JSX.El
         const endpoint = props.vehicleType === vehicleTypeEnum.trailer
             ? API_ENDPOINTS.getTrailersList
             : API_ENDPOINTS.getTrucksList;
-        fetchData<VehicleInterface[]>(endpoint, { setData });
+        fetchData<VehicleInterface[]>(endpoint, { setData }).then((res) => {
+            if (res.success && res.responseData && props.currentRegistration) {
+                const match = res.responseData.find((v) => (
+                    v.companyId === user?.companyId && v.registrationNr === props.currentRegistration
+                ));
+                if (match) props.onChange(match.id.toString());
+            }
+        });
+        // eslint-disable-next-line
     }, [props.vehicleType]);
 
     const list = (data ?? []).filter((v) => v.companyId === user?.companyId);
