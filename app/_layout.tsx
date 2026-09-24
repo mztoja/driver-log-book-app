@@ -58,6 +58,7 @@ const Stacks = () => {
             >
                 <Stack.Screen name="index" redirect={user !== null} options={{ headerShown: false }} />
                 <Stack.Screen name="register" redirect={user !== null} options={{ title: common[lang].registerPageTitle }} />
+                <Stack.Screen name="forgot-password" redirect={user !== null} options={{ title: common[lang].forgotPasswordTitle }} />
                 <Stack.Screen name="(tabs)" redirect={!user} options={{ headerShown: false }} />
                 <Stack.Screen
                     name="+not-found"

@@ -1,5 +1,6 @@
 import { DayInterface, LangInterface, LoadInterface, LogInterface, PaymentInterface, PlaceInterface, TourInterface, UserInterface, userLangEnum } from '@/types';
 import { Dispatch, createContext, useEffect, useState } from 'react';
+import { setCurrentLang } from '@/utils/currentLang';
 
 interface GlobalStateProviderProps {
     children: React.ReactNode;
@@ -52,6 +53,10 @@ export const GlobalStateProvider: React.FC<GlobalStateProviderProps> = ({ childr
     const [paymentMethods, setPaymentMethods] = useState<PaymentInterface[] | null>(null);
     const [activeTour, setActiveTour] = useState<TourInterface | null>(null);
     const [activeLoads, setActiveLoads] = useState<LoadInterface[] | null>(null);
+
+    // getText() bez `lang` czyta język z modułu – ustawiamy go jeszcze w trakcie renderu providera,
+    // żeby dzieci renderowane w tym samym przebiegu dostały już nowy język
+    setCurrentLang(lang);
 
 
     useEffect(() => {

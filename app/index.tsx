@@ -20,6 +20,8 @@ import storeToken from "@/utils/storeToken";
 import storeRefreshToken from "@/utils/storeRefreshToken";
 
 
+const FORGOT_PASSWORD_AFTER_ATTEMPTS = 3;
+
 const Login: React.FC = () => {
 
     const { colors } = useTheme();
@@ -27,6 +29,8 @@ const Login: React.FC = () => {
     const { loading, fetchData } = useApi();
     const { setUser } = useGlobalState();
 
+    // link do odzyskiwania hasła pokazujemy dopiero po kilku nieudanych próbach logowania
+    const [failedAttempts, setFailedAttempts] = useState<number>(0);
     const [loginForm, setLoginForm] = useState<LoginFormInterface>({
         email: '',
         password: '',
@@ -42,6 +46,9 @@ const Login: React.FC = () => {
     const send = (): void => {
         fetchData<LoginResponse>(API_ENDPOINTS.LOGIN, { method: 'POST', sendData: loginForm }, { showSnackbar })
             .then((res) => {
+                if (!res.success) {
+                    setFailedAttempts((prev) => prev + 1);
+                }
                 if (res.success && res.responseData) {
                     storeToken(res.responseData.accessToken);
                     storeRefreshToken(res.responseData.refreshToken);
@@ -74,6 +81,15 @@ const Login: React.FC = () => {
                     <EmailInput value={loginForm.email} onChange={(e) => updateForm('email', e)} />
                     <PasswordInput value={loginForm.password} onChange={(e) => updateForm('password', e)} />
                     <SendButton onPress={send} text={getText('common', 'logIn')} loading={loading} />
+                    {failedAttempts >= FORGOT_PASSWORD_AFTER_ATTEMPTS &&
+                        <ThemedText
+                            type="link"
+                            style={{ alignSelf: 'center' }}
+                            onPress={() => router.push({ pathname: '/forgot-password', params: { email: loginForm.email } })}
+                        >
+                            {getText('common', 'forgotPasswordQuestion')}
+                        </ThemedText>
+                    }
                 </View>
                 <View style={styles.bottomContainer}>
                     <ThemedText type="link" onPress={() => router.push('/register')}>{getText('common', 'register')}</ThemedText>

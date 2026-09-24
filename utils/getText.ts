@@ -7,7 +7,7 @@ import { tours } from "@/assets/text/tours";
 import { places } from "@/assets/text/places";
 import { vehicles } from "@/assets/text/vehicles";
 import { friends } from "@/assets/text/friends";
-import { useGlobalState } from "@/hooks/useGlobalState";
+import { getCurrentLang } from "@/utils/currentLang";
 import { CommonInterface, DtcErrorsInterface, LangInterface, CountriesInterface, InfoInterface, ToursInterface, PlacesInterface, VehiclesInterface, FriendsInterface } from "@/types";
 import { HomeInterface } from "@/types/text/HomeInterface";
 
@@ -38,7 +38,8 @@ interface GetText {
 
 export const getText: GetText = (group: Group, text: Text, langValue?: LangInterface, params?: string): string => {
 
-    const lang = langValue ? langValue : useGlobalState().lang;
+    // bez `lang` – bieżący język z modułu (nie hook: getText bywa wołany warunkowo i w handlerach)
+    const lang = langValue ? langValue : getCurrentLang();
 
     const entry = (() => {
         switch (group) {

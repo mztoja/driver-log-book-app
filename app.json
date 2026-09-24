@@ -40,7 +40,8 @@
         {
           "locationWhenInUsePermission": "Driver Logbook uses your location to fill in the current place of a log entry."
         }
-      ]
+      ],
+      "expo-sharing"
     ],
     "experiments": {
       "typedRoutes": true

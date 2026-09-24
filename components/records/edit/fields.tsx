@@ -59,16 +59,18 @@ export const TimeField: React.FC<{
     );
 };
 
-/** Zwykły tekstowy input z etykietą (nr rejestracyjny pojazdu itp.) */
+/** Zwykły tekstowy input z etykietą (nr rejestracyjny pojazdu itp.); `multiline` – z enterem */
 export const TextField: React.FC<{
     label: string;
     value: string;
     onChange: (e: string) => void;
-}> = ({ label, value, onChange }) => {
+    multiline?: boolean;
+}> = ({ label, value, onChange, multiline }) => {
     const { colors } = useTheme();
     return (
         <TextInput
-            style={[STYLES.textInput, { backgroundColor: colors.inputBackground }]}
+            multiline={multiline}
+            style={[STYLES.textInput, { backgroundColor: colors.inputBackground }, multiline && { minHeight: 90, maxHeight: 220 }]}
             theme={{ colors: { primary: colors.text } }}
             label={label}
             value={value}

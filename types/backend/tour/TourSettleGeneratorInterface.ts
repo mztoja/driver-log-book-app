@@ -1,0 +1,65 @@
+export interface TourSettleGeneratorLeg {
+  startCity: string;
+  startData: string;
+  startOdometer: string;
+  borderDate: string;
+  borderPlace: string;
+  stopCity: string;
+  stopData: string;
+  stopOdometer: string;
+  distance: string;
+  customer: string;
+}
+
+export interface TourSettleGeneratorInterface {
+  name1: string;
+  name2: string;
+  destonationCity: string;
+  truck: string;
+  trailer: string;
+  departureDate: string;
+  returnDate: string;
+  departureTime: string;
+  returnTime: string;
+  departureOdometer: string;
+  returnOdometer: string;
+  distance: string;
+  sci1: string;
+  sci2: string;
+  sci3: string;
+  sci4: string;
+  sci5: string;
+  sci6: string;
+  fuelConsumption: string;
+  fuelBefore: string;
+  fuelAfter: string;
+  routeNr: string;
+  fuel1Date: string;
+  fuel1City: string;
+  fuel1Odometer: string;
+  fuel1Value: string;
+  fuel2Date: string;
+  fuel2City: string;
+  fuel2Odometer: string;
+  fuel2Value: string;
+  fuel3Date: string;
+  fuel3City: string;
+  fuel3Odometer: string;
+  fuel3Value: string;
+  expence1: string;
+  expence2: string;
+  expence3: string;
+  expence4: string;
+  expence5: string;
+  expence6: string;
+  expence7: string;
+  expence8: string;
+  expence9: string;
+  expence10: string;
+  expence11: string;
+  expence12: string;
+  routes: TourSettleGeneratorLeg[];
+  refueled: string;
+  stops: string;
+  other: string;
+}

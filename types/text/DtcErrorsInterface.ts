@@ -7,6 +7,7 @@ interface Entries {
     registerResEmailExist: string;
     actionNoExist: string;
     registerResInvPassword: string;
+    invalidResetCode: string;
     registerCompanyNameNotExist: string;
     registerCompanyCityNotExist: string;
     trailerExist: string;

@@ -10,7 +10,8 @@ import { useGlobalState } from '@/hooks/useGlobalState';
 import { useSnackbar } from '@/hooks/useSnackbar';
 import API_ENDPOINTS from '@/constants/API_ENDPOINTS';
 import { getText } from '@/utils/getText';
-import { TourInterface, ToursInterface } from '@/types';
+import { TourInterface, TourSettleGeneratorInterface, ToursInterface } from '@/types';
+import { TourGeneratorModal } from '@/components/tours/TourGeneratorModal';
 import { formatDate } from '@/utils/formats/formatDate';
 import { formatOdometer } from '@/utils/formats/formatOdometer';
 import { formatWeight } from '@/utils/formats/formatWeight';
@@ -26,6 +27,8 @@ export default function TourDetailsScreen() {
     const { fetchData, loading } = useApi();
     const { showSnackbar } = useSnackbar();
     const [data, setData] = useState<TourInterface | null>(null);
+    const [generatorData, setGeneratorData] = useState<TourSettleGeneratorInterface | null>(null);
+    const [generatorLoading, setGeneratorLoading] = useState<boolean>(false);
 
     useFocusEffect(
         useCallback(() => {
@@ -35,6 +38,17 @@ export default function TourDetailsScreen() {
     );
 
     const t = (k: keyof ToursInterface['en']) => getText('tours', k, lang);
+
+    // jak front TourDetails: dane do rozliczenia z backendu -> okno edycji odcinków -> PDF
+    const openGenerator = (): void => {
+        setGeneratorLoading(true);
+        fetchData<TourSettleGeneratorInterface>(`${API_ENDPOINTS.generateSettlementRoute}/${id}`)
+            .then((res) => {
+                if (res.success && res.responseData) setGeneratorData(res.responseData);
+                else showSnackbar(t('generateError'), 'error');
+            })
+            .finally(() => setGeneratorLoading(false));
+    };
 
     if (!data) {
         return (
@@ -118,8 +132,11 @@ export default function TourDetailsScreen() {
                 <MainFormButton onPress={() => router.push(`/routes/${id}/days`)} text={t('showDays')} />
                 <MainFormButton onPress={() => router.push(`/routes/${id}/finances`)} text={t('showFinances')} />
                 <MainFormButton onPress={() => router.push(`/routes/${id}/loads`)} text={t('showLoads')} />
-                <MainFormButton onPress={() => showSnackbar(t('generateSoon'), 'info')} text={t('generate')} />
+                {generatorLoading
+                    ? <ActivityIndicator color={colors.text} />
+                    : <MainFormButton onPress={openGenerator} text={t('generate')} />}
             </View>
+            {generatorData && <TourGeneratorModal data={generatorData} onClose={() => setGeneratorData(null)} />}
         </ScrollView>
     );
 }

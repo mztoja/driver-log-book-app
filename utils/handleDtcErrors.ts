@@ -270,6 +270,11 @@ export const handleDtcErrors = (dtc: string, lang: LangInterface): HandleDtcErro
                 message: getText('dtcErrors', 'reverseGeocodeFailed', lang),
                 type: 'warning',
             }
+        case 'invalidResetCode':
+            return {
+                message: getText('dtcErrors', 'invalidResetCode', lang),
+                type: 'warning',
+            }
         case 'Unauthorized':
             return {
                 message: getText('dtcErrors', 'apiUnauthorized', lang),

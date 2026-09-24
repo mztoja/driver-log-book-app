@@ -8,6 +8,17 @@ interface Entries {
     profilePageTitle: string;
     notFoundPageTitle: string;
     registerPageTitle: string;
+    forgotPasswordQuestion: string;
+    forgotPasswordTitle: string;
+    forgotPasswordEmailInfo: string;
+    forgotPasswordSubmit: string;
+    forgotPasswordSent: string;
+    resetCodeLabel: string;
+    resetCodeSubmit: string;
+    resetCodeResend: string;
+    resetPasswordInfo: string;
+    resetPasswordSubmit: string;
+    resetPasswordSuccess: string;
     goToMainPage: string;
     logIn: string;
     register: string;
