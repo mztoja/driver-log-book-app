@@ -4,7 +4,7 @@ import { HelperText } from "react-native-paper";
 import { MainFormModal } from "../MainFormModal";
 import { STYLES } from "@/constants/STYLES";
 import { getText } from "@/utils/getText";
-import { GeneralFormData, LoadInterface, StopTourData } from "@/types";
+import { GeneralFormData, LoadInterface, LogInterface, StopTourData, TourInterface } from "@/types";
 import API_ENDPOINTS from "@/constants/API_ENDPOINTS";
 import { useApi } from "@/hooks/useApi";
 import { useSnackbar } from "@/hooks/useSnackbar";
@@ -16,6 +16,8 @@ import { NotesInput } from "@/components/inputs/commons/NotesInput";
 import { FuelInput } from "@/components/inputs/commons/FuelInput";
 import { SendButton } from "@/components/buttons/SendButton";
 import ConfirmModal from "@/components/ConfirmModal";
+import { formatOdometer } from "@/utils/formats/formatOdometer";
+import { formatFuelCombustion } from "@/utils/formats/formatFuelCombustion";
 
 interface Props {
     visible: boolean;
@@ -37,6 +39,7 @@ export const TourStopForm: React.FC<Props> = (props: Props): JSX.Element => {
     const [confirmVisible, setConfirmVisible] = useState<boolean>(false);
     const [confirmText, setConfirmText] = useState<string>('');
     const [, setNotUnloaded] = useState<LoadInterface[] | null>(null);
+    const [startOdometer, setStartOdometer] = useState<number | null>(null);
 
     const txt = {
         title: getText('home', 'tourStop', lang),
@@ -47,13 +50,28 @@ export const TourStopForm: React.FC<Props> = (props: Props): JSX.Element => {
         helper: getText('home', 'tourStopHelper1', lang),
     };
 
+    // formularz jest zamontowany na stałe na home – stan paliwa (uwzględniający tankowania z bieżącej
+    // sesji) i licznik startu trasy liczymy przy każdym otwarciu
     useEffect(() => {
-        if (activeTour) {
-            const proposed = (Number(activeTour.fuelStateBefore) + Number(activeTour.totalRefuel)) - Number(activeTour.burnedFuelComp);
+        if (!props.visible) return;
+        setStartOdometer(null);
+        (async () => {
+            // świeża trasa – tankowania dodane w tej sesji nie odświeżają activeTour w stanie globalnym
+            const tourRes = await fetchData<TourInterface>(API_ENDPOINTS.GET_ACTIVE_ROUTE, { setData: setActiveTour });
+            const tour = tourRes.responseData;
+            if (!tour) return;
+            const proposed = (Number(tour.fuelStateBefore) + Number(tour.totalRefuel)) - Number(tour.burnedFuelComp);
             setForm('fuelQuantity', proposed.toFixed(0));
-        }
+            const logRes = await fetchData<LogInterface>(`${API_ENDPOINTS.getLogById}/${tour.startLogId}`);
+            if (logRes.responseData) setStartOdometer(logRes.responseData.odometer);
+        })();
         // eslint-disable-next-line
-    }, []);
+    }, [props.visible]);
+
+    const distance = startOdometer !== null ? Number(form.odometer) - startOdometer : null;
+    const burnedFuel = activeTour
+        ? Number(activeTour.fuelStateBefore) - Number(form.fuelQuantity) + Number(activeTour.totalRefuel)
+        : 0;
 
     const submit = (): void => {
         fetchData<LoadInterface[]>(API_ENDPOINTS.GET_NOT_UNLOADED_LOADS, { setData: setNotUnloaded })
@@ -107,6 +125,13 @@ export const TourStopForm: React.FC<Props> = (props: Props): JSX.Element => {
                 <FuelInput value={form.fuelQuantity} onChange={(e) => setForm('fuelQuantity', e)} type="quantity" />
                 <HelperText type="info">{txt.helper}</HelperText>
                 <OdometerInput value={form.odometer} onChange={(e) => setForm('odometer', e)} />
+                {distance !== null &&
+                    <HelperText type="info">
+                        {getText('home', 'tourStopHelperDistance', lang, formatOdometer(distance))}
+                        {' '}
+                        {getText('home', 'tourStopHelperCombustion', lang, formatFuelCombustion(burnedFuel, distance))}
+                    </HelperText>
+                }
                 <PlaceInput
                     place={form.place}
                     placeId={form.placeId}

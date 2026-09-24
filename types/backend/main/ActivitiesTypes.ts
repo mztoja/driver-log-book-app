@@ -5,6 +5,7 @@ export type ActivitiesTypes =
   | 'dayStop'
   | 'borderCross'
   | 'anotherLog'
+  | 'addBreak'
   | 'attachTrailer'
   | 'detachTrailer'
   | 'loadingArrival'

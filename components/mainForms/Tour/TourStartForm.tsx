@@ -63,9 +63,17 @@ export const TourStartForm: React.FC<Props> = (props: Props): JSX.Element => {
         loadingCompletedAction: getText('home', 'loadingCompletedAction', lang),
         loadAddedBySystemNote: getText('home', 'loadAddedBySystemNote', lang),
         unloadNote: getText('home', 'finishTourUnloadNote', lang),
+        carriedDataError: getText('home', 'carriedDataError', lang),
     };
 
+    // formularz jest zamontowany na stałe na home – dane poprzedniej trasy pobieramy przy każdym otwarciu
     useEffect(() => {
+        if (!props.visible) return;
+        setAnswered(false);
+        setQueue([]);
+        setStepIdx(-1);
+        setCarriedLoads(null);
+        setPrevRoute(null);
         (async () => {
             const res = await fetchData<TourInterface>(API_ENDPOINTS.getPreviousRoute, { setData: setPrevRoute });
             const prev = res.responseData;
@@ -76,7 +84,7 @@ export const TourStartForm: React.FC<Props> = (props: Props): JSX.Element => {
                 setForm('truck', prev.truck.toString());
             }
 
-            const loadsRes = await fetchData<LoadInterface[]>(`${API_ENDPOINTS.getLoadingsByTourId}/${prev.id}`, { setData: setCarriedLoads });
+            const loadsRes = await fetchData<LoadInterface[]>(`${API_ENDPOINTS.getLoadingsByTourId}/${prev.id}`);
             const carried = (loadsRes.responseData ?? []).filter((l) =>
                 l.status === loadStatusEnum.unloaded &&
                 l.unloadingLogData?.type === logTypeEnum.finishUnloading &&
@@ -85,7 +93,7 @@ export const TourStartForm: React.FC<Props> = (props: Props): JSX.Element => {
             setCarriedLoads(carried);
         })();
         // eslint-disable-next-line
-    }, []);
+    }, [props.visible]);
 
     const buildQueue = (): QueueStep[] => {
         const q: QueueStep[] = [];
@@ -139,6 +147,7 @@ export const TourStartForm: React.FC<Props> = (props: Props): JSX.Element => {
                 odometer: form.odometer,
                 notes: txt.loadAddedBySystemNote,
                 action: txt.loadingCompletedAction,
+                loadNr: orig.loadNr.toString(),
                 vehicle: orig.vehicle,
                 senderId: orig.senderId.toString(),
                 receiverId: orig.receiverId.toString(),
@@ -160,7 +169,8 @@ export const TourStartForm: React.FC<Props> = (props: Props): JSX.Element => {
             await attachCarriedTrailer();
             await addCarriedLoads();
         } catch {
-            // brak przerwania – trasa już powstała
+            // brak przerwania – trasa już powstała, tylko informujemy
+            showSnackbar(txt.carriedDataError, 'warning');
         }
 
         props.setlastLogRefresh((prev) => !prev);

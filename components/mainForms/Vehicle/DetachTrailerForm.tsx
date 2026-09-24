@@ -28,8 +28,9 @@ interface Props {
 export const DetachTrailerForm: React.FC<Props> = (props: Props) => {
 
     const { form, setForm } = props;
-    const { lang, activeLoads, setActiveLoads, activeTour } = useGlobalState();
+    const { lang, setActiveLoads, activeTour } = useGlobalState();
     const [confirmVisible, setConfirmVisible] = useState<boolean>(false);
+    const [confirmText, setConfirmText] = useState<string>('');
     const { fetchData, loading } = useApi();
     const { showSnackbar } = useSnackbar();
     const txt = {
@@ -43,18 +44,14 @@ export const DetachTrailerForm: React.FC<Props> = (props: Props) => {
 
     const check = async (): Promise<void> => {
 
-        await fetchData<LoadInterface[]>(API_ENDPOINTS.GET_NOT_UNLOADED_LOADS, { setData: setActiveLoads });
-
-        if (!activeLoads?.length) {
-            send();
-            return;
-        }
-
-        const hasLoadOnTrailer = activeLoads.some(
+        // świeża lista z odpowiedzi – stan globalny zaktualizuje się dopiero po renderze
+        const res = await fetchData<LoadInterface[]>(API_ENDPOINTS.GET_NOT_UNLOADED_LOADS, { setData: setActiveLoads });
+        const loadsOnTrailer = (res.responseData ?? []).filter(
             load => load.vehicle === activeTour?.trailer
         );
 
-        if (hasLoadOnTrailer) {
+        if (loadsOnTrailer.length > 0) {
+            setConfirmText(getText('home', 'detachTrailerConfirm', lang, loadsOnTrailer.length.toString()));
             setConfirmVisible(true);
             return;
         }
@@ -64,6 +61,7 @@ export const DetachTrailerForm: React.FC<Props> = (props: Props) => {
 
 
     const send = (): void => {
+        setConfirmVisible(false);
 
         const sendData: DetachTrailerData = {
             date: props.form.date,
@@ -78,8 +76,9 @@ export const DetachTrailerForm: React.FC<Props> = (props: Props) => {
         fetchData(API_ENDPOINTS.DETACH_TRAILER, { method: 'POST', sendData }, { showSnackbar })
             .then((res) => {
                 if (res.success) {
-                    showSnackbar(getText('home', 'detachTrailerSuccess', lang, form.action), 'success');
+                    showSnackbar(getText('home', 'detachTrailerSuccess', lang), 'success');
                     props.setActiveTourRefresh((prev => !prev));
+                    props.setActiveLoadsRefresh((prev => !prev));
                     props.setlastLogRefresh((prev => !prev));
                     props.setVisible(false);
                 }
@@ -93,7 +92,7 @@ export const DetachTrailerForm: React.FC<Props> = (props: Props) => {
             setVisible={props.setVisible}
             title={txt.title}
         >
-            <ConfirmModal visible={confirmVisible} onCancel={cancel} onConfirm={send} />
+            <ConfirmModal visible={confirmVisible} text={confirmText} onCancel={cancel} onConfirm={send} />
             <ScrollView style={STYLES.scrollView}>
                 <DateTimeInput value={form.date} onChange={(e) => setForm('date', e)} />
                 <OdometerInput value={form.odometer} onChange={(e) => setForm('odometer', e)} />

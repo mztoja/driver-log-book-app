@@ -79,9 +79,11 @@ export const ExpenseAdd: React.FC<Props> = (props: Props): JSX.Element => {
     React.useEffect(() => {
         if (user && props.visible) {
             const find = COUNTRIES.find((country) => country.code === user.country);
+            // jak na froncie przy każdym otwarciu: przełącznik startuje od „nie",
+            // a włącza się sam, gdy waluta bieżącego kraju różni się od waluty użytkownika
+            setSwitchValue(find && find.currency !== user.currency ? 'true' : 'false');
             if (find) {
                 setForeignCurrency(find.currency);
-                if (find.currency !== user.currency) setSwitchValue('true');
             }
         }
         // eslint-disable-next-line

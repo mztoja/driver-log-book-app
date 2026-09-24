@@ -1,20 +1,31 @@
-import { Stack } from 'expo-router';
+import { Stack, router, type Href } from 'expo-router';
+import { HeaderBackButton } from 'expo-router/react-navigation';
 import { useTheme } from '@/hooks/useTheme';
 import { useGlobalState } from '@/hooks/useGlobalState';
 import { getText } from '@/utils/getText';
-import { SwitchTheme } from '@/components/SwitchTheme';
+import { HeaderRightButtons } from '@/components/HeaderRightButtons';
+import { StackHeader } from '@/components/StackHeader';
 
 export default function RecordsStackLayout() {
     const { colors } = useTheme();
     const { lang } = useGlobalState();
 
+    // Stack otwierany z home (ukryta karta) – pierwszy ekran nie ma domyślnej strzałki,
+    // więc zawsze pokazujemy własną: czyści stos i wraca na stronę główną.
+    const goHome = () => {
+        if (router.canDismiss()) router.dismissAll();
+        router.navigate('/home' as Href);
+    };
+
     return (
         <Stack
             screenOptions={{
+                header: (props) => <StackHeader {...props} />,
                 headerStyle: { backgroundColor: colors.headerBackground },
                 headerTitleStyle: { color: colors.text },
                 headerTintColor: colors.text,
-                headerRight: () => <SwitchTheme />,
+                headerRight: () => <HeaderRightButtons />,
+                headerLeft: (props) => <HeaderBackButton {...props} onPress={goHome} />,
                 contentStyle: { backgroundColor: colors.background },
             }}
         >

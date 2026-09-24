@@ -33,7 +33,7 @@ interface Props {
 export const LoadingCompleted: React.FC<Props> = (props: Props): JSX.Element => {
 
     const { form, setForm, visible, setVisible } = props;
-    const { user, activeTour } = useGlobalState();
+    const { user, activeTour, places } = useGlobalState();
     const [switchValue, setSwitchValue] = React.useState<'false' | 'true'>('true');
     const [senderCountry, setSenderCountry] = React.useState<string>(form.country);
     const [receiverCountry, setReceiverCountry] = React.useState<string>(form.country);
@@ -49,15 +49,30 @@ export const LoadingCompleted: React.FC<Props> = (props: Props): JSX.Element => 
         receiver: getText('home', 'loadingReceiver'),
     };
 
+    // formularz jest zamontowany na stałe na home – nadawcę (zaznaczony dojazd na załadunek
+    // albo bieżące miejsce) ustawiamy przy każdym otwarciu, jak front przy montażu
     React.useEffect(() => {
+        if (!visible) return;
+        setSwitchValue('true');
         if (user && user.markedArrive !== 0) {
             setForm('senderId', user.markedArrive.toString());
-            setForm('place', '');
-            setForm('placeId', user.markedArrive.toString());
         } else {
             setForm('senderId', form.placeId);
         }
-    }, []);
+        // eslint-disable-next-line
+    }, [visible]);
+
+    // Jak front: przy „miejsce załadunku = nadawca" wpis (miejsce + kraj) idzie na nadawcę
+    // i podąża za każdą zmianą nadawcy.
+    React.useEffect(() => {
+        if (!visible || switchValue !== 'true') return;
+        setForm('place', '');
+        setForm('placeId', form.senderId);
+        const senderPlace = places?.find((p) => p.id === Number(form.senderId));
+        const country = senderPlace?.country ?? senderCountry;
+        if (country) setForm('country', country);
+        // eslint-disable-next-line
+    }, [visible, switchValue, form.senderId, senderCountry]);
 
     const send = (): void => {
         const sendData: AddLoadingData = {

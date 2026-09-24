@@ -29,8 +29,8 @@ export interface RecordConfig<T> {
     endpoints: { tour: string; place?: string; all: string };
     /** czy tryby stronicowane pokazują wyszukiwarkę */
     searchable: boolean;
-    /** wiersz zwinięty */
-    renderSummary: (item: T) => React.ReactNode;
+    /** wiersz zwinięty; `list` = wszystkie wczytane wpisy (np. pauza liczona z sąsiedniego dnia) */
+    renderSummary: (item: T, list: T[]) => React.ReactNode;
     /** dodatkowa treść po rozwinięciu wiersza */
     renderDetails?: (item: T) => React.ReactNode;
     /** modal edycji – montowany gdy użytkownik kliknie „Edytuj" */
@@ -244,7 +244,7 @@ export function RecordList<T extends { id: number; tourId: number }>({ source, c
                                         {getText('places', 'logTour', lang)} {tourNr}
                                     </ThemedText>
                                 )}
-                                {config.renderSummary(item)}
+                                {config.renderSummary(item, items ?? [])}
 
                                 {expanded && (
                                     <View style={styles.details}>

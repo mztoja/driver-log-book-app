@@ -1,5 +1,5 @@
 import { View, StyleSheet, ScrollView, ImageBackground } from "react-native";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useTheme } from "@/hooks/useTheme";
 import { MainFormButton } from "@/components/buttons/MainFormButton";
 import { getText } from "@/utils/getText";
@@ -10,7 +10,7 @@ import { DayInterface, ExpenseEnum, GeneralFormData, LoadInterface, LogInterface
 import { useFocusEffect } from "expo-router";
 import { STYLES } from "@/constants/STYLES";
 import { ThemedText } from "@/components/ThemedText";
-import { NewDayForm, BorderCrossForm, AddLogForm, FinishDayForm, TourStartForm, TourStopForm, ServiceForm } from "@/components/mainForms";
+import { NewDayForm, BorderCrossForm, AddLogForm, AddBreakForm, FinishDayForm, TourStartForm, TourStopForm, ServiceForm } from "@/components/mainForms";
 import { useSnackbar } from "@/hooks/useSnackbar";
 import { ExpenseAdd } from "@/components/mainForms/Finances/ExpenseAdd";
 import { LoadingArrival } from "@/components/mainForms/Loadings/LoadingArrival";
@@ -20,6 +20,9 @@ import { UnloadingCompleted } from "@/components/mainForms/Loadings/UnloadingCom
 import { AttachTrailerForm } from "@/components/mainForms/Vehicle/AttachTrailerForm";
 import { DetachTrailerForm } from "@/components/mainForms/Vehicle/DetachTrailerForm";
 import { BrowseRecordsSection } from "@/components/records/BrowseRecordsSection";
+import { UserNotes } from "@/components/UserNotes";
+import { useKeyboardHeight } from "@/hooks/useKeyboardHeight";
+import { homeButtonOpacity, homeImageOpacity } from "@/utils/homeButtonOpacity";
 
 export default function Home() {
 
@@ -38,6 +41,7 @@ export default function Home() {
   const [tourStopVisible, setTourStopVisible] = useState<boolean>(false);
   const [borderCrossVisible, setBorderCrossVisible] = useState<boolean>(false);
   const [addLogVisible, setAddLogVisible] = useState<boolean>(false);
+  const [addBreakVisible, setAddBreakVisible] = useState<boolean>(false);
   const [expenceAddVisible, setExpenceAddVisible] = useState<boolean>(false);
   const [expenceType, setExpenceType] = useState<ExpenseEnum>(ExpenseEnum.standard);
   const [loadingArrivalVisible, setLoadingArrivalVisible] = useState<boolean>(false);
@@ -69,6 +73,11 @@ export default function Home() {
     cardTakeOut: 'false',
     driveTime: '',
     driveTime2: '',
+    breakTaken: '',
+    breakDriveTime: '',
+    breakOnlyBreak: 'false',
+    breakChangeToSlot1: 'false',
+    breakMyCardInSlot1: 'false',
     addNewBorder: 'false',
     description: '',
     quantity: '',
@@ -86,6 +95,7 @@ export default function Home() {
     serviceEntry: '',
     serviceType: '',
     serviceVehicleId: '',
+    serviceVehicleReg: '',
     serviceVehicleType: '',
   });
   const updateGeneralFormData = useCallback((key: keyof GeneralFormData, value: string): void => {
@@ -115,9 +125,33 @@ export default function Home() {
     detachTrailer: getText('home', 'detachTrailer', lang),
     addService: getText('home', 'addService', lang),
     addLubrication: getText('home', 'addLubrication', lang),
+    addBreak: getText('home', 'addBreak', lang),
+    driverChange: getText('home', 'driverChange', lang),
+    trailerExist: getText('home', 'trailerExist', lang),
+    noTrailer: getText('home', 'noTrailer', lang),
+    dayExistRegardRoute: getText('home', 'dayExistRegardRoute', lang),
   }
 
-  const imageOpacity = theme === 'dark' ? 0.5 : 1;
+  const imageOpacity = homeImageOpacity(theme);
+
+  // Notatki są na samym dole – przy edycji robimy miejsce na klawiaturę (edge-to-edge na Androidzie
+  // nie zmniejsza okna) i przewijamy do nich, żeby wpisywany tekst był widoczny.
+  const scrollRef = useRef<ScrollView>(null);
+  const keyboardHeight = useKeyboardHeight();
+  const [notesFocused, setNotesFocused] = useState<boolean>(false);
+  const keyboardSpace = notesFocused ? keyboardHeight : 0;
+
+  // także przy każdej zmianie wysokości treści (notatka rośnie przy pisaniu kolejnych linii)
+  const scrollToNotesIfEditing = (): void => {
+    if (keyboardSpace > 0) {
+      requestAnimationFrame(() => scrollRef.current?.scrollToEnd({ animated: true }));
+    }
+  };
+
+  useEffect(() => {
+    scrollToNotesIfEditing();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [keyboardSpace]);
 
   useFocusEffect(
     useCallback(() => {
@@ -167,8 +201,11 @@ export default function Home() {
   if (!activeTour) {
     return (
       <ScrollView
+        ref={scrollRef}
         style={[STYLES.scrollView, { backgroundColor: colors.background }]}
-        contentContainerStyle={styles.noTourContent}
+        contentContainerStyle={[styles.noTourContent, { paddingBottom: 30 + keyboardSpace }]}
+        keyboardShouldPersistTaps="handled"
+        onContentSizeChange={scrollToNotesIfEditing}
       >
         <TourStartForm
           visible={tourStartVisible}
@@ -179,16 +216,23 @@ export default function Home() {
           setActiveTourRefresh={setActiveTourRefresh}
           setActiveLoadsRefresh={setActiveLoadsRefresh}
         />
-        <View style={styles.tourStartOnly}>
+        <View style={[styles.tourStartOnly, { opacity: homeButtonOpacity(theme) }]}>
           <MainFormButton onPress={() => setTourStartVisible(true)} text={txt.tourStart} />
         </View>
         <BrowseRecordsSection />
+        <UserNotes onFocusChange={setNotesFocused} />
       </ScrollView>
     );
   }
 
   return (
-    <ScrollView style={[STYLES.scrollView, { backgroundColor: colors.background }]}>
+    <ScrollView
+      ref={scrollRef}
+      style={[STYLES.scrollView, { backgroundColor: colors.background }]}
+      contentContainerStyle={{ paddingBottom: keyboardSpace }}
+      keyboardShouldPersistTaps="handled"
+        onContentSizeChange={scrollToNotesIfEditing}
+    >
 
       <NewDayForm
         visible={newDayVisible}
@@ -228,6 +272,14 @@ export default function Home() {
         form={generalFormData}
         setForm={updateGeneralFormData}
         setlastLogRefresh={setLastLogRefresh}
+      />
+      <AddBreakForm
+        visible={addBreakVisible}
+        setVisible={setAddBreakVisible}
+        form={generalFormData}
+        setForm={updateGeneralFormData}
+        setlastLogRefresh={setLastLogRefresh}
+        setActiveDayRefresh={setActiveDayRefresh}
       />
       <ExpenseAdd
         visible={expenceAddVisible}
@@ -314,6 +366,12 @@ export default function Home() {
             <MainFormButton onPress={() => activeDay ? setFinishDayVisible(true) : showSnackbar(txt.dayNotExist, 'info')} text={txt.dayStop} />
           </View>
           <View style={styles.buttonView}>
+            <MainFormButton
+              onPress={() => activeDay ? setAddBreakVisible(true) : showSnackbar(txt.dayNotExist, 'info')}
+              text={activeDay?.doubleCrew ? txt.driverChange : txt.addBreak}
+            />
+          </View>
+          <View style={styles.buttonView}>
             <MainFormButton onPress={() => setBorderCrossVisible(true)} text={txt.crossBorder} />
           </View>
           <View style={styles.buttonView}>
@@ -375,10 +433,10 @@ export default function Home() {
         resizeMode="cover"
       >
         <View style={styles.buttonView}>
-          <MainFormButton onPress={() => setAttachTrailerVisible(true)} text={txt.attachTrailer} />
+          <MainFormButton onPress={() => activeTour?.trailer ? showSnackbar(txt.trailerExist, 'info') : setAttachTrailerVisible(true)} text={txt.attachTrailer} />
         </View>
         <View style={styles.buttonView}>
-          <MainFormButton onPress={() => setDetachTrailerVisible(true)} text={txt.detachTrailer} />
+          <MainFormButton onPress={() => activeTour?.trailer ? setDetachTrailerVisible(true) : showSnackbar(txt.noTrailer, 'info')} text={txt.detachTrailer} />
         </View>
         <View style={styles.buttonView}>
           <MainFormButton onPress={() => {
@@ -394,11 +452,13 @@ export default function Home() {
         </View>
       </ImageBackground>
 
-      <View style={styles.tourStopBottom}>
-        <MainFormButton onPress={() => setTourStopVisible(true)} text={txt.tourStop} />
+      <View style={[styles.tourStopBottom, { opacity: homeButtonOpacity(theme) }]}>
+        <MainFormButton onPress={() => activeDay ? showSnackbar(txt.dayExistRegardRoute, 'info') : setTourStopVisible(true)} text={txt.tourStop} />
       </View>
 
       <BrowseRecordsSection />
+
+      <UserNotes onFocusChange={setNotesFocused} />
 
     </ScrollView >
   );
@@ -407,7 +467,7 @@ export default function Home() {
 const styles = StyleSheet.create({
   imageBackground: {
     justifyContent: 'center',
-    height: 230,
+    minHeight: 230,
     width: '99%',
     padding: 5,
     marginVertical: 5,

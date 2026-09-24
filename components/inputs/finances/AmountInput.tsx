@@ -82,7 +82,12 @@ export const AmountInput: React.FC<Props> = (props: Props): JSX.Element => {
     }, [props.valueCurrency]);
 
     useEffect(() => {
-        if (!props.valueCurrency) {
+        // Jak front: waluta widoczna w polu musi trafić do formularza także wtedy, gdy przyszła
+        // jako wartość domyślna (np. waluta kraju przy płatności w obcej walucie) – inaczej
+        // do bazy poszedłby pusty string, dopóki użytkownik nie wybierze jej ręcznie.
+        if (props.valueCurrency) {
+            props.onChangeCurrency(props.valueCurrency);
+        } else {
             user ? props.onChangeCurrency(user.currency) : props.onChangeCurrency('EUR');
         }
     }, []);

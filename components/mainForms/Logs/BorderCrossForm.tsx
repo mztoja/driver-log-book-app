@@ -40,13 +40,13 @@ export const BorderCrossForm: React.FC<Props> = (props: Props) => {
             date: form.date,
             notes: form.notes,
             odometer: form.odometer,
-            action: getText('home', 'crossBorder', lang) + ': ' + user?.country + ' > ' + form.country,
+            action: getText('home', 'crossBorder', lang) + ' ' + user?.country + ' > ' + form.country,
             addNewBorder: form.addNewBorder,
         }
         fetchData(API_ENDPOINTS.CREATE_BORDER_CROSS, { method: 'POST', sendData }, { showSnackbar })
             .then((res) => {
                 if (res.success) {
-                    showSnackbar(sendData.action, 'success');
+                    showSnackbar(getText('home', 'borderCrossSuccess', lang), 'success');
                     props.setlastLogRefresh((prev => !prev));
                     props.setVisible(false);
                 }

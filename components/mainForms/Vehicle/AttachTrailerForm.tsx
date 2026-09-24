@@ -39,7 +39,7 @@ export const AttachTrailerForm: React.FC<Props> = (props: Props) => {
         if (form.trailer.length <= 3) {
             showSnackbar(txt.trailerNoValid, 'warning');
         } else {
-            setForm('trailer', form.trailer.replace(/\s/g, ''));
+            const trailer = form.trailer.replace(/\s/g, '');
             const sendData: AddLogData = {
                 date: props.form.date,
                 country: props.form.country,
@@ -47,12 +47,13 @@ export const AttachTrailerForm: React.FC<Props> = (props: Props) => {
                 placeId: props.form.placeId,
                 odometer: props.form.odometer,
                 notes: props.form.notes,
-                action: txt.attatchTrailerAction + ': ' + form.trailer,
+                action: txt.attatchTrailerAction + ': ' + trailer,
             };
             fetchData(API_ENDPOINTS.ATTACH_TRAILER, { method: 'POST', sendData }, { showSnackbar })
                 .then((res) => {
                     if (res.success) {
-                        showSnackbar(getText('home', 'attachTrailerSuccess', lang, form.action), 'success');
+                        showSnackbar(getText('home', 'attachTrailerSuccess', lang), 'success');
+                        setForm('trailer', '');
                         props.setActiveTourRefresh((prev => !prev));
                         props.setlastLogRefresh((prev => !prev));
                         props.setVisible(false);

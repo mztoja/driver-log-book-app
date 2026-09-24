@@ -4,6 +4,13 @@ const API_ENDPOINTS = {
     getPlace: '/places/getOne',
     createPlace: '/places/create',
     getCompanyList: '/places/companyList',
+    geocodeNextPlace: '/places/geocodeNext',
+    reverseGeocode: '/places/reverseGeocode',
+    // friends
+    getFriends: '/friends/get',
+    inviteFriend: '/friends/invite',
+    acceptFriendRequest: '/friends/accept',
+    declineFriendRequest: '/friends/decline',
     editPlace: '/places/edit',
     // routes
     GET_ACTIVE_ROUTE: '/tours/getActiveRoute',
@@ -30,9 +37,13 @@ const API_ENDPOINTS = {
     logout: '/auth/logout',
     markDepart: '/users/markDepart',
     userUpdate: '/users/userUpdate',
+    getUserNotes: '/user-notes',
+    saveUserNote: '/user-notes/save',
     // days
     START_NEW_DAY: '/days/create',
     FINISH_DAY: '/days/finish',
+    RESUME_DAY: '/days/resume',
+    ADD_BREAK: '/days/addBreak',
     GET_ACTIVE_DAY: '/days/getActiveDay',
     getLastDay: '/days/getLastDay',
     getYourLastDay: '/days/getYourLastDay',
@@ -70,6 +81,7 @@ const API_ENDPOINTS = {
     // services
     createService: '/services/create',
     getServiceByVehicleId: '/services/getByVehicleId',
+    getServiceByLogId: '/services/getByLogId',
     editService: '/services/edit',
     // loadings
     CREATE_LOAD: '/loads/create',

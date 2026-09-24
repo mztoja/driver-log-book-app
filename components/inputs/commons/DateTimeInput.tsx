@@ -3,7 +3,7 @@ import { useGlobalState } from '@/hooks/useGlobalState';
 import { useTheme } from '@/hooks/useTheme';
 import { getText } from '@/utils/getText';
 import { homeNow } from '@/utils/homeNow';
-import { placeTypeEnum } from '@/types';
+import { useBaseCountry } from '@/hooks/useBaseCountry';
 import React, { useEffect, useRef, useState } from 'react';
 import { View } from 'react-native';
 import { IconButton, TextInput } from 'react-native-paper';
@@ -23,14 +23,10 @@ interface Props {
 export const DateTimeInput: React.FC<Props> = (props: Props): JSX.Element => {
 
     const { colors } = useTheme();
-    const { lang, user, places } = useGlobalState();
-    // „godzina domowa" = czas kraju bazy z profilu (miejsce typu `base`, wskazywane przez user.companyId).
-    // Gdy jedziemy za granicą telefon może przestawić strefę, a do dziennika ma trafić czas bazy
-    // (w surowym formacie, bez konwersji stref). user.country to kraj BIEŻĄCY (zmienny na granicach) – tylko fallback.
-    const baseCountry =
-        places?.find((p) => p.id === user?.companyId)?.country ??
-        places?.find((p) => p.type === placeTypeEnum.base)?.country ??
-        user?.country;
+    const { lang } = useGlobalState();
+    // „godzina domowa" = czas kraju bazy z profilu. Gdy jedziemy za granicą telefon może przestawić
+    // strefę, a do dziennika ma trafić czas bazy (w surowym formacie, bez konwersji stref).
+    const baseCountry = useBaseCountry();
     const today = homeNow(baseCountry);
 
     // parsujemy komponenty daty wprost z tekstu, żeby uniknąć przesunięć stref

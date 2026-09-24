@@ -2,7 +2,8 @@ import { STYLES } from "@/constants/STYLES";
 import { useTheme } from "@/hooks/useTheme";
 import { getText } from "@/utils/getText";
 import { useEffect, useState } from "react";
-import { Dimensions, FlatList, Modal, TouchableOpacity, View, Text, KeyboardAvoidingView } from "react-native";
+import { Dimensions, FlatList, Modal, TouchableOpacity, View, Text, KeyboardAvoidingView, ActivityIndicator } from "react-native";
+import * as Location from "expo-location";
 import { HelperText, IconButton, TextInput } from "react-native-paper";
 import { ThemedText } from "../../ThemedText";
 import { PlaceInterface, placeTypeEnum } from "@/types";
@@ -10,6 +11,11 @@ import { useGlobalState } from "@/hooks/useGlobalState";
 import { useApi } from "@/hooks/useApi";
 import API_ENDPOINTS from "@/constants/API_ENDPOINTS";
 import { CountrySelect } from "../address/CountrySelect";
+import { useSnackbar } from "@/hooks/useSnackbar";
+import { distanceMeters } from "@/utils/distanceMeters";
+
+// promień, w którym bieżąca pozycja „trafia" w miejsce z listy adresowej
+const NEAR_PLACE_RADIUS_M = 500;
 
 interface Props {
     place: string;
@@ -29,6 +35,8 @@ export const PlaceInput: React.FC<Props> = (props: Props): JSX.Element => {
 
     const { places, setPlaces, lang } = useGlobalState();
     const { fetchData } = useApi();
+    const { showSnackbar } = useSnackbar();
+    const [locating, setLocating] = useState<boolean>(false);
     const [displayedText, setDisplayedText] = useState<string>('');
     const [filteredPlaces, setFilteredPlaces] = useState<PlaceInterface[]>([]);
     const [searchText, setSearchText] = useState<string>('');
@@ -52,6 +60,60 @@ export const PlaceInput: React.FC<Props> = (props: Props): JSX.Element => {
         // setDisplayedText(`${place.name} - ${place.street}, ${place.code} ${place.city}`);
         setModalVisible(false);
     }
+
+    // Pozycja GPS -> najbliższe miejsce z listy adresowej w promieniu 500 m (jeśli jest),
+    // a w przeciwnym razie backend ustala nazwę miejscowości (Nominatim) i wpisuje ją jako wolny tekst.
+    const locate = async (): Promise<void> => {
+        if (locating) return;
+        setLocating(true);
+        try {
+            const permission = await Location.requestForegroundPermissionsAsync();
+            if (permission.status !== 'granted') {
+                showSnackbar(getText('common', 'gpsPermissionDenied', lang), 'warning');
+                return;
+            }
+            let position: Location.LocationObject;
+            try {
+                position = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Balanced });
+            } catch {
+                showSnackbar(getText('common', 'gpsPositionError', lang), 'error');
+                return;
+            }
+            const { latitude, longitude } = position.coords;
+
+            if (!props.options?.withoutPlaceId) {
+                let nearest: { place: PlaceInterface; distance: number } | null = null;
+                (places ?? [])
+                    .filter((p) => Number(p.lat) > 0.001 && Number(p.lon) > 0.001)
+                    .forEach((p) => {
+                        const distance = distanceMeters(latitude, longitude, Number(p.lat), Number(p.lon));
+                        if (distance <= NEAR_PLACE_RADIUS_M && (!nearest || distance < nearest.distance)) {
+                            nearest = { place: p, distance };
+                        }
+                    });
+                if (nearest) {
+                    const { place, distance } = nearest as { place: PlaceInterface; distance: number };
+                    props.onChangeCountry(place.country);
+                    handlePlaceSelect(place.id);
+                    showSnackbar(getText('common', 'gpsNearestPlace', lang, `${place.name} - ${place.city} (${Math.round(distance)} m)`), 'success');
+                    return;
+                }
+            }
+
+            const res = await fetchData<{ place: string; country: string }>(
+                API_ENDPOINTS.reverseGeocode,
+                { method: 'POST', sendData: { lat: latitude, lon: longitude } },
+                { showSnackbar },
+            );
+            if (res.success && res.responseData) {
+                if (res.responseData.country) props.onChangeCountry(res.responseData.country);
+                writePlace(res.responseData.place);
+                showSnackbar(getText('common', 'gpsFoundPlace', lang, res.responseData.place), 'success');
+            }
+        } finally {
+            setLocating(false);
+        }
+    };
 
     const handleSelectButton = (): void => {
         setSearchText(props.place);
@@ -141,6 +203,16 @@ export const PlaceInput: React.FC<Props> = (props: Props): JSX.Element => {
                     </HelperText>
                 }
                 <View style={STYLES.iconInputWrapper}>
+                    {!choosed && !props.options?.disablePlaceText && (locating
+                        ? <ActivityIndicator style={{ marginHorizontal: 12 }} color={colors.text} />
+                        : <IconButton
+                            icon="crosshairs-gps"
+                            size={24}
+                            iconColor={colors.actionIcon}
+                            accessibilityLabel={getText('common', 'gpsLocate', lang)}
+                            onPress={locate}
+                        />
+                    )}
                     {choosed &&
                         <IconButton
                             icon="check-bold"

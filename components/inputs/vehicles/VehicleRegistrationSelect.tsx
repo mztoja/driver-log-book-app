@@ -15,6 +15,8 @@ interface Props {
     onChange: (e: string) => void;
     vehicleType: vehicleTypeEnum;
     currentRegistration?: string | null;
+    // numer rejestracyjny wybranego pojazdu (jak front) – np. do treści wpisu serwisowego
+    onRegistrationChange?: (registration: string) => void;
 }
 
 export const VehicleRegistrationSelect: React.FC<Props> = (props: Props): JSX.Element => {
@@ -47,6 +49,11 @@ export const VehicleRegistrationSelect: React.FC<Props> = (props: Props): JSX.El
 
     const list = (data ?? []).filter((v) => v.companyId === user?.companyId);
     const selected = list.find((v) => v.id.toString() === props.value);
+
+    useEffect(() => {
+        props.onRegistrationChange?.(selected ? selected.registrationNr : '');
+        // eslint-disable-next-line
+    }, [selected?.registrationNr]);
 
     const handleSelect = (id: number): void => {
         props.onChange(id.toString());

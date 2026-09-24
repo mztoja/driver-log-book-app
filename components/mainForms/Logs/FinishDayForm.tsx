@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { STYLES } from '@/constants/STYLES';
 import { ScrollView } from 'react-native';
 import { getText } from '@/utils/getText';
@@ -13,8 +14,10 @@ import { OnOffSwitch } from '@/components/inputs/commons/OnOffSwitch';
 import API_ENDPOINTS from '@/constants/API_ENDPOINTS';
 import { useSnackbar } from '@/hooks/useSnackbar';
 import { DriveTimeInput } from '@/components/inputs/commons/DriveTimeInput';
+import { AddDurationSwitch } from '@/components/inputs/commons/AddDurationSwitch';
 import { useGlobalState } from '@/hooks/useGlobalState';
 import { FuelInput } from '@/components/inputs/commons/FuelInput';
+import { extractTime } from '@/utils/extractTime';
 
 interface Props {
     visible: boolean;
@@ -27,16 +30,36 @@ interface Props {
 
 export const FinishDayForm = (props: Props) => {
 
-    const { form, setForm } = props;
+    const { form, setForm, visible } = props;
     const { fetchData, loading } = useApi();
     const { showSnackbar } = useSnackbar();
-    const { activeDay } = useGlobalState();
+    const { lang, activeDay, setActiveDay } = useGlobalState();
     const txt = {
-        title: getText('home', 'dayStop'),
-        cardTakeOut: getText('common', 'cardTakeOut'),
-        finishedDayAction: getText('home', 'finishedDayAction'),
-        finishedDayActionCardTakeOut: getText('home', 'finishedDayActionCardTakeOut'),
-    }
+        title: getText('home', 'dayStop', lang),
+        cardTakeOut: getText('common', 'cardTakeOut', lang),
+        finishedDayAction: getText('home', 'finishedDayAction', lang),
+        finishedDayActionCardTakeOut: getText('home', 'finishedDayActionCardTakeOut', lang),
+        finishedDay: getText('home', 'finishedDay', lang),
+        addDriveTimeSwitch: getText('home', 'addDriveTimeSwitch', lang),
+        addDriveTimeLabel: getText('home', 'addDriveTimeLabel', lang),
+    };
+
+    // Dzień mógł być wcześniej wznowiony po krótkiej przerwie (zob. NewDayForm) — driveTime/
+    // driveTime2/fuelBurned zapisane wtedy na dniu to wartości sprzed przerwy. Podpowiadamy je przy
+    // otwarciu, żeby użytkownik doliczył do nich nowy odcinek zamiast wpisać tylko sam nowy fragment.
+    useEffect(() => {
+        if (!visible || !activeDay) return;
+        if (activeDay.driveTime && activeDay.driveTime !== '00:00:00') {
+            setForm('driveTime', extractTime(activeDay.driveTime));
+        }
+        if (activeDay.driveTime2 && activeDay.driveTime2 !== '00:00:00') {
+            setForm('driveTime2', extractTime(activeDay.driveTime2));
+        }
+        if (Number(activeDay.fuelBurned) > 0) {
+            setForm('fuelCombustion', activeDay.fuelBurned.toString());
+        }
+        // eslint-disable-next-line
+    }, [visible]);
 
     const send = (): void => {
         const sendData: StopDayData = {
@@ -51,17 +74,21 @@ export const FinishDayForm = (props: Props) => {
             driveTime: form.driveTime,
             driveTime2: form.driveTime2,
             action: txt.finishedDayAction + ' ' + (form.cardTakeOut === 'true' ? txt.finishedDayActionCardTakeOut : ''),
-        }
+        };
         fetchData(API_ENDPOINTS.FINISH_DAY, { method: 'POST', sendData }, { showSnackbar })
             .then((res) => {
                 if (res.success) {
-                    showSnackbar(sendData.action, 'success');
+                    showSnackbar(txt.finishedDay, 'success');
+                    setActiveDay(null);
+                    setForm('fuelCombustion', '');
+                    setForm('driveTime', '');
+                    setForm('driveTime2', '');
                     props.setlastLogRefresh((prev => !prev));
                     props.setActiveDayRefresh((prev => !prev));
                     props.setVisible(false);
                 }
             });
-    }
+    };
 
     return (
         <MainFormModal
@@ -79,22 +106,36 @@ export const FinishDayForm = (props: Props) => {
                     country={form.country}
                     onChangeCountry={(e) => setForm('country', e)}
                 />
-                <FuelInput
-                    value={form.fuelCombustion}
-                    onChange={(e) => setForm('fuelCombustion', e)}
-                    type='combustion'
+                <AddDurationSwitch
+                    value={form.driveTime}
+                    onChange={(v) => setForm('driveTime', v)}
+                    switchLabel={txt.addDriveTimeSwitch}
+                    addLabel={txt.addDriveTimeLabel}
                 />
                 <DriveTimeInput
                     value={form.driveTime}
                     onChange={(e) => setForm('driveTime', e)}
                 />
                 {activeDay?.doubleCrew &&
-                    <DriveTimeInput
-                        value={form.driveTime2}
-                        onChange={(e) => setForm('driveTime2', e)}
-                        secDriver
-                    />
+                    <>
+                        <AddDurationSwitch
+                            value={form.driveTime2}
+                            onChange={(v) => setForm('driveTime2', v)}
+                            switchLabel={txt.addDriveTimeSwitch}
+                            addLabel={txt.addDriveTimeLabel}
+                        />
+                        <DriveTimeInput
+                            value={form.driveTime2}
+                            onChange={(e) => setForm('driveTime2', e)}
+                            secDriver
+                        />
+                    </>
                 }
+                <FuelInput
+                    value={form.fuelCombustion}
+                    onChange={(e) => setForm('fuelCombustion', e)}
+                    type='combustion'
+                />
                 {activeDay?.cardState === dayCardStateEnum.inserted &&
                     <OnOffSwitch
                         value={form.cardTakeOut}
@@ -102,8 +143,8 @@ export const FinishDayForm = (props: Props) => {
                         label={txt.cardTakeOut}
                     />
                 }
-                <DateTimeInput value={form.date} onChange={(e) => setForm('date', e)} />
                 <NotesInput value={form.notes} onChange={(e) => setForm('notes', e)} />
+                <DateTimeInput value={form.date} onChange={(e) => setForm('date', e)} />
                 <SendButton onPress={send} text={txt.title} loading={loading} />
             </ScrollView>
         </MainFormModal>

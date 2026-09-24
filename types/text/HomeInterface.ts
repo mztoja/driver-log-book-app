@@ -86,9 +86,41 @@ export interface Entries {
     addService: string;
     addLubrication: string;
     addServiceSuccess: string;
-    addServiceAction: string;
+    addServiceAction(x: string): string;
     chooseServicedVehicle: string;
     noServiceEntry: string;
+    startedDay: string;
+    finishedDay: string;
+    borderCrossSuccess: string;
+    trailerExist: string;
+    noTrailer: string;
+    dayExistRegardRoute: string;
+    detachTrailerConfirm(x: string): string;
+    tourStopHelperDistance(x: string): string;
+    tourStopHelperCombustion(x: string): string;
+    resumeDayButton: string;
+    resumeDayConfirm(x: string): string;
+    resumedDay: string;
+    resumeDayAction: string;
+    addBreak: string;
+    driverChange: string;
+    addBreakSuccess: string;
+    addBreakAction(x: string): string;
+    changeSlot1Action: string;
+    changeSlot2Action: string;
+    breakTakenLabel: string;
+    breakDriveTimeLabel: string;
+    breakDriveTimeHelper: string;
+    addDriveTimeSwitch: string;
+    addDriveTimeLabel: string;
+    breakOnlyBreakSwitch: string;
+    changeToSlot1: string;
+    changeToSlot2: string;
+    myCardInSlot1: string;
+    carriedDataError: string;
+    userNotes: string;
+    notesHistory: string;
+    notesHistoryTitle: string;
 }
 
 export interface HomeInterface {

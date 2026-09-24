@@ -28,6 +28,10 @@ interface Entries {
     break11HourEnd: string;
     breakOver: string;
     breakIn: string;
+    workTimeGaugeLabel: string;
+    edit: string;
+    showVehicleDetails: string;
+    addVehicleHint: string;
     carriedLoads: string;
     // etykiety szczegółów pojazdu
     model: string;

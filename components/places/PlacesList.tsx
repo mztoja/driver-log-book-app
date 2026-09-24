@@ -1,12 +1,11 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import { View, StyleSheet, FlatList, Pressable, Linking, ActivityIndicator, RefreshControl } from 'react-native';
-import { useFocusEffect, router } from 'expo-router';
+import { View, StyleSheet, FlatList, Pressable, ActivityIndicator, RefreshControl } from 'react-native';
+import { useFocusEffect } from 'expo-router';
 import { Icon, IconButton, TextInput } from 'react-native-paper';
 import { ThemedText } from '@/components/ThemedText';
 import { useTheme } from '@/hooks/useTheme';
 import { useApi } from '@/hooks/useApi';
 import { useGlobalState } from '@/hooks/useGlobalState';
-import { useSnackbar } from '@/hooks/useSnackbar';
 import { getText } from '@/utils/getText';
 import { formatCountry } from '@/utils/formats/formatCountry';
 import API_ENDPOINTS from '@/constants/API_ENDPOINTS';
@@ -15,16 +14,12 @@ import { STYLES } from '@/constants/STYLES';
 import { PlaceTypeSelect } from '@/components/places/PlaceTypeSelect';
 import { CountrySelect } from '@/components/inputs/address/CountrySelect';
 import { PlaceFormModal } from '@/components/places/PlaceFormModal';
-
-const openMaps = (query: string): void => {
-    Linking.openURL(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`);
-};
+import { PlaceDetailContent } from '@/components/places/PlaceDetailContent';
 
 export const PlacesList: React.FC = (): JSX.Element => {
     const { colors } = useTheme();
     const { fetchData, loading } = useApi();
-    const { showSnackbar } = useSnackbar();
-    const { lang, user, setUser, places, setPlaces } = useGlobalState();
+    const { lang, user, places, setPlaces } = useGlobalState();
 
     const t = (k: keyof PlacesInterface['en']) => getText('places', k, lang);
 
@@ -65,17 +60,6 @@ export const PlacesList: React.FC = (): JSX.Element => {
             return true;
         });
     }, [places, search, filterCountry, filterType]);
-
-    const markPlace = (place: PlaceInterface): void => {
-        fetchData(API_ENDPOINTS.markDepart, { method: 'PATCH', sendData: { placeId: place.id } }).then((res) => {
-            if (res.success) {
-                showSnackbar(`${t('markedSuccess')} ${place.name} - ${place.city}`, 'success');
-                if (user) setUser({ ...user, markedDepart: place.id });
-            } else {
-                showSnackbar(t('markedError'), 'warning');
-            }
-        });
-    };
 
     const typeName = (type: number): string =>
         getText('common', `placeType${type}` as keyof CommonInterface['en'], lang);
@@ -173,49 +157,7 @@ export const PlacesList: React.FC = (): JSX.Element => {
 
                             {expanded && (
                                 <View style={styles.details}>
-                                    {hasGps && (
-                                        <ThemedText style={styles.dim}>
-                                            {t('gps')}: {item.lat}, {item.lon}
-                                        </ThemedText>
-                                    )}
-                                    {!!item.description && (
-                                        <ThemedText style={styles.desc}>{item.description}</ThemedText>
-                                    )}
-
-                                    <View style={styles.actions}>
-                                        <ActionRow
-                                            icon="directions"
-                                            label={`${t('openInMaps')}`}
-                                            color={colors.actionIcon}
-                                            onPress={() => openMaps(`${item.street} ${item.code} ${item.city} ${item.country}`)}
-                                        />
-                                        {hasGps && (
-                                            <ActionRow
-                                                icon="crosshairs-gps"
-                                                label={t('openGps')}
-                                                color={colors.actionIcon}
-                                                onPress={() => openMaps(`${item.lat}, ${item.lon}`)}
-                                            />
-                                        )}
-                                        <ActionRow
-                                            icon="navigation-variant"
-                                            label={t('markAsDestination')}
-                                            color={colors.actionIcon}
-                                            onPress={() => markPlace(item)}
-                                        />
-                                        <ActionRow
-                                            icon="pencil"
-                                            label={t('edit')}
-                                            color={colors.actionIcon}
-                                            onPress={() => setEditPlace(item)}
-                                        />
-                                        <ActionRow
-                                            icon="clipboard-text-outline"
-                                            label={t('showActivities')}
-                                            color={colors.actionIcon}
-                                            onPress={() => router.push(`/places/${item.id}/logs`)}
-                                        />
-                                    </View>
+                                    <PlaceDetailContent place={item} onEdit={setEditPlace} />
                                 </View>
                             )}
                         </Pressable>
@@ -233,21 +175,6 @@ export const PlacesList: React.FC = (): JSX.Element => {
                 onPress={() => setAddVisible(true)}
             />
         </View>
-    );
-};
-
-const ActionRow: React.FC<{ icon: string; label: string; color: string; onPress: () => void }> = ({
-    icon,
-    label,
-    color,
-    onPress,
-}) => {
-    const { colors } = useTheme();
-    return (
-        <Pressable onPress={onPress} style={styles.actionRow}>
-            <Icon source={icon} size={20} color={color} />
-            <ThemedText style={{ color: colors.text }}>{label}</ThemedText>
-        </Pressable>
     );
 };
 
@@ -270,8 +197,5 @@ const styles = StyleSheet.create({
         borderTopColor: 'rgba(128,128,128,0.4)',
         gap: 6,
     },
-    desc: { opacity: 0.9 },
-    actions: { marginTop: 4, gap: 2 },
-    actionRow: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 8 },
     fab: { position: 'absolute', right: 16, bottom: 24, borderRadius: 30 },
 });

@@ -16,6 +16,15 @@ interface Entries {
     password: string;
     passwordHelper: string;
     language: string;
+    fuelConsumptionType: string;
+    fuelConType1: string;
+    fuelConType2: string;
+    profileSave: string;
+    profileSaved: string;
+    profileNoChanges: string;
+    currencyLockedHelper: string;
+    logout: string;
+    logoutConfirm: string;
     companyName: string;
     companyNameHelper: string;
     street: string;
@@ -51,6 +60,11 @@ interface Entries {
     place: string;
     placeHelper: string;
     choosePlace: string;
+    gpsLocate: string;
+    gpsPermissionDenied: string;
+    gpsPositionError: string;
+    gpsNearestPlace(x: string): string;
+    gpsFoundPlace(x: string): string;
     placeType: string;
     placeType0: string;
     placeType1: string;

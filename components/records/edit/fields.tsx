@@ -85,7 +85,8 @@ export const LogFieldset: React.FC<{
     value: LogEditData;
     onChange: (key: keyof LogEditData, value: string) => void;
     showActivity?: boolean;
-}> = ({ title, value, onChange, showActivity }) => (
+    hideOdometer?: boolean;
+}> = ({ title, value, onChange, showActivity, hideOdometer }) => (
     <View>
         {title ? (
             <ThemedText type="defaultSemiBold" style={styles.sectionTitle}>
@@ -93,7 +94,7 @@ export const LogFieldset: React.FC<{
             </ThemedText>
         ) : null}
         <DateTimeInput value={value.date} initialValue={value.date} onChange={(e) => onChange('date', e)} />
-        <OdometerInput value={value.odometer} onChange={(e) => onChange('odometer', e)} disableHelper />
+        {!hideOdometer && <OdometerInput value={value.odometer} onChange={(e) => onChange('odometer', e)} disableHelper />}
         <PlaceInput
             place={value.place}
             placeId={value.placeId}

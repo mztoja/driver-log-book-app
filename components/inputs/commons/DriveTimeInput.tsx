@@ -10,6 +10,8 @@ interface Props {
     value: string;
     onChange: (e: string) => void;
     secDriver?: boolean;
+    label?: string;
+    helperText?: string;
 }
 
 export const DriveTimeInput: React.FC<Props> = (props: Props): JSX.Element => {
@@ -33,16 +35,18 @@ export const DriveTimeInput: React.FC<Props> = (props: Props): JSX.Element => {
                         primary: colors.text,
                     }
                 }}
-                label={props.secDriver ? getText('common', 'driveTime2') : getText('common', 'driveTime')}
+                label={props.label ?? (props.secDriver ? getText('common', 'driveTime2') : getText('common', 'driveTime'))}
                 value={props.value}
                 onChangeText={onChange}
                 textColor={colors.text}
                 placeholderTextColor={colors.text}
                 keyboardType='numeric'
             />
-            <HelperText type="info">
-                {props.secDriver ? getText('common', 'driveTimeHelper2') : getText('common', 'driveTimeHelper')}
-            </HelperText>
+            {props.helperText !== '' &&
+                <HelperText type="info">
+                    {props.helperText ?? (props.secDriver ? getText('common', 'driveTimeHelper2') : getText('common', 'driveTimeHelper'))}
+                </HelperText>
+            }
         </View>
     );
 }

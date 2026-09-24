@@ -1,4 +1,4 @@
-import { COLORS } from '@/constants/COLORS';
+import { COLORS } from '@/constants/Colors';
 import React, { createContext, useState } from 'react';
 import { useColorScheme } from 'react-native';
 

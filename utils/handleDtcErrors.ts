@@ -240,6 +240,36 @@ export const handleDtcErrors = (dtc: string, lang: LangInterface): HandleDtcErro
                 message: getText('dtcErrors', 'cannotEditSettledTourData', lang),
                 type: 'warning',
             }
+        case 'friendUserNotFound':
+            return {
+                message: getText('dtcErrors', 'friendUserNotFound', lang),
+                type: 'warning',
+            }
+        case 'friendCannotInviteSelf':
+            return {
+                message: getText('dtcErrors', 'friendCannotInviteSelf', lang),
+                type: 'warning',
+            }
+        case 'friendAlreadyExists':
+            return {
+                message: getText('dtcErrors', 'friendAlreadyExists', lang),
+                type: 'warning',
+            }
+        case 'friendNotFound':
+            return {
+                message: getText('dtcErrors', 'friendNotFound', lang),
+                type: 'warning',
+            }
+        case 'friendEmailInvalid':
+            return {
+                message: getText('dtcErrors', 'friendEmailInvalid', lang),
+                type: 'warning',
+            }
+        case 'reverseGeocodeFailed':
+            return {
+                message: getText('dtcErrors', 'reverseGeocodeFailed', lang),
+                type: 'warning',
+            }
         case 'Unauthorized':
             return {
                 message: getText('dtcErrors', 'apiUnauthorized', lang),

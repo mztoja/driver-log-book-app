@@ -18,6 +18,11 @@ export interface GeneralFormData {
   cardTakeOut: 'false' | 'true';
   driveTime: string;
   driveTime2: string;
+  breakTaken: string;
+  breakDriveTime: string;
+  breakOnlyBreak: 'false' | 'true';
+  breakChangeToSlot1: 'false' | 'true';
+  breakMyCardInSlot1: 'false' | 'true';
   addNewBorder: 'false' | 'true';
   description: string;
   quantity: string;
@@ -33,6 +38,7 @@ export interface GeneralFormData {
   expenseForeignAmount: string;
   expenseForeignCurrency: string;
   serviceVehicleId: string;
+  serviceVehicleReg: string;
   serviceType: string;
   serviceEntry: string;
   serviceVehicleType: string;

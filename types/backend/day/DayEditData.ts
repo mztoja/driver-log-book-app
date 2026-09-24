@@ -9,8 +9,6 @@ export interface DayEditData {
   distance: string;
   driveTime: string;
   driveTime2: string;
-  workTime: string;
-  breakTime: string;
   fuelBurned: string;
   doubleCrew: 'true' | 'false';
 }

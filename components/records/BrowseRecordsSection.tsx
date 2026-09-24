@@ -4,6 +4,8 @@ import { router, type Href } from 'expo-router';
 import { ThemedText } from '@/components/ThemedText';
 import { MainFormButton } from '@/components/buttons/MainFormButton';
 import { useGlobalState } from '@/hooks/useGlobalState';
+import { useTheme } from '@/hooks/useTheme';
+import { homeButtonOpacity } from '@/utils/homeButtonOpacity';
 import { getText } from '@/utils/getText';
 
 /**
@@ -12,6 +14,8 @@ import { getText } from '@/utils/getText';
  */
 export const BrowseRecordsSection: React.FC = (): JSX.Element => {
     const { lang } = useGlobalState();
+    const { theme } = useTheme();
+    const buttonStyle = [styles.button, { opacity: homeButtonOpacity(theme) }];
     const t = (k: 'browseRecords' | 'showLogs' | 'showDays' | 'showFinances' | 'showLoads') =>
         getText('tours', k, lang);
 
@@ -20,16 +24,16 @@ export const BrowseRecordsSection: React.FC = (): JSX.Element => {
             <ThemedText type="subtitle" style={styles.title}>
                 {t('browseRecords')}
             </ThemedText>
-            <View style={styles.button}>
+            <View style={buttonStyle}>
                 <MainFormButton onPress={() => router.push('/records/logs' as Href)} text={t('showLogs')} />
             </View>
-            <View style={styles.button}>
+            <View style={buttonStyle}>
                 <MainFormButton onPress={() => router.push('/records/days' as Href)} text={t('showDays')} />
             </View>
-            <View style={styles.button}>
+            <View style={buttonStyle}>
                 <MainFormButton onPress={() => router.push('/records/finances' as Href)} text={t('showFinances')} />
             </View>
-            <View style={styles.button}>
+            <View style={buttonStyle}>
                 <MainFormButton onPress={() => router.push('/records/loads' as Href)} text={t('showLoads')} />
             </View>
         </View>

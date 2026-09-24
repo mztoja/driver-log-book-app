@@ -44,7 +44,6 @@ export const ServiceForm: React.FC<Props> = (props: Props): JSX.Element => {
 
     const txt = {
         title: isLube ? getText('home', 'addLubrication', lang) : getText('home', 'addService', lang),
-        action: getText('home', 'addServiceAction', lang),
         success: getText('home', 'addServiceSuccess', lang),
         lubrication: getText('home', 'addLubrication', lang),
         chooseVehicle: getText('home', 'chooseServicedVehicle', lang),
@@ -76,7 +75,7 @@ export const ServiceForm: React.FC<Props> = (props: Props): JSX.Element => {
             placeId: form.placeId,
             odometer: isTruck ? form.odometer : '0',
             notes: form.notes,
-            action: txt.action,
+            action: getText('home', 'addServiceAction', lang, form.serviceVehicleReg),
             serviceVehicleId: form.serviceVehicleId,
             serviceType: isLube ? serviceTypeEnum.maintenance.toString() : form.serviceType,
             serviceEntry: entryValue,
@@ -88,6 +87,7 @@ export const ServiceForm: React.FC<Props> = (props: Props): JSX.Element => {
                     props.setlastLogRefresh((prev) => !prev);
                     setForm('notes', '');
                     setForm('serviceEntry', '');
+                    setForm('serviceVehicleReg', '');
                     props.setVisible(false);
                 }
             });
@@ -112,6 +112,7 @@ export const ServiceForm: React.FC<Props> = (props: Props): JSX.Element => {
                     onChange={(e) => setForm('serviceVehicleId', e)}
                     vehicleType={vehicleType}
                     currentRegistration={vehicleType === vehicleTypeEnum.trailer ? activeTour?.trailer : activeTour?.truck}
+                    onRegistrationChange={(e) => setForm('serviceVehicleReg', e)}
                 />
                 {isTruck &&
                     <OdometerInput value={form.odometer} onChange={(e) => setForm('odometer', e)} />

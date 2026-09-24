@@ -110,6 +110,15 @@ export const useApi = () => {
                     return { success: true, responseData };
                 } else if (!config || config.setData) {
 
+                    // Bez configu (sam odczyt) – zwracamy dane w odpowiedzi, jak front.
+                    // Wcześniej ta ścieżka zawsze kończyła się {success:false} bez responseData.
+                    if (!config) {
+                        if (responseData && !responseData.dtc) {
+                            return { success: true, responseData };
+                        }
+                        return { success: false };
+                    }
+
                     if (config?.setData) {
                         if (!responseData) {
                             config.setData(null);

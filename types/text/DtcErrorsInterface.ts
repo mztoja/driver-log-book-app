@@ -36,6 +36,12 @@ interface Entries {
     sessionExpired: string;
     apiUnknownError: string;
     apiConnectionError: string;
+    friendUserNotFound: string;
+    friendCannotInviteSelf: string;
+    friendAlreadyExists: string;
+    friendNotFound: string;
+    friendEmailInvalid: string;
+    reverseGeocodeFailed: string;
 }
 
 export interface DtcErrorsInterface {

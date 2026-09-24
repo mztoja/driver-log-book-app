@@ -4,3 +4,5 @@ export * from './CountriesInterface';
 export * from './InfoInterface';
 export * from './ToursInterface';
 export * from './PlacesInterface';
+export * from './VehiclesInterface';
+export * from './FriendsInterface';

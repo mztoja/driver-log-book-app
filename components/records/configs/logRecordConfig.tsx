@@ -11,9 +11,17 @@ import { formatSimplePlace } from '@/utils/formats/formatSimplePlace';
 import { formatCountry } from '@/utils/formats/formatCountry';
 import { RecordConfig, RecordEditProps } from '@/components/records/RecordList';
 import { LogEditDispatcher } from '@/components/records/edit/LogEditDispatcher';
+import { LogExtraDetails, clearLogDetailsCache } from '@/components/records/LogExtraDetails';
 
 const LogEdit: React.FC<RecordEditProps<LogInterface>> = ({ item, onClose, onSaved }) => (
-    <LogEditDispatcher log={item} onClose={onClose} onSaved={onSaved} />
+    <LogEditDispatcher
+        log={item}
+        onClose={onClose}
+        onSaved={() => {
+            clearLogDetailsCache();
+            onSaved();
+        }}
+    />
 );
 
 export const logRecordConfig = (lang: LangInterface): RecordConfig<LogInterface> => {
@@ -38,12 +46,17 @@ export const logRecordConfig = (lang: LangInterface): RecordConfig<LogInterface>
                 <Row label={t('odometer')} value={formatOdometer(log.odometer)} />
             </View>
         ),
-        renderDetails: (log) =>
-            log.notes ? (
-                <ThemedText style={{ opacity: 0.85 }}>
-                    {t('notes')}: {log.notes}
-                </ThemedText>
-            ) : null,
+        // jak front: po rozwinięciu pełny adres + dociągnięte szczegóły wpisu (dzień/trasa/wydatek/ładunek/serwis)
+        renderDetails: (log) => (
+            <>
+                <LogExtraDetails key={log.id} log={log} />
+                {!!log.notes &&
+                    <ThemedText style={{ opacity: 0.85 }}>
+                        {t('notes')}: {log.notes}
+                    </ThemedText>
+                }
+            </>
+        ),
         EditComponent: LogEdit,
     };
 };

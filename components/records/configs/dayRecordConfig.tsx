@@ -4,7 +4,7 @@ import { ThemedText } from '@/components/ThemedText';
 import { Row } from '@/components/tours/DetailCard';
 import API_ENDPOINTS from '@/constants/API_ENDPOINTS';
 import { getText } from '@/utils/getText';
-import { DayInterface, LangInterface, ToursInterface, dayCardStateEnum } from '@/types';
+import { DayInterface, LangInterface, ToursInterface } from '@/types';
 import { formatDate } from '@/utils/formats/formatDate';
 import { formatOdometer } from '@/utils/formats/formatOdometer';
 import { formatTimeToTime } from '@/utils/formats/formatTimeToTime';
@@ -12,6 +12,7 @@ import { formatFuelQuantity } from '@/utils/formats/formatFuelQuantity';
 import { formatSimplePlace } from '@/utils/formats/formatSimplePlace';
 import { RecordConfig, RecordEditProps } from '@/components/records/RecordList';
 import { DayEditModal } from '@/components/records/edit/DayEditModal';
+import { DayTimes } from '@/components/records/DayTimes';
 
 const DayEdit: React.FC<RecordEditProps<DayInterface>> = ({ item, onClose, onSaved }) => (
     <DayEditModal day={item} onClose={onClose} onSaved={onSaved} />
@@ -23,7 +24,7 @@ export const dayRecordConfig = (lang: LangInterface): RecordConfig<DayInterface>
         endpoints: { tour: API_ENDPOINTS.getDaysByTourId, all: API_ENDPOINTS.getDays },
         searchable: false,
         emptyText: t('noRecords'),
-        renderSummary: (day) => (
+        renderSummary: (day, days) => (
             <View style={{ gap: 3 }}>
                 <ThemedText type="defaultSemiBold">
                     {day.startData ? formatDate(day.startData.date, lang) : t('na')}
@@ -44,10 +45,8 @@ export const dayRecordConfig = (lang: LangInterface): RecordConfig<DayInterface>
                 )}
                 <Row label={t('driveTime')} value={formatTimeToTime(day.driveTime)} />
                 {day.doubleCrew && <Row label={t('secondDriver')} value={formatTimeToTime(day.driveTime2)} />}
-                <Row label={t('workTime')} value={formatTimeToTime(day.workTime)} />
-                {day.cardState === dayCardStateEnum.notUsed && (
-                    <Row label={t('breakTime')} value={formatTimeToTime(day.breakTime)} />
-                )}
+                {/* jak front: liczone z dat start/stop, nie z day.workTime / day.breakTime z bazy */}
+                <DayTimes day={day} days={days} />
                 <Row label={t('distance')} value={formatOdometer(day.distance)} />
                 <Row label={t('fuel')} value={formatFuelQuantity(day.fuelBurned, 'oneDecimal')} />
             </View>

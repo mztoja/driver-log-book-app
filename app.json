@@ -33,6 +33,13 @@
           "resizeMode": "contain",
           "backgroundColor": "#1c1c36"
         }
+      ],
+      "expo-web-browser",
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Driver Logbook uses your location to fill in the current place of a log entry."
+        }
       ]
     ],
     "experiments": {

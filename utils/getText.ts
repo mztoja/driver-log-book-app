@@ -5,11 +5,13 @@ import { home } from "@/assets/text/home";
 import { info } from "@/assets/text/info";
 import { tours } from "@/assets/text/tours";
 import { places } from "@/assets/text/places";
+import { vehicles } from "@/assets/text/vehicles";
+import { friends } from "@/assets/text/friends";
 import { useGlobalState } from "@/hooks/useGlobalState";
-import { CommonInterface, DtcErrorsInterface, LangInterface, CountriesInterface, InfoInterface, ToursInterface, PlacesInterface } from "@/types";
+import { CommonInterface, DtcErrorsInterface, LangInterface, CountriesInterface, InfoInterface, ToursInterface, PlacesInterface, VehiclesInterface, FriendsInterface } from "@/types";
 import { HomeInterface } from "@/types/text/HomeInterface";
 
-type Group = 'common' | 'home' | 'dtcErrors' | 'countries' | 'info' | 'tours' | 'places';
+type Group = 'common' | 'home' | 'dtcErrors' | 'countries' | 'info' | 'tours' | 'places' | 'vehicles' | 'friends';
 type TextCommon = keyof CommonInterface['en'];
 type TextHome = keyof HomeInterface['en'];
 type TextDtcErrors = keyof DtcErrorsInterface['en'];
@@ -17,7 +19,9 @@ type TextCountries = keyof CountriesInterface['en'];
 type TextInfo = keyof InfoInterface['en'];
 type TextTours = keyof ToursInterface['en'];
 type TextPlaces = keyof PlacesInterface['en'];
-type Text = TextCommon | TextHome | TextDtcErrors | TextCountries | TextInfo | TextTours | TextPlaces;
+type TextVehicles = keyof VehiclesInterface['en'];
+type TextFriends = keyof FriendsInterface['en'];
+type Text = TextCommon | TextHome | TextDtcErrors | TextCountries | TextInfo | TextTours | TextPlaces | TextVehicles | TextFriends;
 
 interface GetText {
     (group: 'common', text: TextCommon, lang?: LangInterface, params?: string): string;
@@ -27,6 +31,8 @@ interface GetText {
     (group: 'info', text: TextInfo, lang?: LangInterface, params?: string): string;
     (group: 'tours', text: TextTours, lang?: LangInterface, params?: string): string;
     (group: 'places', text: TextPlaces, lang?: LangInterface, params?: string): string;
+    (group: 'vehicles', text: TextVehicles, lang?: LangInterface, params?: string): string;
+    (group: 'friends', text: TextFriends, lang?: LangInterface, params?: string): string;
 }
 
 
@@ -50,6 +56,10 @@ export const getText: GetText = (group: Group, text: Text, langValue?: LangInter
                 return tours[lang][text as TextTours];
             case 'places':
                 return places[lang][text as TextPlaces];
+            case 'vehicles':
+                return vehicles[lang][text as TextVehicles];
+            case 'friends':
+                return friends[lang][text as TextFriends];
             default:
                 return '';
         }

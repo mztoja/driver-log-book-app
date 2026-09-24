@@ -1,4 +1,4 @@
-import { AddLogData, GeneralFormData } from "@/types";
+import { AddLogData, GeneralFormData, PlaceInterface } from "@/types";
 import { MainFormModal } from "../MainFormModal";
 import { ScrollView } from "react-native";
 import { DateTimeInput } from "@/components/inputs/commons/DateTimeInput";
@@ -11,7 +11,6 @@ import { getText } from "@/utils/getText";
 import { useApi } from "@/hooks/useApi";
 import { LoadSelect } from "@/components/inputs/loads/LoadSelect";
 import React from "react";
-import { useGlobalState } from "@/hooks/useGlobalState";
 import API_ENDPOINTS from "@/constants/API_ENDPOINTS";
 import { useSnackbar } from "@/hooks/useSnackbar";
 
@@ -27,7 +26,6 @@ export const UnloadingArrival: React.FC<Props> = (props: Props): JSX.Element => 
 
     const { form, setForm, visible, setVisible } = props;
     const { fetchData, loading } = useApi();
-    const { activeLoads } = useGlobalState();
     const { showSnackbar } = useSnackbar();
     const txt = {
         title: getText('home', 'unloadingArrival'),
@@ -36,13 +34,20 @@ export const UnloadingArrival: React.FC<Props> = (props: Props): JSX.Element => 
         noLoadChosen: getText('dtcErrors', 'noLoadChosen'),
     };
 
+    // Jak front: miejsce rozładunku (z krajem) pobierane z API przy otwarciu z już wybranym
+    // ładunkiem oraz przy każdej zmianie ładunku.
     React.useEffect(() => {
-        const foundedLoad = activeLoads?.find((load) => load.id === Number(form.loadId));
-        if (foundedLoad?.receiverData) {
-            setForm('place', '');
-            setForm('placeId', foundedLoad.receiverData.id.toString());
-        }
-    }, [form.loadId]);
+        if (!visible || Number(form.loadId) < 1) return;
+        fetchData<PlaceInterface>(`${API_ENDPOINTS.getUnloadingPlace}/${form.loadId}`).then((res) => {
+            const place = res.responseData;
+            if (place) {
+                setForm('country', place.country);
+                setForm('placeId', place.id.toString());
+                setForm('place', '');
+            }
+        });
+        // eslint-disable-next-line
+    }, [visible, form.loadId]);
 
     const send = (): void => {
         if (Number(form.loadId) > 0) {

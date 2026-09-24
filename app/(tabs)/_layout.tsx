@@ -1,18 +1,15 @@
-import { Tabs, useSegments, router } from "expo-router";
-import { Pressable, View, StyleSheet } from 'react-native';
+import { Tabs } from "expo-router";
 import { common } from '../../assets/text/common';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import { useTheme } from "@/hooks/useTheme";
 import { useGlobalState } from "@/hooks/useGlobalState";
-import { SwitchTheme } from "@/components/SwitchTheme";
+import { HeaderRightButtons } from "@/components/HeaderRightButtons";
 
 export default function TabLayout() {
 
     const { user } = useGlobalState();
     const { colors } = useTheme();
-    // @ts-ignore
-    const isProfileScreen = useSegments().includes('profile');
 
     return (
         <Tabs
@@ -20,22 +17,7 @@ export default function TabLayout() {
                 headerStyle: { backgroundColor: colors.headerBackground },
                 headerTitleStyle: { color: colors.text },
                 tabBarStyle: { backgroundColor: colors.tabBarBackground },
-                headerRight: () => (
-                    <View style={styles.topBarRightButtons}>
-                        <SwitchTheme />
-                        <Pressable
-                            // @ts-ignore
-                            onPress={() => router.push('/profile')}
-                            style={{ marginRight: 10 }}
-                        >
-                            <AntDesign
-                                name="setting"
-                                size={24}
-                                color={!isProfileScreen ? colors.tabIconDefault : colors.tabIconSelected}
-                            />
-                        </Pressable>
-                    </View>
-                ),
+                headerRight: () => <HeaderRightButtons />,
                 tabBarActiveTintColor: colors.tabIconSelected,
                 tabBarInactiveTintColor: colors.tabIconDefault,
                 tabBarActiveBackgroundColor: colors.tabBackgroundSelected,
@@ -89,6 +71,7 @@ export default function TabLayout() {
                 redirect={!user}
                 options={{
                     title: common.pl.vehiclesPageTitle,
+                    headerShown: false,
                     tabBarIcon: ({ focused }) => (
                         <FontAwesome5 name="truck" size={20} color={!focused ? colors.tabIconDefault : colors.tabIconSelected} />
                     ),
@@ -113,10 +96,3 @@ export default function TabLayout() {
         </Tabs>
     );
 }
-
-const styles = StyleSheet.create({
-    topBarRightButtons: {
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
-});

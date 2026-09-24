@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { View, StyleSheet, Pressable } from 'react-native';
-import { ProgressBar } from 'react-native-paper';
-import { useFocusEffect } from 'expo-router';
+import { Icon, ProgressBar } from 'react-native-paper';
+import { router, useFocusEffect } from 'expo-router';
 import { ThemedText } from '@/components/ThemedText';
 import { useTheme } from '@/hooks/useTheme';
 import { useGlobalState } from '@/hooks/useGlobalState';
@@ -17,6 +17,7 @@ import {
     TourInterface,
     UserInterface,
     VehicleInterface,
+    vehicleTypeEnum,
 } from '@/types';
 import { formatOdometer } from '@/utils/formats/formatOdometer';
 import { formatWeight } from '@/utils/formats/formatWeight';
@@ -24,6 +25,10 @@ import { formatDateToTime } from '@/utils/formats/formatDateToTime';
 import { formatFuelQuantity } from '@/utils/formats/formatFuelQuantity';
 import { formatSimplePlace } from '@/utils/formats/formatSimplePlace';
 import { formatShortDate } from '@/utils/formats/formatShortDate';
+import { TimeArcGauge } from '@/components/TimeArcGauge';
+import { useBaseCountry } from '@/hooks/useBaseCountry';
+import { homeNow } from '@/utils/homeNow';
+import { VehicleFormModal } from '@/components/vehicles/VehicleFormModal';
 
 // Data z bazy to surowy "wall time". Do liczenia różnic (względem `new Date()`)
 // budujemy Date z komponentów wprost z tekstu – bez parsowania przez silnik i bez
@@ -70,7 +75,13 @@ const Row: React.FC<{ label: string; value: string; danger?: boolean }> = ({ lab
     );
 };
 
-export const InfoPanel: React.FC = (): JSX.Element => {
+interface Props {
+    // wołane, gdy rozwinięte szczegóły pojazdu dostały layout – rodzic (ScrollView) przewija do nich,
+    // bo to ostatni element panelu i bez przewinięcia zostają pod krawędzią ekranu
+    onDetailsShown?: () => void;
+}
+
+export const InfoPanel: React.FC<Props> = (props: Props): JSX.Element => {
 
     const { colors } = useTheme();
     const { fetchData } = useApi();
@@ -127,7 +138,12 @@ export const InfoPanel: React.FC = (): JSX.Element => {
         yes: getText('info', 'yes', lang),
         no: getText('info', 'no', lang),
         expired: getText('info', 'expired', lang),
+        workTimeGaugeLabel: getText('info', 'workTimeGaugeLabel', lang),
+        edit: getText('info', 'edit', lang),
+        showVehicleDetails: getText('info', 'showVehicleDetails', lang),
+        addVehicleHint: getText('info', 'addVehicleHint', lang),
     };
+    const baseCountry = useBaseCountry();
 
     const [currentTime, setCurrentTime] = useState<Date>(new Date());
     const [stopDate, setStopDate] = useState<Date | null>(null);
@@ -139,6 +155,10 @@ export const InfoPanel: React.FC = (): JSX.Element => {
     const [showTruck, setShowTruck] = useState<boolean>(false);
     const [showTrailer, setShowTrailer] = useState<boolean>(false);
     const [, setLastDay] = useState<DayInterface | null>(null);
+    // jak front: nieznany pojazd -> formularz dodania z wpisanym numerem; znany -> edycja
+    const [addVehicle, setAddVehicle] = useState<{ type: vehicleTypeEnum; registration: string } | null>(null);
+    const [editVehicle, setEditVehicle] = useState<VehicleInterface | null>(null);
+    const [vehicleRefresh, setVehicleRefresh] = useState<boolean>(false);
 
     // odświeżenie stanu globalnego przy wejściu na kartę
     useFocusEffect(
@@ -204,7 +224,7 @@ export const InfoPanel: React.FC = (): JSX.Element => {
 
         Promise.all(jobs).then(() => setVehicleLoaded(true));
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [activeTour?.truck, activeTour?.trailer, user?.markedDepart]);
+    }, [activeTour?.truck, activeTour?.trailer, user?.markedDepart, vehicleRefresh]);
 
     // --- wyliczenia zależne od zegara ---
     let tourDuration = '';
@@ -248,6 +268,15 @@ export const InfoPanel: React.FC = (): JSX.Element => {
         breakInfo = `${txt.breakLasts}: ${hours}:${minutes.toString().padStart(2, '0')}\n${description}`;
     }
 
+    // Jak front (TimeArcGauge w InfoBar): czas pracy dzisiejszego dnia liczony na żywo od jego
+    // rozpoczęcia, progi wg obsady (1-osobowa: 13h/15h, 2-osobowa: 20h/21h). Data z bazy to
+    // „ściana zegara" bazy, więc porównujemy z homeNow(kraj bazy), a nie z czasem telefonu.
+    const workSeconds = activeDay?.startData
+        ? Math.max(0, Math.floor((homeNow(baseCountry).getTime() - toLocalDate(activeDay.startData.date).getTime()) / 1000))
+        : 0;
+    const workWarnSeconds = (activeDay?.doubleCrew ? 20 : 13) * 3600;
+    const workMaxSeconds = (activeDay?.doubleCrew ? 21 : 15) * 3600;
+
     const totalWeight = (truckData?.weight ?? 0) + (trailerData?.weight ?? 0) + (goodsWeight ?? 0);
     const fuelValue = activeTour
         ? Number(activeTour.fuelStateBefore) + Number(activeTour.totalRefuel) - Number(activeTour.burnedFuelComp)
@@ -268,6 +297,24 @@ export const InfoPanel: React.FC = (): JSX.Element => {
 
     return (
         <View style={styles.container}>
+            {addVehicle &&
+                <VehicleFormModal
+                    visible
+                    initialType={addVehicle.type}
+                    initialRegistration={addVehicle.registration}
+                    onClose={() => setAddVehicle(null)}
+                    onSaved={() => setVehicleRefresh((p) => !p)}
+                />
+            }
+            {editVehicle &&
+                <VehicleFormModal
+                    key={editVehicle.id}
+                    visible
+                    vehicle={editVehicle}
+                    onClose={() => setEditVehicle(null)}
+                    onSaved={() => setVehicleRefresh((p) => !p)}
+                />
+            }
 
             {!activeTour &&
                 <Card>
@@ -297,6 +344,14 @@ export const InfoPanel: React.FC = (): JSX.Element => {
             <Card title={txt.dayTitle}>
                 {activeDay
                     ? <>
+                        {activeDay.startData &&
+                            <TimeArcGauge
+                                label={txt.workTimeGaugeLabel}
+                                seconds={workSeconds}
+                                warnSeconds={workWarnSeconds}
+                                maxSeconds={workMaxSeconds}
+                            />
+                        }
                         {activeDay.startData &&
                             <ThemedText>
                                 {txt.youStartedDayAt} {formatDateToTime(activeDay.startData.date)} {txt.in} {formatSimplePlace(activeDay.startData.place, activeDay.startData.placeData)}
@@ -332,6 +387,9 @@ export const InfoPanel: React.FC = (): JSX.Element => {
                                     ? `${load.receiverData.name}, ${load.receiverData.street}, ${load.receiverData.country}-${load.receiverData.code} ${load.receiverData.city}`
                                     : '—'}
                             </ThemedText>
+                            {load.receiverData &&
+                                <ThemedText style={styles.dim}>GPS: {load.receiverData.lat}, {load.receiverData.lon}</ThemedText>
+                            }
                         </View>
                     ))}
                 </Card>
@@ -339,15 +397,21 @@ export const InfoPanel: React.FC = (): JSX.Element => {
 
             {activeTour && vehicleLoaded &&
                 <Card title={txt.tourSetTitle}>
-                    <Pressable onPress={() => truckData && setShowTruck((p) => !p)}>
+                    <Pressable onPress={() => truckData
+                        ? setShowTruck((p) => !p)
+                        : setAddVehicle({ type: vehicleTypeEnum.truck, registration: activeTour.truck })}>
                         <ThemedText>
-                            {txt.truck}: <ThemedText type="defaultSemiBold" style={truckData ? { color: colors.actionIcon } : undefined}>{activeTour.truck}</ThemedText>
+                            {txt.truck}: <ThemedText type="defaultSemiBold" style={{ color: colors.actionIcon }}>{activeTour.truck}</ThemedText>
+                            {!truckData && <ThemedText style={styles.dim}>  ({txt.addVehicleHint})</ThemedText>}
                         </ThemedText>
                     </Pressable>
                     {activeTour.trailer &&
-                        <Pressable onPress={() => trailerData && setShowTrailer((p) => !p)}>
+                        <Pressable onPress={() => trailerData
+                            ? setShowTrailer((p) => !p)
+                            : setAddVehicle({ type: vehicleTypeEnum.trailer, registration: activeTour.trailer ?? '' })}>
                             <ThemedText>
-                                {txt.trailer}: <ThemedText type="defaultSemiBold" style={trailerData ? { color: colors.actionIcon } : undefined}>{activeTour.trailer}</ThemedText>
+                                {txt.trailer}: <ThemedText type="defaultSemiBold" style={{ color: colors.actionIcon }}>{activeTour.trailer}</ThemedText>
+                                {!trailerData && <ThemedText style={styles.dim}>  ({txt.addVehicleHint})</ThemedText>}
                             </ThemedText>
                         </Pressable>
                     }
@@ -372,7 +436,7 @@ export const InfoPanel: React.FC = (): JSX.Element => {
                     }
 
                     {showTruck && truckData &&
-                        <View style={styles.details}>
+                        <View style={styles.details} onLayout={() => props.onDetailsShown?.()}>
                             <Row label={txt.model} value={truckData.model || '---'} />
                             <Row label={txt.isLoadable} value={truckData.isLoadable ? txt.yes : txt.no} />
                             <Row label={txt.tankCapacity} value={formatFuelQuantity(truckData.fuel)} />
@@ -387,17 +451,29 @@ export const InfoPanel: React.FC = (): JSX.Element => {
                                 danger={!(truckData.service && lastLog && truckData.service > lastLog.odometer)}
                             />
                             {!!truckData.notes && <ThemedText style={styles.notes}>{txt.notes}: {truckData.notes}</ThemedText>}
+                            <VehicleActions
+                                editLabel={txt.edit}
+                                detailsLabel={txt.showVehicleDetails}
+                                onEdit={() => setEditVehicle(truckData)}
+                                onDetails={() => router.navigate({ pathname: '/vehicles', params: { id: truckData.id } })}
+                            />
                         </View>
                     }
 
                     {showTrailer && trailerData &&
-                        <View style={styles.details}>
+                        <View style={styles.details} onLayout={() => props.onDetailsShown?.()}>
                             <Row label={txt.model} value={trailerData.model || '---'} />
                             <Row label={txt.yearOfProduction} value={trailerData.year === 0 ? '---' : String(trailerData.year)} />
                             <Row label={txt.weightDisp} value={formatWeight(trailerData.weight)} />
                             <Row label={txt.techRev} value={formatShortDate(trailerData.techRev)} danger={isPast(trailerData.techRev)} />
                             <Row label={txt.insurance} value={formatShortDate(trailerData.insurance)} danger={isPast(trailerData.insurance)} />
                             {!!trailerData.notes && <ThemedText style={styles.notes}>{txt.notes}: {trailerData.notes}</ThemedText>}
+                            <VehicleActions
+                                editLabel={txt.edit}
+                                detailsLabel={txt.showVehicleDetails}
+                                onEdit={() => setEditVehicle(trailerData)}
+                                onDetails={() => router.navigate({ pathname: '/vehicles', params: { id: trailerData.id } })}
+                            />
                         </View>
                     }
                 </Card>
@@ -406,7 +482,25 @@ export const InfoPanel: React.FC = (): JSX.Element => {
     );
 };
 
+const VehicleActions: React.FC<{ editLabel: string; detailsLabel: string; onEdit: () => void; onDetails: () => void }> = (props) => {
+    const { colors } = useTheme();
+    return (
+        <View style={styles.vehicleActions}>
+            <Pressable onPress={props.onEdit} style={styles.vehicleActionRow}>
+                <Icon source="pencil" size={20} color={colors.actionIcon} />
+                <ThemedText>{props.editLabel}</ThemedText>
+            </Pressable>
+            <Pressable onPress={props.onDetails} style={styles.vehicleActionRow}>
+                <Icon source="truck-outline" size={20} color={colors.actionIcon} />
+                <ThemedText>{props.detailsLabel}</ThemedText>
+            </Pressable>
+        </View>
+    );
+};
+
 const styles = StyleSheet.create({
+    vehicleActions: { marginTop: 6 },
+    vehicleActionRow: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 8 },
     container: {
         padding: 12,
         gap: 12,

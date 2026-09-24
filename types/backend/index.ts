@@ -9,3 +9,4 @@ export * from './vehicles';
 export * from './tour';
 export * from './load';
 export * from './services';
+export * from './friend';

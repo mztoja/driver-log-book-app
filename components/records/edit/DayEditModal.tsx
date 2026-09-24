@@ -37,8 +37,6 @@ const formFromDay = (day: DayInterface): DayEditData => ({
     distance: day.distance ? day.distance.toString() : '0',
     driveTime: day.driveTime ?? '',
     driveTime2: day.driveTime2 ?? '',
-    workTime: day.workTime ?? '',
-    breakTime: day.breakTime ?? '',
     fuelBurned: day.fuelBurned ? day.fuelBurned.toString() : '0',
     doubleCrew: day.doubleCrew ? 'true' : 'false',
 });
@@ -112,8 +110,6 @@ export const DayEditModal: React.FC<Props> = (props: Props): JSX.Element | null 
                                 onChange={(e) => update('driveTime2', e)}
                             />
                         )}
-                        <TimeField label={getText('tours', 'workTime', lang)} value={form.workTime} onChange={(e) => update('workTime', e)} />
-                        <TimeField label={getText('tours', 'breakTime', lang)} value={form.breakTime} onChange={(e) => update('breakTime', e)} />
                         <NumberField
                             label={getText('tours', 'fuel', lang)}
                             value={form.fuelBurned}

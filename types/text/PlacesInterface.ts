@@ -21,6 +21,17 @@ interface Entries {
     markedError: string;
     edit: string;
     showActivities: string;
+    // mapa
+    listTab: string;
+    mapTab: string;
+    mapHiddenPlaces(x: string): string;
+    mapPartialPlaces(x: string): string;
+    mapGeocodeConfirm: string;
+    mapGeocodePartialConfirm: string;
+    mapGeocodeProgress(x: string): string;
+    mapGeocodeFound(x: string): string;
+    mapGeocodeFailed(x: string): string;
+    mapPartialMarkerNote: string;
     // formularz dodawania / edycji
     addPlace: string;
     editPlace: string;

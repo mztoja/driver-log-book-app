@@ -2,7 +2,8 @@ import { Stack } from 'expo-router';
 import { useTheme } from '@/hooks/useTheme';
 import { useGlobalState } from '@/hooks/useGlobalState';
 import { getText } from '@/utils/getText';
-import { SwitchTheme } from '@/components/SwitchTheme';
+import { HeaderRightButtons } from '@/components/HeaderRightButtons';
+import { StackHeader } from '@/components/StackHeader';
 
 export default function PlacesStackLayout() {
     const { colors } = useTheme();
@@ -11,10 +12,11 @@ export default function PlacesStackLayout() {
     return (
         <Stack
             screenOptions={{
+                header: (props) => <StackHeader {...props} />,
                 headerStyle: { backgroundColor: colors.headerBackground },
                 headerTitleStyle: { color: colors.text },
                 headerTintColor: colors.text,
-                headerRight: () => <SwitchTheme />,
+                headerRight: () => <HeaderRightButtons />,
                 contentStyle: { backgroundColor: colors.background },
             }}
         >

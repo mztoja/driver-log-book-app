@@ -5,3 +5,4 @@ export * from './Logs/FinishDayForm';
 export * from './Tour/TourStartForm';
 export * from './Tour/TourStopForm';
 export * from './Vehicle/ServiceForm';
+export * from './Logs/AddBreakForm';
