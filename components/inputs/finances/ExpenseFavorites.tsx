@@ -10,6 +10,7 @@ import { useTheme } from '@/hooks/useTheme';
 import { getText } from '@/utils/getText';
 import { DeleteExpenseFavoriteData, ExpenseFavoriteInterface } from '@/types';
 
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 interface Props {
     visible: boolean;
     onClose: () => void;
@@ -18,6 +19,8 @@ interface Props {
 
 export const ExpenseFavorites: React.FC<Props> = ({ visible, onClose, onApply }: Props): JSX.Element => {
     const { colors } = useTheme();
+    // okno wysuwane od dołu – margines nad systemowymi przyciskami (edge-to-edge)
+    const bottomInset = useSafeAreaInsets().bottom;
     const { lang, places } = useGlobalState();
     const { fetchData, loading } = useApi();
     const screenHeight = Dimensions.get('window').height;
@@ -71,7 +74,7 @@ export const ExpenseFavorites: React.FC<Props> = ({ visible, onClose, onApply }:
         <Modal animationType="slide" transparent visible={visible} onRequestClose={onClose}>
             <View style={STYLES.modalSelectContainer}>
                 <TouchableOpacity style={STYLES.modalSelectBlackout} onPress={onClose} />
-                <View style={[STYLES.modaSelectContent, { backgroundColor: colors.background, height: screenHeight * 0.5 }]}>
+                <View style={[STYLES.modaSelectContent, { paddingBottom: 10 + bottomInset, backgroundColor: colors.background, height: screenHeight * 0.5 }]}>
                     <View style={{ marginBottom: 10 }}>
                         <ThemedText style={{ alignSelf: 'center' }} type="subtitle">
                             {txt.title}

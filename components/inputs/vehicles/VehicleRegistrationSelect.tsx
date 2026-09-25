@@ -10,6 +10,7 @@ import React, { useEffect, useState } from "react";
 import { ActivityIndicator, FlatList, Modal, TouchableOpacity, View, Text } from "react-native";
 import { TextInput } from "react-native-paper";
 
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 interface Props {
     value: string;
     onChange: (e: string) => void;
@@ -22,6 +23,10 @@ interface Props {
 export const VehicleRegistrationSelect: React.FC<Props> = (props: Props): JSX.Element => {
 
     const { colors } = useTheme();
+
+    // okno wysuwane od dołu – margines nad systemowymi przyciskami (edge-to-edge)
+
+    const bottomInset = useSafeAreaInsets().bottom;
     const { user } = useGlobalState();
     const { fetchData, loading } = useApi();
     const [modalVisible, setModalVisible] = useState<boolean>(false);
@@ -79,7 +84,7 @@ export const VehicleRegistrationSelect: React.FC<Props> = (props: Props): JSX.El
             <Modal animationType="slide" transparent={true} visible={modalVisible}>
                 <View style={STYLES.modalSelectContainer}>
                     <TouchableOpacity style={STYLES.modalSelectBlackout} onPress={() => setModalVisible(false)} />
-                    <View style={[STYLES.modaSelectContent, { backgroundColor: colors.background }]}>
+                    <View style={[STYLES.modaSelectContent, { paddingBottom: 10 + bottomInset, backgroundColor: colors.background }]}>
                         <View style={{ marginBottom: 10 }}>
                             <ThemedText style={{ alignSelf: 'center' }} type="subtitle">
                                 {getText('common', 'chooseFromList')}

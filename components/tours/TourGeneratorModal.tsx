@@ -11,7 +11,6 @@ import { STYLES } from '@/constants/STYLES';
 import { useTheme } from '@/hooks/useTheme';
 import { useGlobalState } from '@/hooks/useGlobalState';
 import { useSnackbar } from '@/hooks/useSnackbar';
-import { useKeyboardHeight } from '@/hooks/useKeyboardHeight';
 import { getText } from '@/utils/getText';
 import { buildTourSettlementPdf, MAX_LEG_ROWS, openPdfForEditing, sharePdf } from '@/utils/generateTourSettlement';
 import { TourSettleGeneratorInterface, TourSettleGeneratorLeg, ToursInterface } from '@/types';
@@ -57,7 +56,6 @@ export const TourGeneratorModal: React.FC<Props> = (props: Props): JSX.Element =
     const { colors } = useTheme();
     const { lang, user } = useGlobalState();
     const { showSnackbar } = useSnackbar();
-    const keyboardHeight = useKeyboardHeight();
     const t = (k: LabelKey, x?: string) => getText('tours', k, lang, x);
 
     const [data, setData] = useState<TourSettleGeneratorInterface>(props.data);
@@ -147,7 +145,7 @@ export const TourGeneratorModal: React.FC<Props> = (props: Props): JSX.Element =
         <MainFormModal visible setVisible={() => props.onClose()} title={t('generatorTourEdit')}>
             <ScrollView
                 style={STYLES.scrollView}
-                contentContainerStyle={[styles.content, { paddingBottom: 24 + keyboardHeight }]}
+                contentContainerStyle={[styles.content, { paddingBottom: 24 }]}
                 keyboardShouldPersistTaps="handled"
             >
                 <ThemedText style={styles.hint}>{t('generatorHint')}</ThemedText>

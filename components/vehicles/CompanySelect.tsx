@@ -10,6 +10,7 @@ import { getText } from '@/utils/getText';
 import { ThemedText } from '@/components/ThemedText';
 import { PlaceInterface } from '@/types';
 
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 interface Props {
     // id firmy (miejsca-bazy), do której przypisane są pojazdy
     value: number;
@@ -19,6 +20,8 @@ interface Props {
 /** Odpowiednik front `CompanySelect` – filtr pojazdów po firmie (lista `/places/companyList`). */
 export const CompanySelect: React.FC<Props> = (props: Props): JSX.Element => {
     const { colors } = useTheme();
+    // okno wysuwane od dołu – margines nad systemowymi przyciskami (edge-to-edge)
+    const bottomInset = useSafeAreaInsets().bottom;
     const { lang } = useGlobalState();
     const { fetchData } = useApi();
     const [companies, setCompanies] = useState<PlaceInterface[]>([]);
@@ -51,7 +54,7 @@ export const CompanySelect: React.FC<Props> = (props: Props): JSX.Element => {
             <Modal animationType="slide" transparent visible={modalVisible}>
                 <View style={STYLES.modalSelectContainer}>
                     <TouchableOpacity style={STYLES.modalSelectBlackout} onPress={() => setModalVisible(false)} />
-                    <View style={[STYLES.modaSelectContent, { backgroundColor: colors.background, height: screenHeight * 0.5 }]}>
+                    <View style={[STYLES.modaSelectContent, { paddingBottom: 10 + bottomInset, backgroundColor: colors.background, height: screenHeight * 0.5 }]}>
                         <View style={{ marginBottom: 10 }}>
                             <ThemedText style={{ alignSelf: 'center' }} type="subtitle">
                                 {getText('common', 'chooseFromList', lang)}

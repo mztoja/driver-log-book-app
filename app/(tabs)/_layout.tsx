@@ -1,4 +1,8 @@
+import { useEffect } from "react";
 import { Tabs } from "expo-router";
+import { useBottomTabBarHeight } from "expo-router/tabs";
+import { Portal } from "react-native-paper";
+import { setTabBarHeight } from "@/utils/tabBarHeightStore";
 import { common } from '../../assets/text/common';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
@@ -6,13 +10,26 @@ import { useTheme } from "@/hooks/useTheme";
 import { useGlobalState } from "@/hooks/useGlobalState";
 import { HeaderRightButtons } from "@/components/HeaderRightButtons";
 
+// zgłasza wysokość dolnego paska zakładek nakładce formularzy (MainFormModal), która siedzi nad Tabs
+const TabBarHeightReporter = () => {
+    const height = useBottomTabBarHeight();
+    useEffect(() => {
+        setTabBarHeight(height);
+    }, [height]);
+    return null;
+};
+
 export default function TabLayout() {
 
     const { user } = useGlobalState();
     const { colors } = useTheme();
 
     return (
+        // host portalu NAD nawigatorem – formularz (MainFormModal) zastępuje górny pasek ekranu,
+        // a kończy się nad dolnymi zakładkami, które zostają widoczne i klikalne
+        <Portal.Host>
         <Tabs
+            screenLayout={({ children }) => <>{children}<TabBarHeightReporter /></>}
             screenOptions={{
                 headerStyle: { backgroundColor: colors.headerBackground },
                 headerTitleStyle: { color: colors.text },
@@ -94,5 +111,6 @@ export default function TabLayout() {
                 }}
             />
         </Tabs>
+        </Portal.Host>
     );
 }

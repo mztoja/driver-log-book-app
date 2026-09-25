@@ -5,10 +5,11 @@ import { useTheme } from '@/hooks/useTheme';
 import { CountryCodesEntries } from '@/types';
 import { getText } from '@/utils/getText';
 import React, { useEffect, useState } from 'react';
-import { View, FlatList, Text, TouchableOpacity, Modal, KeyboardAvoidingView, Dimensions } from 'react-native';
+import { View, FlatList, Text, TouchableOpacity, Modal, Dimensions } from 'react-native';
 import { TextInput } from 'react-native-paper';
 import { ThemedText } from '@/components/ThemedText';
 
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 interface Props {
     value: string;
     onChange: (e: string) => void;
@@ -19,6 +20,8 @@ export const CountrySelect: React.FC<Props> = (props: Props): JSX.Element => {
     const [searchText, setSearchText] = useState<string>('');
     const [modalVisible, setModalVisible] = useState<boolean>(false);
     const { colors } = useTheme();
+    // okno wysuwane od dołu – margines nad systemowymi przyciskami (edge-to-edge)
+    const bottomInset = useSafeAreaInsets().bottom;
     const { lang, user } = useGlobalState();
     const screenHeight = Dimensions.get('window').height;
 
@@ -102,7 +105,7 @@ export const CountrySelect: React.FC<Props> = (props: Props): JSX.Element => {
             >
                 <View style={STYLES.modalSelectContainer}>
                     <TouchableOpacity style={STYLES.modalSelectBlackout} onPress={() => { setModalVisible(false) }} />
-                    <View style={[STYLES.modaSelectContent, { backgroundColor: colors.background, height: screenHeight * 0.5 }]}>
+                    <View style={[STYLES.modaSelectContent, { paddingBottom: 10 + bottomInset, backgroundColor: colors.background, height: screenHeight * 0.5 }]}>
                         <View style={{ marginBottom: 10 }}>
                             <ThemedText
                                 style={{ alignSelf: 'center' }}
@@ -111,16 +114,7 @@ export const CountrySelect: React.FC<Props> = (props: Props): JSX.Element => {
                                 {getText('common', 'chooseFromList')}
                             </ThemedText>
                         </View>
-                        <FlatList
-                            data={filteredCountries}
-                            keyExtractor={(item) => item.code}
-                            renderItem={({ item }) => (
-                                <TouchableOpacity onPress={() => handleCountrySelect(item)}>
-                                    <Text style={[STYLES.selectItem, { color: colors.text }]}>{getCountryName(item.code)} ({item.code}) +{item.phone}</Text>
-                                </TouchableOpacity>
-                            )}
-                        />
-                        <KeyboardAvoidingView style={{ backgroundColor: colors.inputBackground }}>
+                        <View style={{ marginBottom: 6 }}>
                             <TextInput
                                 style={[STYLES.textInput, { backgroundColor: colors.inputBackground }]}
                                 theme={{
@@ -134,7 +128,16 @@ export const CountrySelect: React.FC<Props> = (props: Props): JSX.Element => {
                                 value={searchText}
                                 onChangeText={handleSearch}
                             />
-                        </KeyboardAvoidingView>
+                        </View>
+                        <FlatList
+                            data={filteredCountries}
+                            keyExtractor={(item) => item.code}
+                            renderItem={({ item }) => (
+                                <TouchableOpacity onPress={() => handleCountrySelect(item)}>
+                                    <Text style={[STYLES.selectItem, { color: colors.text }]}>{getCountryName(item.code)} ({item.code}) +{item.phone}</Text>
+                                </TouchableOpacity>
+                            )}
+                        />
                     </View>
                 </View>
             </Modal>

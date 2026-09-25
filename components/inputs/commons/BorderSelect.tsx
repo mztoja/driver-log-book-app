@@ -1,6 +1,6 @@
 import { STYLES } from "@/constants/STYLES";
 import { getText } from "@/utils/getText";
-import { Dimensions, FlatList, KeyboardAvoidingView, Modal, TouchableOpacity, View, Text, Alert } from "react-native";
+import { Dimensions, FlatList, Modal, TouchableOpacity, View, Text, Alert } from "react-native";
 import { TextInput } from "react-native-paper";
 import { useTheme } from "@/hooks/useTheme";
 import { ThemedText } from "@/components/ThemedText";
@@ -11,6 +11,7 @@ import API_ENDPOINTS from "@/constants/API_ENDPOINTS";
 import { useGlobalState } from "@/hooks/useGlobalState";
 import { PlaceInput } from "./PlaceInput";
 
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 interface Props {
     place: string;
     placeOnChange: (e: string) => void;
@@ -35,6 +36,8 @@ export const BorderSelect: React.FC<Props> = (props: Props): JSX.Element => {
     const [borders, setBorders] = useState<BorderInterface[] | null>(null);
     const [filteredBorders, setFilteredBorders] = useState<BorderInterface[]>([]);
     const { colors } = useTheme();
+    // okno wysuwane od dołu – margines nad systemowymi przyciskami (edge-to-edge)
+    const bottomInset = useSafeAreaInsets().bottom;
     const { fetchData, loading } = useApi();
     const screenHeight = Dimensions.get('window').height;
 
@@ -145,7 +148,7 @@ export const BorderSelect: React.FC<Props> = (props: Props): JSX.Element => {
             >
                 <View style={STYLES.modalSelectContainer}>
                     <TouchableOpacity style={STYLES.modalSelectBlackout} onPress={() => { setModalVisible(false) }} />
-                    <View style={[STYLES.modaSelectContent, { backgroundColor: colors.background, height: screenHeight * 0.5 }]}>
+                    <View style={[STYLES.modaSelectContent, { paddingBottom: 10 + bottomInset, backgroundColor: colors.background, height: screenHeight * 0.5 }]}>
                         <View style={{ marginBottom: 10 }}>
                             <ThemedText
                                 style={{ alignSelf: 'center' }}
@@ -153,6 +156,21 @@ export const BorderSelect: React.FC<Props> = (props: Props): JSX.Element => {
                             >
                                 {getText('common', 'chooseFromList')}
                             </ThemedText>
+                        </View>
+                        <View style={{ marginBottom: 6 }}>
+                            <TextInput
+                                style={[STYLES.textInput, { backgroundColor: colors.inputBackground }]}
+                                theme={{
+                                    colors: {
+                                        primary: colors.text,
+                                    }
+                                }}
+                                label={getText('common', 'search')}
+                                textColor={colors.text}
+                                placeholderTextColor={colors.text}
+                                value={searchText}
+                                onChangeText={handleSearch}
+                            />
                         </View>
                         <FlatList
                             data={filteredBorders.sort((a, b) => {
@@ -177,21 +195,6 @@ export const BorderSelect: React.FC<Props> = (props: Props): JSX.Element => {
                                 );
                             }}
                         />
-                        <KeyboardAvoidingView style={{ backgroundColor: colors.inputBackground }}>
-                            <TextInput
-                                style={[STYLES.textInput, { backgroundColor: colors.inputBackground }]}
-                                theme={{
-                                    colors: {
-                                        primary: colors.text,
-                                    }
-                                }}
-                                label={getText('common', 'search')}
-                                textColor={colors.text}
-                                placeholderTextColor={colors.text}
-                                value={searchText}
-                                onChangeText={handleSearch}
-                            />
-                        </KeyboardAvoidingView>
                     </View>
                 </View>
             </Modal>

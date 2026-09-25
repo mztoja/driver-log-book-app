@@ -9,6 +9,7 @@ import React from "react";
 import { Dimensions, Modal, TouchableOpacity, View, Text, FlatList } from "react-native";
 import { TextInput } from "react-native-paper";
 
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 interface Props {
     value: string;
     onChange: (e: string) => void;
@@ -32,6 +33,12 @@ export const LoadOnVehicleSelect: React.FC<Props> = (props: Props): JSX.Element 
 
 
     const { colors } = useTheme();
+
+
+    // okno wysuwane od dołu – margines nad systemowymi przyciskami (edge-to-edge)
+
+
+    const bottomInset = useSafeAreaInsets().bottom;
     const { fetchData, loading } = useApi();
     const screenHeight = Dimensions.get('window').height;
     const txt = {
@@ -108,7 +115,7 @@ export const LoadOnVehicleSelect: React.FC<Props> = (props: Props): JSX.Element 
             >
                 <View style={STYLES.modalSelectContainer}>
                     <TouchableOpacity style={STYLES.modalSelectBlackout} onPress={() => { setModalVisible(false) }} />
-                    <View style={[STYLES.modaSelectContent, { backgroundColor: colors.background, height: screenHeight * 0.5 }]}>
+                    <View style={[STYLES.modaSelectContent, { paddingBottom: 10 + bottomInset, backgroundColor: colors.background, height: screenHeight * 0.5 }]}>
                         <View style={{ marginBottom: 10 }}>
                             <ThemedText
                                 style={{ alignSelf: 'center' }}

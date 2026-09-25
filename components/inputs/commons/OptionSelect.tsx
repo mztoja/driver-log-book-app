@@ -7,6 +7,7 @@ import { useGlobalState } from '@/hooks/useGlobalState';
 import { getText } from '@/utils/getText';
 import { ThemedText } from '@/components/ThemedText';
 
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 export interface SelectOption {
     value: string;
     label: string;
@@ -23,6 +24,8 @@ interface Props {
 /** Prosty select z listą w modalu (styl jak pozostałe selecty aplikacji). */
 export const OptionSelect: React.FC<Props> = (props: Props): JSX.Element => {
     const { colors } = useTheme();
+    // okno wysuwane od dołu – margines nad systemowymi przyciskami (edge-to-edge)
+    const bottomInset = useSafeAreaInsets().bottom;
     const { lang } = useGlobalState();
     const [modalVisible, setModalVisible] = useState<boolean>(false);
     const screenHeight = Dimensions.get('window').height;
@@ -44,7 +47,7 @@ export const OptionSelect: React.FC<Props> = (props: Props): JSX.Element => {
             <Modal animationType="slide" transparent visible={modalVisible}>
                 <View style={STYLES.modalSelectContainer}>
                     <TouchableOpacity style={STYLES.modalSelectBlackout} onPress={() => setModalVisible(false)} />
-                    <View style={[STYLES.modaSelectContent, { backgroundColor: colors.background, maxHeight: screenHeight * 0.5 }]}>
+                    <View style={[STYLES.modaSelectContent, { paddingBottom: 10 + bottomInset, backgroundColor: colors.background, maxHeight: screenHeight * 0.5 }]}>
                         <View style={{ marginBottom: 10 }}>
                             <ThemedText style={{ alignSelf: 'center' }} type="subtitle">
                                 {getText('common', 'chooseFromList', lang)}

@@ -2,7 +2,7 @@ import { STYLES } from "@/constants/STYLES";
 import { useTheme } from "@/hooks/useTheme";
 import { getText } from "@/utils/getText";
 import { useEffect, useState } from "react";
-import { Dimensions, FlatList, Modal, TouchableOpacity, View, Text, KeyboardAvoidingView, ActivityIndicator } from "react-native";
+import { Dimensions, FlatList, Modal, TouchableOpacity, View, Text, ActivityIndicator } from "react-native";
 import * as Location from "expo-location";
 import { HelperText, IconButton, TextInput } from "react-native-paper";
 import { ThemedText } from "../../ThemedText";
@@ -14,6 +14,7 @@ import { CountrySelect } from "../address/CountrySelect";
 import { useSnackbar } from "@/hooks/useSnackbar";
 import { distanceMeters } from "@/utils/distanceMeters";
 
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 // promień, w którym bieżąca pozycja „trafia" w miejsce z listy adresowej
 const NEAR_PLACE_RADIUS_M = 500;
 
@@ -45,6 +46,8 @@ export const PlaceInput: React.FC<Props> = (props: Props): JSX.Element => {
     const [modalVisible, setModalVisible] = useState<boolean>(false);
     const [selectVisible, setSelectVisible] = useState<boolean>(false);
     const { colors } = useTheme();
+    // okno wysuwane od dołu – margines nad systemowymi przyciskami (edge-to-edge)
+    const bottomInset = useSafeAreaInsets().bottom;
     const screenHeight = Dimensions.get('window').height;
     const [error, setError] = useState<boolean>(false);
 
@@ -245,7 +248,7 @@ export const PlaceInput: React.FC<Props> = (props: Props): JSX.Element => {
             >
                 <View style={STYLES.modalSelectContainer}>
                     <TouchableOpacity style={STYLES.modalSelectBlackout} onPress={() => { setModalVisible(false) }} />
-                    <View style={[STYLES.modaSelectContent, { backgroundColor: colors.background, height: screenHeight * 0.5 }]}>
+                    <View style={[STYLES.modaSelectContent, { paddingBottom: 10 + bottomInset, backgroundColor: colors.background, height: screenHeight * 0.5 }]}>
                         <View style={{ marginBottom: 10 }}>
                             <ThemedText
                                 style={{ alignSelf: 'center' }}
@@ -253,6 +256,21 @@ export const PlaceInput: React.FC<Props> = (props: Props): JSX.Element => {
                             >
                                 {getText('common', 'choosePlace')}
                             </ThemedText>
+                        </View>
+                        <View style={{ marginBottom: 6 }}>
+                            <TextInput
+                                style={[STYLES.textInput, { backgroundColor: colors.inputBackground }]}
+                                theme={{
+                                    colors: {
+                                        primary: colors.text,
+                                    }
+                                }}
+                                label={getText('common', 'search')}
+                                textColor={colors.text}
+                                placeholderTextColor={colors.text}
+                                value={searchText}
+                                onChangeText={handleSearch}
+                            />
                         </View>
                         <FlatList
                             data={filteredPlaces.sort((a, b) => {
@@ -303,21 +321,6 @@ export const PlaceInput: React.FC<Props> = (props: Props): JSX.Element => {
                                 );
                             }}
                         />
-                        <KeyboardAvoidingView style={{ backgroundColor: colors.inputBackground }}>
-                            <TextInput
-                                style={[STYLES.textInput, { backgroundColor: colors.inputBackground }]}
-                                theme={{
-                                    colors: {
-                                        primary: colors.text,
-                                    }
-                                }}
-                                label={getText('common', 'search')}
-                                textColor={colors.text}
-                                placeholderTextColor={colors.text}
-                                value={searchText}
-                                onChangeText={handleSearch}
-                            />
-                        </KeyboardAvoidingView>
                     </View>
                 </View>
             </Modal>

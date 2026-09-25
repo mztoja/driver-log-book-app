@@ -45,18 +45,6 @@ export const STYLES = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
     },
-    modalFormHeader: {
-        height: 50,
-        justifyContent: 'center',
-        alignItems: 'center',
-        width: '100%',
-    },
-    modalFormHeaderBackIcon: {
-        position: 'absolute',
-        left: 10,
-        top: '50%',
-        transform: [{ translateY: -12 }],
-    },
     inputWrapper: {
         position: 'relative',
         width: '100%',
