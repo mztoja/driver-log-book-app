@@ -98,13 +98,13 @@ export const PlacesMap: React.FC<{ active?: boolean }> = ({ active }): JSX.Eleme
         if (showFriends && friends) {
             friends.accepted.filter((fr) => fr.position).forEach((fr) => list.push({
                 kind: 'friend', id: fr.friendshipId, lat: fr.position!.lat, lon: fr.position!.lon,
-                initials: initials(fr.firstName, fr.lastName), onTour: !!fr.cargo?.destinations.length,
+                initials: initials(fr.firstName, fr.lastName), onTour: !!fr.cargo?.activeTour,
             }));
             if (friends.self.position) {
                 list.push({
                     kind: 'self', id: 0, lat: friends.self.position.lat, lon: friends.self.position.lon,
                     initials: initials(friends.self.firstName, friends.self.lastName),
-                    onTour: !!friends.self.cargo?.destinations.length,
+                    onTour: !!friends.self.cargo?.activeTour,
                 });
             }
         }
@@ -211,7 +211,7 @@ export const PlacesMap: React.FC<{ active?: boolean }> = ({ active }): JSX.Eleme
             >
                 {selectedFriend &&
                     <ScrollView style={STYLES.scrollView} contentContainerStyle={styles.modalContent}>
-                        <FriendPositionInfo position={selectedFriend.position} cargo={selectedFriend.cargo} />
+                        <FriendPositionInfo position={selectedFriend.position} lastActivity={selectedFriend.lastActivity} cargo={selectedFriend.cargo} />
                         <ActionRow
                             icon="account-remove"
                             label={f('removeFriend')}
@@ -238,7 +238,7 @@ export const PlacesMap: React.FC<{ active?: boolean }> = ({ active }): JSX.Eleme
             >
                 {friends?.self &&
                     <ScrollView style={STYLES.scrollView} contentContainerStyle={styles.modalContent}>
-                        <FriendPositionInfo position={friends.self.position} cargo={friends.self.cargo} />
+                        <FriendPositionInfo position={friends.self.position} lastActivity={friends.self.lastActivity} cargo={friends.self.cargo} />
                     </ScrollView>
                 }
             </MainFormModal>

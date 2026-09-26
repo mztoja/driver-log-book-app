@@ -17,6 +17,10 @@ interface Entries {
     removeFriend: string;
     removeFriendConfirm(x: string): string;
     lastPositionLabel: string;
+    lastActivityLabel: string;
+    loadsWithoutReceiverLabel: string;
+    activeTourNoLoads: string;
+    noActivity: string;
     currentCargoLabel: string;
     targetPlaceLabel: string;
     loadDestinationsLabel: string;

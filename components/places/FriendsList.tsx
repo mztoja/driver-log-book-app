@@ -99,7 +99,7 @@ export const FriendsList: React.FC = (): JSX.Element => {
                         <ThemedText type="defaultSemiBold">
                             {f('selfLabel')} ({friends.self.firstName} {friends.self.lastName})
                         </ThemedText>
-                        <FriendPositionInfo position={friends.self.position} cargo={friends.self.cargo} />
+                        <FriendPositionInfo position={friends.self.position} lastActivity={friends.self.lastActivity} cargo={friends.self.cargo} />
                     </View>
                 )}
 
@@ -113,7 +113,7 @@ export const FriendsList: React.FC = (): JSX.Element => {
                             <IconButton icon="account-remove" size={22} iconColor={colors.deleteIcon}
                                         accessibilityLabel={f('removeFriend')} onPress={() => setToRemove(fr)} />
                         </View>
-                        <FriendPositionInfo position={fr.position} cargo={fr.cargo} />
+                        <FriendPositionInfo position={fr.position} lastActivity={fr.lastActivity} cargo={fr.cargo} />
                     </View>
                 ))}
 

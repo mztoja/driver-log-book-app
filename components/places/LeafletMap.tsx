@@ -53,11 +53,34 @@ const HTML = `<!DOCTYPE html>
         '<text x="' + (SIZE - 5) + '" y="7.7" font-size="7" font-weight="bold" text-anchor="middle" fill="#000000">T</text>' : '') +
       '</svg>';
   }
-  function iconFor(m) {
+  // off = [dx, dy] – przesunięcie ikony w pikselach (kilka pinezek w tym samym punkcie)
+  function iconFor(m, off) {
     if (m.kind === 'place') {
-      return L.divIcon({ html: placeSvg(PLACE_COLORS[m.type] || PLACE_COLORS[0], m.partial), className: 'pin', iconSize: [25, 41], iconAnchor: [12, 41] });
+      return L.divIcon({ html: placeSvg(PLACE_COLORS[m.type] || PLACE_COLORS[0], m.partial), className: 'pin', iconSize: [25, 41], iconAnchor: [12 - off[0], 41 - off[1]] });
     }
-    return L.divIcon({ html: personSvg(m.kind === 'self' ? SELF_COLOR : FRIEND_COLOR, m.initials, m.onTour), className: 'pin', iconSize: [SIZE, SIZE], iconAnchor: [SIZE / 2, SIZE / 2] });
+    return L.divIcon({ html: personSvg(m.kind === 'self' ? SELF_COLOR : FRIEND_COLOR, m.initials, m.onTour), className: 'pin', iconSize: [SIZE, SIZE], iconAnchor: [SIZE / 2 - off[0], SIZE / 2 - off[1]] });
+  }
+
+  // Pinezki w tym samym punkcie (np. kilku znajomych w jednym miejscu) rozkładamy w małym okręgu –
+  // przesuwamy SAMĄ IKONĘ o piksele, nie współrzędne, więc rozrzut jest stały przy każdym przybliżeniu.
+  // Ten sam algorytm co front (components/places/markerSpread.ts).
+  function spreadOffsets(markers) {
+    var groups = {};
+    markers.forEach(function (m, i) {
+      var k = m.lat.toFixed(5) + '_' + m.lon.toFixed(5);
+      (groups[k] = groups[k] || []).push(i);
+    });
+    var offsets = markers.map(function () { return [0, 0]; });
+    Object.keys(groups).forEach(function (k) {
+      var g = groups[k];
+      if (g.length < 2) return;
+      var radius = Math.max(22, (g.length * 36) / (2 * Math.PI));
+      g.forEach(function (idx, i) {
+        var angle = (2 * Math.PI * i) / g.length - Math.PI / 2;
+        offsets[idx] = [Math.round(radius * Math.cos(angle)), Math.round(radius * Math.sin(angle))];
+      });
+    });
+    return offsets;
   }
 
   var map = L.map('map', { zoomControl: true }).setView([52, 19], 5);
@@ -70,9 +93,10 @@ const HTML = `<!DOCTYPE html>
   window.__setMarkers = function (markers) {
     layer.clearLayers();
     var positions = [];
-    markers.forEach(function (m) {
+    var offsets = spreadOffsets(markers);
+    markers.forEach(function (m, i) {
       positions.push([m.lat, m.lon]);
-      L.marker([m.lat, m.lon], { icon: iconFor(m) })
+      L.marker([m.lat, m.lon], { icon: iconFor(m, offsets[i]) })
         .on('click', function () { window.ReactNativeWebView.postMessage(JSON.stringify({ kind: m.kind, id: m.id })); })
         .addTo(layer);
     });
