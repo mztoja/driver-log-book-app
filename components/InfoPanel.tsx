@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { View, StyleSheet, Pressable } from 'react-native';
+import { View, StyleSheet, Pressable, AppState } from 'react-native';
 import { Icon, ProgressBar } from 'react-native-paper';
 import { router, useFocusEffect } from 'expo-router';
 import { ThemedText } from '@/components/ThemedText';
@@ -145,7 +145,9 @@ export const InfoPanel: React.FC<Props> = (props: Props): JSX.Element => {
     };
     const baseCountry = useBaseCountry();
 
-    const [currentTime, setCurrentTime] = useState<Date>(new Date());
+    // „teraz" jako ściana zegara kraju bazy (tak zapisywane są daty wpisów) – jeden zegar dla
+    // czasu trasy, odpoczynku i pracy, niezależnie od strefy telefonu (np. za granicą)
+    const [currentTime, setCurrentTime] = useState<Date>(() => homeNow(baseCountry));
     const [stopDate, setStopDate] = useState<Date | null>(null);
     const [truckData, setTruckData] = useState<VehicleInterface | null>(null);
     const [trailerData, setTrailerData] = useState<VehicleInterface | null>(null);
@@ -172,11 +174,20 @@ export const InfoPanel: React.FC<Props> = (props: Props): JSX.Element => {
         }, [])
     );
 
-    // wyświetlane wartości mają rozdzielczość minutową – wystarczy tick co 20 s
+    // tick co 2 s (jak front InfoBar) + natychmiastowe odświeżenie po powrocie aplikacji z tła
+    // (timery JS stoją w tle, więc bez tego po powrocie widać stare czasy aż do kolejnego ticka)
     useEffect(() => {
-        const id = setInterval(() => setCurrentTime(new Date()), 20000);
-        return () => clearInterval(id);
-    }, []);
+        const tick = (): void => setCurrentTime(homeNow(baseCountry));
+        tick();
+        const id = setInterval(tick, 2000);
+        const sub = AppState.addEventListener('change', (state) => {
+            if (state === 'active') tick();
+        });
+        return () => {
+            clearInterval(id);
+            sub.remove();
+        };
+    }, [baseCountry]);
 
     // odpoczynek dobowy – potrzebny tylko gdy nie ma aktywnego dnia
     useEffect(() => {
@@ -272,7 +283,7 @@ export const InfoPanel: React.FC<Props> = (props: Props): JSX.Element => {
     // rozpoczęcia, progi wg obsady (1-osobowa: 13h/15h, 2-osobowa: 20h/21h). Data z bazy to
     // „ściana zegara" bazy, więc porównujemy z homeNow(kraj bazy), a nie z czasem telefonu.
     const workSeconds = activeDay?.startData
-        ? Math.max(0, Math.floor((homeNow(baseCountry).getTime() - toLocalDate(activeDay.startData.date).getTime()) / 1000))
+        ? Math.max(0, Math.floor((currentTime.getTime() - toLocalDate(activeDay.startData.date).getTime()) / 1000))
         : 0;
     const workWarnSeconds = (activeDay?.doubleCrew ? 20 : 13) * 3600;
     const workMaxSeconds = (activeDay?.doubleCrew ? 21 : 15) * 3600;

@@ -7,7 +7,7 @@ import { useTheme } from "@/hooks/useTheme";
 import { VehicleInterface, vehicleTypeEnum } from "@/types";
 import { getText } from "@/utils/getText";
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, FlatList, Modal, TouchableOpacity, View, Text } from "react-native";
+import { ActivityIndicator, Dimensions, FlatList, Modal, TouchableOpacity, View, Text } from "react-native";
 import { TextInput } from "react-native-paper";
 
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -84,7 +84,7 @@ export const VehicleRegistrationSelect: React.FC<Props> = (props: Props): JSX.El
             <Modal animationType="slide" transparent={true} visible={modalVisible}>
                 <View style={STYLES.modalSelectContainer}>
                     <TouchableOpacity style={STYLES.modalSelectBlackout} onPress={() => setModalVisible(false)} />
-                    <View style={[STYLES.modaSelectContent, { paddingBottom: 10 + bottomInset, backgroundColor: colors.background }]}>
+                    <View style={[STYLES.modaSelectContent, { paddingBottom: 10 + bottomInset, backgroundColor: colors.background, maxHeight: Dimensions.get('window').height * 0.5 }]}>
                         <View style={{ marginBottom: 10 }}>
                             <ThemedText style={{ alignSelf: 'center' }} type="subtitle">
                                 {getText('common', 'chooseFromList')}
@@ -93,6 +93,9 @@ export const VehicleRegistrationSelect: React.FC<Props> = (props: Props): JSX.El
                         {loading
                             ? <ActivityIndicator color={colors.text} />
                             : <FlatList
+                                // lista mieści się w oknie i przewija w środku – bez tego rośnie do pełnej
+                                // wysokości treści i wypycha resztę okna pod systemowe przyciski
+                                style={{ flexShrink: 1 }}
                                 data={list}
                                 keyExtractor={(item) => item.id.toString()}
                                 renderItem={({ item }) => (

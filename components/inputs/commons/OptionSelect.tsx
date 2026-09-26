@@ -54,6 +54,9 @@ export const OptionSelect: React.FC<Props> = (props: Props): JSX.Element => {
                             </ThemedText>
                         </View>
                         <FlatList
+                            // lista mieści się w oknie i przewija w środku – bez tego rośnie do pełnej
+                            // wysokości treści i wypycha resztę okna pod systemowe przyciski
+                            style={{ flexShrink: 1 }}
                             data={props.options}
                             keyExtractor={(o) => o.value}
                             renderItem={({ item }) => (

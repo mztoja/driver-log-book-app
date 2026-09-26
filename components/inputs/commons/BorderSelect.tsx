@@ -173,6 +173,9 @@ export const BorderSelect: React.FC<Props> = (props: Props): JSX.Element => {
                             />
                         </View>
                         <FlatList
+                            // lista mieści się w oknie i przewija w środku – bez tego rośnie do pełnej
+                            // wysokości treści i wypycha resztę okna pod systemowe przyciski
+                            style={{ flexShrink: 1 }}
                             data={filteredBorders.sort((a, b) => {
                                 if (a.place < b.place) return -1;
                                 if (a.place > b.place) return 1;

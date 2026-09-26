@@ -176,6 +176,9 @@ export const LoadOnVehicleSelect: React.FC<Props> = (props: Props): JSX.Element 
                             </View>
                         }
                         <FlatList
+                            // lista mieści się w oknie i przewija w środku – bez tego rośnie do pełnej
+                            // wysokości treści i wypycha resztę okna pod systemowe przyciski
+                            style={{ flexShrink: 1 }}
                             data={[]}
                             renderItem={() => (<></>)}
                         />

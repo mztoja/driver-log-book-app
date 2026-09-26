@@ -86,6 +86,9 @@ export const ExpenseFavorites: React.FC<Props> = ({ visible, onClose, onApply }:
                         <ThemedText style={{ alignSelf: 'center', opacity: 0.7, marginTop: 20 }}>{txt.empty}</ThemedText>
                     ) : (
                         <FlatList
+                            // lista mieści się w oknie i przewija w środku – bez tego rośnie do pełnej
+                            // wysokości treści i wypycha resztę okna pod systemowe przyciski
+                            style={{ flexShrink: 1 }}
                             data={list}
                             keyExtractor={(item) => item.id.toString()}
                             renderItem={({ item }) => (
