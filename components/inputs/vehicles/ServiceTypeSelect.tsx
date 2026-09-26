@@ -49,6 +49,8 @@ export const ServiceTypeSelect: React.FC<Props> = (props: Props): JSX.Element =>
             <TouchableOpacity onPress={() => setModalVisible(true)}>
                 <View style={STYLES.inputWrapper}>
                     <TextInput
+                        // na iOS nieedytowalny TextInput i tak łapie dotyk – bez tego onPress rodzica nie działa
+                        pointerEvents="none"
                         style={[STYLES.textInput, { backgroundColor: colors.inputBackground }]}
                         theme={{ colors: { primary: colors.text } }}
                         label={txt.label}

@@ -112,6 +112,8 @@ export const AmountInput: React.FC<Props> = (props: Props): JSX.Element => {
             />
             <TouchableOpacity onPress={() => { if (!props.options?.currencyDisable) onModalOpen() }}>
                 <TextInput
+                    // na iOS nieedytowalny TextInput i tak łapie dotyk – bez tego onPress rodzica nie działa
+                    pointerEvents="none"
                     style={[STYLES.textInput, { backgroundColor: colors.inputBackground, maxWidth: 150 }]}
                     theme={{
                         colors: {

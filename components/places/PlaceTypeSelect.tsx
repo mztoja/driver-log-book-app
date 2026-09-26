@@ -38,6 +38,8 @@ export const PlaceTypeSelect: React.FC<Props> = (props: Props): JSX.Element => {
         <View>
             <TouchableOpacity onPress={() => setModalVisible(true)}>
                 <TextInput
+                    // na iOS nieedytowalny TextInput i tak łapie dotyk – bez tego onPress rodzica nie działa
+                    pointerEvents="none"
                     style={[STYLES.textInput, { backgroundColor: colors.inputBackground }]}
                     theme={{ colors: { primary: colors.text } }}
                     label={props.label ?? getText('common', 'placeType', lang)}

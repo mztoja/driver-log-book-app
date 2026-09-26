@@ -129,7 +129,9 @@ export const useEditExpenseMath = (
     updateFormData: (key: keyof FinanceEditData, value: string) => void,
     markers: Markers,
 ) => {
-    const source = useRef<Source>(null);
+    // w edycji punktem odniesienia jest zapisana kwota (cena jednostkowa jest z niej tylko wyliczana),
+    // więc zmiana ilości przelicza cenę, dopóki użytkownik sam nie wpisze ceny
+    const source = useRef<Source>('amount');
     // efekty odpalają się też przy montowaniu – przeliczamy tylko zmiany wpisane przez użytkownika
     // (inaczej otwarcie edycji mogłoby np. zaokrąglić cenę i nadpisać zapisaną kwotę)
     const ready = useRef<boolean>(false);
