@@ -17,6 +17,24 @@ import { distanceMeters } from "@/utils/distanceMeters";
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 // promień, w którym bieżąca pozycja „trafia" w miejsce z listy adresowej
 const NEAR_PLACE_RADIUS_M = 500;
+// ile czekamy na dokładny odczyt GPS, zanim przejdziemy na zwykłą dokładność
+const HIGH_ACCURACY_TIMEOUT_MS = 10000;
+
+/**
+ * Pozycja z wysoką dokładnością (GPS). Przy kilku miejscach w promieniu 500 m wybieramy najbliższe,
+ * więc dokładność ma znaczenie – tryb Balanced (Wi-Fi / sieć komórkowa, błąd ~100 m+) potrafił
+ * wskazać sąsiedni parking. Gdy GPS nie odpowie w czasie (np. w hali), zwykła dokładność.
+ */
+const getAccuratePosition = async (): Promise<Location.LocationObject> => {
+    try {
+        return await Promise.race([
+            Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.High }),
+            new Promise<never>((_, reject) => setTimeout(() => reject(new Error('gps timeout')), HIGH_ACCURACY_TIMEOUT_MS)),
+        ]);
+    } catch {
+        return Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Balanced });
+    }
+};
 
 interface Props {
     place: string;
@@ -77,7 +95,7 @@ export const PlaceInput: React.FC<Props> = (props: Props): JSX.Element => {
             }
             let position: Location.LocationObject;
             try {
-                position = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Balanced });
+                position = await getAccuratePosition();
             } catch {
                 showSnackbar(getText('common', 'gpsPositionError', lang), 'error');
                 return;
