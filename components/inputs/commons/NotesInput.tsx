@@ -10,16 +10,16 @@ interface Props {
     onChange: (e: string) => void;
 }
 
+// Bez `height` w style: Paper przy podanej wysokości przełącza się w tryb stałej wysokości
+// (inne paddingi, sztywne `height`), przez co na iOS pole nie rosło. Natywny multiline rośnie sam.
 export const NotesInput: React.FC<Props> = (props: Props): JSX.Element => {
     const { colors } = useTheme();
-    const [height, setHeight] = React.useState(0);
 
     return (
         <View>
             <TextInput
                 style={[STYLES.textInput, {
                     backgroundColor: colors.inputBackground,
-                    height: Math.max(40, height),
                 }]}
                 theme={{
                     colors: {
@@ -30,11 +30,9 @@ export const NotesInput: React.FC<Props> = (props: Props): JSX.Element => {
                 value={props.value}
                 onChangeText={props.onChange}
                 multiline={true}
+                scrollEnabled={false}
                 textColor={colors.text}
                 placeholderTextColor={colors.text}
-                onContentSizeChange={(event) =>
-                    setHeight(event.nativeEvent.contentSize.height)
-                }
             />
         </View>
     );
