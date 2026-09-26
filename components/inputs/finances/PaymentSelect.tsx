@@ -7,10 +7,10 @@ import { useTheme } from '@/hooks/useTheme';
 import { AddPaymentData, DeletePaymentData, PaymentInterface } from '@/types';
 import { getText } from '@/utils/getText';
 import React from 'react';
-import { Dimensions, FlatList, Modal, TouchableOpacity, View, Text, KeyboardAvoidingView } from 'react-native';
+import { FlatList, Modal, TouchableOpacity, View, Text, KeyboardAvoidingView } from 'react-native';
 import { IconButton, TextInput } from 'react-native-paper';
 
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useSelectSheetStyle } from "@/hooks/useSelectSheetStyle";
 interface Props {
     value: string;
     onChange: (e: string) => void;
@@ -23,11 +23,10 @@ export const PaymentSelect: React.FC<Props> = (props: Props): JSX.Element => {
     const [addText, setAddText] = React.useState<string>('');
     const [refresh, setRefresh] = React.useState<boolean>(false);
     const { colors } = useTheme();
-    // okno wysuwane od dołu – margines nad systemowymi przyciskami (edge-to-edge)
-    const bottomInset = useSafeAreaInsets().bottom;
+    // okno wysuwane od dołu – margines nad systemowymi przyciskami (edge-to-edge), na iOS nad klawiaturą
+    const sheetStyle = useSelectSheetStyle();
     const { paymentMethods, setPaymentMethods } = useGlobalState();
     const { fetchData, loading } = useApi();
-    const screenHeight = Dimensions.get('window').height;
     const txt = {
         chooseFromList: getText('common', 'chooseFromList'),
         cash: getText('home', 'cash'),
@@ -121,7 +120,7 @@ export const PaymentSelect: React.FC<Props> = (props: Props): JSX.Element => {
             >
                 <View style={STYLES.modalSelectContainer}>
                     <TouchableOpacity style={STYLES.modalSelectBlackout} onPress={() => { setModalVisible(false) }} />
-                    <View style={[STYLES.modaSelectContent, { paddingBottom: 10 + bottomInset, backgroundColor: colors.background, height: screenHeight * 0.5 }]}>
+                    <View style={[STYLES.modaSelectContent, { backgroundColor: colors.background }, sheetStyle]}>
                         <View style={{ marginBottom: 10 }}>
                             <ThemedText
                                 style={{ alignSelf: 'center' }}

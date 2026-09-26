@@ -7,10 +7,10 @@ import { extractNumberWithDecimal } from '@/utils/extractNumberWithDecimal';
 import { getText } from '@/utils/getText';
 import React, { Dispatch, SetStateAction } from 'react';
 import { useEffect, useState } from 'react';
-import { FlatList, Modal, TouchableOpacity, View, Text, Dimensions } from 'react-native';
+import { FlatList, Modal, TouchableOpacity, View, Text } from 'react-native';
 import { TextInput } from 'react-native-paper';
 
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useSelectSheetStyle } from "@/hooks/useSelectSheetStyle";
 interface Props {
     valueAmount: string;
     valueCurrency: string;
@@ -29,10 +29,9 @@ export const AmountInput: React.FC<Props> = (props: Props): JSX.Element => {
     const [searchText, setSearchText] = useState<string>('');
     const [modalVisible, setModalVisible] = useState<boolean>(false);
     const { colors } = useTheme();
-    // okno wysuwane od dołu – margines nad systemowymi przyciskami (edge-to-edge)
-    const bottomInset = useSafeAreaInsets().bottom;
+    // okno wysuwane od dołu – margines nad systemowymi przyciskami (edge-to-edge), na iOS nad klawiaturą
+    const sheetStyle = useSelectSheetStyle();
     const { user } = useGlobalState();
-    const screenHeight = Dimensions.get('window').height;
     const txt = {
         amount: getText('common', 'amount'),
         currency: getText('common', 'currency'),
@@ -133,7 +132,7 @@ export const AmountInput: React.FC<Props> = (props: Props): JSX.Element => {
             >
                 <View style={STYLES.modalSelectContainer}>
                     <View style={STYLES.modalSelectBlackout} />
-                    <View style={[STYLES.modaSelectContent, { paddingBottom: 10 + bottomInset, backgroundColor: colors.background, height: screenHeight * 0.5 }]}>
+                    <View style={[STYLES.modaSelectContent, { backgroundColor: colors.background }, sheetStyle]}>
                         <View style={{ marginBottom: 10 }}>
                             <ThemedText
                                 style={{ alignSelf: 'center' }}
