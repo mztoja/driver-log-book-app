@@ -1,7 +1,7 @@
 import React from "react";
 import { AddExpenseData, AddExpenseFavoriteData, ExpenseEnum, ExpenseFavoriteInterface, GeneralFormData } from "@/types";
 import { MainFormModal } from "../MainFormModal";
-import { ScrollView, View } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
 import { STYLES } from "@/constants/STYLES";
 import { getText } from "@/utils/getText";
 import { DateTimeInput } from "@/components/inputs/commons/DateTimeInput";
@@ -200,24 +200,27 @@ export const ExpenseAdd: React.FC<Props> = (props: Props): JSX.Element => {
                     onChange={(e) => setForm('expenseItemDescription', e)}
                     disabled={expenseType !== ExpenseEnum.standard}
                 />
-                <View style={{ alignSelf: 'center' }}>
-                    <ExpenseQuantityInput
-                        value={form.expenseQuantity}
-                        onChange={(e) => setForm('expenseQuantity', e)}
-                        marker={setQuantityMarker}
-                    />
-                </View>
-                <View style={{ alignSelf: 'center' }}>
-                    <UnitPriceInput
-                        value={form.expenseUnitPrice}
-                        onChange={(e) => setForm('expenseUnitPrice', e)}
-                        marker={setUnitPriceMarker}
-                    />
-                </View>
                 <PaymentSelect
                     value={form.payment}
                     onChange={(e) => setForm('payment', e)}
                 />
+                {/* ilość i cena jednostkowa w jednej linii */}
+                <View style={styles.qtyPriceRow}>
+                    <View style={styles.qtyPriceCell}>
+                        <ExpenseQuantityInput
+                            value={form.expenseQuantity}
+                            onChange={(e) => setForm('expenseQuantity', e)}
+                            marker={setQuantityMarker}
+                        />
+                    </View>
+                    <View style={styles.qtyPriceCell}>
+                        <UnitPriceInput
+                            value={form.expenseUnitPrice}
+                            onChange={(e) => setForm('expenseUnitPrice', e)}
+                            marker={setUnitPriceMarker}
+                        />
+                    </View>
+                </View>
                 <OnOffSwitch
                     value={switchValue}
                     onChange={(e) => setSwitchValue(e)}
@@ -253,3 +256,8 @@ export const ExpenseAdd: React.FC<Props> = (props: Props): JSX.Element => {
         </MainFormModal>
     );
 }
+
+const styles = StyleSheet.create({
+    qtyPriceRow: { flexDirection: 'row', justifyContent: 'center', gap: 12 },
+    qtyPriceCell: { flex: 1, maxWidth: 150 },
+});
