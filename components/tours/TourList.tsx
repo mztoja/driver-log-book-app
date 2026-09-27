@@ -17,9 +17,10 @@ interface Props {
     onRefresh: () => void;
     emptyText: string;
     ListHeaderComponent?: React.ReactElement;
+    ListFooterComponent?: React.ReactElement;
 }
 
-export const TourList: React.FC<Props> = ({ data, loading, onRefresh, emptyText, ListHeaderComponent }) => {
+export const TourList: React.FC<Props> = ({ data, loading, onRefresh, emptyText, ListHeaderComponent, ListFooterComponent }) => {
     const { colors } = useTheme();
     const { lang } = useGlobalState();
 
@@ -38,6 +39,7 @@ export const TourList: React.FC<Props> = ({ data, loading, onRefresh, emptyText,
             data={data ?? []}
             keyExtractor={(t) => t.id.toString()}
             ListHeaderComponent={ListHeaderComponent}
+            ListFooterComponent={ListFooterComponent}
             refreshControl={<RefreshControl refreshing={loading} onRefresh={onRefresh} tintColor={colors.text} />}
             ListEmptyComponent={<ThemedText style={styles.empty}>{emptyText}</ThemedText>}
             renderItem={({ item }) => {

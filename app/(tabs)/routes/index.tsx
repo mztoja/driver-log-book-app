@@ -9,6 +9,7 @@ import { TourInterface, ToursInterface } from '@/types';
 import API_ENDPOINTS from '@/constants/API_ENDPOINTS';
 import { SegmentedTabs } from '@/components/tours/SegmentedTabs';
 import { TourList } from '@/components/tours/TourList';
+import { TourTotalsCard } from '@/components/tours/TourTotalsCard';
 import { TourSettlementsView } from '@/components/tours/TourSettlementsView';
 import { TourStatsView } from '@/components/tours/TourStatsView';
 
@@ -30,7 +31,15 @@ function UnaccountedTours() {
         }, [])
     );
 
-    return <TourList data={data} loading={loading} onRefresh={load} emptyText={getText('tours', 'noTours', lang)} />;
+    return (
+        <TourList
+            data={data}
+            loading={loading}
+            onRefresh={load}
+            emptyText={getText('tours', 'noTours', lang)}
+            ListFooterComponent={data && data.length > 0 ? <TourTotalsCard data={data} /> : undefined}
+        />
+    );
 }
 
 export default function RoutesScreen() {
